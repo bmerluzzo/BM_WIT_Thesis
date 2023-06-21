@@ -1,4 +1,4 @@
-#Test code for Crazyflie control with Multi-ranger deck and Flow deck
+#Test code for Crazyflie control with Multi-ranger deck and Flow deck - Github
 
 import logging
 import sys
