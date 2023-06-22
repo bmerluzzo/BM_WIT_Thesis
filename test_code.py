@@ -1,5 +1,37 @@
-#Test code for Crazyflie control with Multi-ranger deck and Flow deck - Github
+# -*- coding: utf-8 -*-
+#
+#     ||          ____  _ __
+#  +------+      / __ )(_) /_______________ _____  ___
+#  | 0xBC |     / __  / / __/ ___/ ___/ __ `/_  / / _ \
+#  +------+    / /_/ / / /_/ /__/ /  / /_/ / / /_/  __/
+#   ||  ||    /_____/_/\__/\___/_/   \__,_/ /___/\___/
+#
+#  Copyright (C) 2017 Bitcraze AB
+#
+#  Crazyflie Nano Quadcopter Client
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+"""
+This script shows the basic use of the MotionCommander class.
 
+Simple example that connects to the crazyflie at `URI` and runs a
+sequence. This script requires some kind of location system, it has been
+tested with (and designed for) the flow deck.
+
+The MotionCommander uses velocity setpoints.
+
+Change the URI variable to your Crazyflie configuration.
+"""
 import logging
 import sys
 import time
@@ -13,15 +45,11 @@ from cflib.utils.multiranger import Multiranger
 
 URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
 
-if len(sys.argv) > 1:
-    URI = sys.argv[1]
-
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 
-
 def is_close(range):
-    MIN_DISTANCE = 0.2 
+    MIN_DISTANCE = 0.3 
 
     if range is None:
         return False
@@ -30,15 +58,16 @@ def is_close(range):
 
 
 if __name__ == '__main__':
-    x = 20
+    # Initialize the low-level drivers
+    cflib.crtp.init_drivers()
+    x = 10
     y = 0 
     fl = 0.2
     j = 0
-    # Initialize the low-level drivers
-    cflib.crtp.init_drivers()
+    i = 0
 
-    cf = Crazyflie(rw_cache='./cache')
     with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+        # We take off when the commander is created
         with MotionCommander(scf) as mc:
             with Multiranger(scf) as mr:
                 time.sleep(2)
@@ -46,24 +75,24 @@ if __name__ == '__main__':
                     mc.forward(fl)
                     if is_close(mr.front):
                         mc.stop()
-                        break
-                        '''while j == 0:
+                        time.sleep(2)
+                        while j == 0:
                             if is_close(mr.front):
                                 mc.left(fl)
                                 y = y + 1
                             else:
-                                mc.forward(fl*3)
-                                i = i + 3
+                                time.sleep(1)
+                                mc.forward(fl*2)
+                                i = i + 2
                                 if is_close(mr.right):
                                     mc.forward(fl)
                                     i = i + 1
                                 else:
+                                    time.sleep(1)
                                     for k in range(y):
                                         mc.right(fl)
-                                    y = 0
-                                    j = 1'''
-                
-
-                    
-
-    
+                                    j = 1
+                    elif is_close(mr.up):
+                        mc.stop()
+                        time.sleep(5)
+                        break  
