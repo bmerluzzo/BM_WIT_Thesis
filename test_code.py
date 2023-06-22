@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.ERROR)
 
 
 def is_close(range):
-    MIN_DISTANCE = 0.2  # m
+    MIN_DISTANCE = 0.2 
 
     if range is None:
         return False
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     cflib.crtp.init_drivers()
 
     cf = Crazyflie(rw_cache='./cache')
-    with SyncCrazyflie(URI, cf=cf) as scf:
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
         with MotionCommander(scf) as mc:
             with Multiranger(scf) as mr:
                 time.sleep(2)
@@ -46,20 +46,22 @@ if __name__ == '__main__':
                     mc.forward(fl)
                     if is_close(mr.front):
                         mc.stop()
-                        while j == 0:
+                        break
+                        '''while j == 0:
                             if is_close(mr.front):
                                 mc.left(fl)
                                 y = y + 1
                             else:
-                                mc.forward(fl)
-                                i = i + 1
+                                mc.forward(fl*3)
+                                i = i + 3
                                 if is_close(mr.right):
                                     mc.forward(fl)
                                     i = i + 1
                                 else:
                                     for k in range(y):
                                         mc.right(fl)
-                                        j = 1
+                                    y = 0
+                                    j = 1'''
                 
 
                     
