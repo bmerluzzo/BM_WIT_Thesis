@@ -55,7 +55,7 @@ if __name__ == '__main__':
         
         
         with MotionCommander(scf) as mc:
-            
+            time.sleep(3)
             logconf.start()
             for i in range(3):
                 xp = spX[i]
@@ -65,24 +65,28 @@ if __name__ == '__main__':
                 if xp == xn and yp < yn:
                     yd = yn - yp
                     ym = yd/fl
+                    ym = int(ym)
                     for j in range(ym):
                         mc.forward(fl)
                     time.sleep(2)
                 elif xp == xn and yp > yn:
                     yd = yp - yn
                     ym = yd/fl
+                    ym = int(ym)
                     for k in range(ym):
                         mc.back(fl)
                     time.sleep(2)
                 elif xp < xn and yp == yn:
                     xd = xn - xp
                     xm = xd/fl
+                    xm = int(xm)
                     for l in range(xm):
                         mc.right(fl)
                     time.sleep(2)
                 elif xp > xn and yp == yn:
                     xd = xp - xn
                     xm = xd/fl
+                    xm = int(xm)
                     for m in range(xm):
                         mc.left(fl)
                     time.sleep(2)
