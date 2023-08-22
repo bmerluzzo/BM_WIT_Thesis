@@ -49,7 +49,7 @@ URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
 logging.basicConfig(level=logging.ERROR)
 
 def is_close(range):
-    MIN_DISTANCE = 0.3 
+    MIN_DISTANCE = 0.3
 
     if range is None:
         return False
@@ -60,9 +60,9 @@ def is_close(range):
 if __name__ == '__main__':
     # Initialize the low-level drivers
     cflib.crtp.init_drivers()
-    x = 10
+    x = 20
     y = 0 
-    fl = 0.2
+    fl = 0.05
     j = 0
     i = 0
 
@@ -82,7 +82,7 @@ if __name__ == '__main__':
                                 y = y + 1
                             else:
                                 time.sleep(1)
-                                mc.forward(fl*2)
+                                mc.forward(fl*6)
                                 i = i + 2
                                 if is_close(mr.right):
                                     mc.forward(fl)
