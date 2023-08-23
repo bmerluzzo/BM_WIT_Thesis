@@ -9,17 +9,25 @@ from cflib.crazyflie.log import LogConfig
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.utils import uri_helper
 from cflib.positioning.motion_commander import MotionCommander
+from cflib.utils.multiranger import Multiranger
 
 URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
 
 position_estimate = [0, 0]
-spX = [0, 0, 1, 1]
-spY = [0, 1, 1, 0]
+spX = [0, 1, 0]
+spY = [0, 1, 0]
 fl = 0.1
 
 
 deck_attached_event = Event()
 
+def is_close(range):
+    MIN_DISTANCE = 0.3
+
+    if range is None:
+        return False
+    else:
+        return range < MIN_DISTANCE
 
 def log_pos_callback(timestamp, data, logconf):
     print(data)
@@ -46,7 +54,7 @@ if __name__ == '__main__':
     
         scf.cf.param.add_update_callback(group='deck', name='bcFlow2', cb=param_deck_flow)
 
-        logconf = LogConfig(name='Position', period_in_ms=1000)
+        logconf = LogConfig(name='Position', period_in_ms=500)
         logconf.add_variable('stateEstimate.x', 'float')
         logconf.add_variable('stateEstimate.y', 'float')
         scf.cf.log.add_config(logconf)
@@ -55,40 +63,74 @@ if __name__ == '__main__':
         
         
         with MotionCommander(scf) as mc:
-            time.sleep(3)
-            logconf.start()
-            for i in range(3):
-                xp = spX[i]
-                yp = spY[i]
-                xn = spX[i+1]
-                yn = spY[i+1]
-                if xp == xn and yp < yn:
-                    yd = yn - yp
-                    ym = yd/fl
-                    ym = int(ym)
-                    for j in range(ym):
-                        mc.forward(fl)
-                    time.sleep(2)
-                elif xp == xn and yp > yn:
-                    yd = yp - yn
-                    ym = yd/fl
-                    ym = int(ym)
-                    for k in range(ym):
-                        mc.back(fl)
-                    time.sleep(2)
-                elif xp < xn and yp == yn:
-                    xd = xn - xp
-                    xm = xd/fl
-                    xm = int(xm)
-                    for l in range(xm):
-                        mc.right(fl)
-                    time.sleep(2)
-                elif xp > xn and yp == yn:
-                    xd = xp - xn
-                    xm = xd/fl
-                    xm = int(xm)
-                    for m in range(xm):
-                        mc.left(fl)
-                    time.sleep(2)
+            with Multiranger(scf) as mr:
+                time.sleep(2)
+                logconf.start()
+                for i in range(2):
+                    xp = spX[i]
+                    yp = spY[i]
+                    xn = spX[i+1]
+                    yn = spY[i+1]
 
-            logconf.stop()
+                    if xp == xn and yp < yn:
+                        yd = yn - yp
+                        ym = yd/fl
+                        ym = int(ym)
+                        for j in range(ym):
+                            mc.forward(fl)
+                        time.sleep(2)
+
+                    elif xp == xn and yp > yn:
+                        yd = yp - yn
+                        ym = yd/fl
+                        ym = int(ym)
+                        for k in range(ym):
+                            mc.back(fl)
+                        time.sleep(2)
+
+                    elif xp < xn and yp == yn:
+                        xd = xn - xp
+                        xm = xd/fl
+                        xm = int(xm)
+                        for l in range(xm):
+                            mc.right(fl)
+                        time.sleep(2)
+
+                    elif xp > xn and yp == yn:
+                        xd = xp - xn
+                        xm = xd/fl
+                        xm = int(xm)
+                        for m in range(xm):
+                            mc.left(fl)
+                        time.sleep(2)
+
+                    elif xp < xn and yp < yn:
+                        yd = yn - yp
+                        ym = yd/fl
+                        ym = int(ym)
+                        for n in range(ym):
+                            mc.forward(fl)
+                        time.sleep(2)
+                        xd = xn - xp
+                        xm = xd/fl
+                        xm = int(xm)
+                        for o in range(xm):
+                            mc.right(fl)
+                        time.sleep(2)
+
+                    elif xp > xn and yp > yn:
+                        yd = yp - yn
+                        ym = yd/fl
+                        ym = int(ym)
+                        for p in range(ym):
+                            mc.back(fl)
+                        time.sleep(2)
+                        xd = xp - xn
+                        xm = xd/fl
+                        xm = int(xm)
+                        for q in range(xm):
+                            mc.left(fl)
+                        time.sleep(2)
+                    
+
+                logconf.stop()
