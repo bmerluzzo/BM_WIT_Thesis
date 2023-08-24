@@ -74,24 +74,98 @@ if __name__ == '__main__':
                 for i in range(x):
                     mc.forward(fl)
                     if is_close(mr.front):
+                        j = 0
                         mc.stop()
                         time.sleep(2)
-                        while j == 0:
-                            if is_close(mr.front):
-                                mc.left(fl)
-                                y = y + 1
-                            else:
-                                time.sleep(1)
-                                mc.forward(fl*6)
-                                i = i + 2
-                                if is_close(mr.right):
-                                    mc.forward(fl)
-                                    i = i + 1
+
+                        if is_close(mr.right):
+                            while j == 0:
+                                if is_close(mr.front):
+                                    mc.left(fl)
+                                    y = y + 1
                                 else:
                                     time.sleep(1)
-                                    for k in range(y):
-                                        mc.right(fl)
-                                    j = 1
+                                    mc.forward(fl*6)
+                                    i = i + 6
+                                    if is_close(mr.right):
+                                        mc.forward(fl)
+                                        i = i + 1
+                                    else:
+                                        time.sleep(1)
+                                        for k in range(y):
+                                            mc.right(fl)
+                                        y = 0
+                                        k = 0
+                                        j = 1
+
+                        elif is_close(mr.left):
+                            while j == 0:
+                                if is_close(mr.front):
+                                    mc.right(fl)
+                                    y = y + 1
+                                else:
+                                    time.sleep(1)
+                                    mc.forward(fl*6)
+                                    i = i + 6
+                                    if is_close(mr.right):
+                                        mc.forward(fl)
+                                        i = i + 1
+                                    else:
+                                        time.sleep(1)
+                                        for k in range(y):
+                                            mc.left(fl)
+                                        y = 0
+                                        k = 0
+                                        j = 1
+
+                        else:
+                            while j == 0:
+                                if is_close(mr.front):
+                                    mc.left(fl)
+                                    y = y + 1
+                                else:
+                                    time.sleep(1)
+                                    mc.forward(fl*6)
+                                    i = i + 6
+                                    if is_close(mr.right):
+                                        mc.forward(fl)
+                                        i = i + 1
+                                    else:
+                                        time.sleep(1)
+                                        for k in range(y):
+                                            mc.right(fl)
+                                        y = 0
+                                        k = 0
+                                        j = 1
+                            
+
+                        """elif is_close(mr.front) and is_close(mr.left) and is_close(mr.right):
+                            while j == 0:
+                                if is_close(mr.left) and is_close(mr.right):
+                                    mc.back(fl)
+                                    i = i - 1
+                                else:
+                                    time.sleep(2)
+                                    if y == 0:
+                                        mc.left(fl*4)
+                                        y = y + 4
+                                        while is_close(mr.front):
+                                            mc.left(fl)
+                                            y = y + 1
+                                    else: 
+                                        time.sleep(2)
+                                        mc.forward(fl*4)
+                                        i = i + 4
+                                        while is_close(mr.right):
+                                            mc.forward(fl)
+                                            i = i + 1
+                                        time.sleep(2)
+                                        for k in range(y):
+                                            mc.right(fl)
+                                        y = 0
+                                        k = 0
+                                        j = 1"""
+
                     elif is_close(mr.up):
                         mc.stop()
                         time.sleep(5)
