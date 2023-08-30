@@ -14,8 +14,8 @@ from cflib.utils.multiranger import Multiranger
 URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
 
 position_estimate = [0, 0]
-spX = [0, 1, 0]
-spY = [0, 1, 0]
+spX = [0, 0, 1, 1, 0]
+spY = [0, 1, 1, 2, 2]
 fl = 0.1
 
 
@@ -66,7 +66,7 @@ if __name__ == '__main__':
             with Multiranger(scf) as mr:
                 time.sleep(2)
                 logconf.start()
-                for i in range(2):
+                for i in range(4):
                     xp = spX[i]
                     yp = spY[i]
                     xn = spX[i+1]

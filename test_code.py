@@ -60,7 +60,7 @@ def is_close(range):
 if __name__ == '__main__':
     # Initialize the low-level drivers
     cflib.crtp.init_drivers()
-    x = 20
+    x = 40
     y = 0 
     fl = 0.05
     j = 0
@@ -166,7 +166,4 @@ if __name__ == '__main__':
                                         k = 0
                                         j = 1"""
 
-                    elif is_close(mr.up):
-                        mc.stop()
-                        time.sleep(5)
-                        break  
+                time.sleep(2)
