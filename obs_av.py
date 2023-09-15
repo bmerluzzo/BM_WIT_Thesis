@@ -65,6 +65,7 @@ if __name__ == '__main__':
     fl = 0.05
     j = 0
     i = 0
+    s = 0
 
     with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
         # We take off when the commander is created
@@ -127,16 +128,18 @@ if __name__ == '__main__':
                                     time.sleep(1)
                                     mc.forward(fl*6)
                                     i = i + 6
-                                    if is_close(mr.right):
-                                        mc.forward(fl)
-                                        i = i + 1
-                                    else:
-                                        time.sleep(1)
-                                        for k in range(y):
-                                            mc.right(fl)
-                                        y = 0
-                                        k = 0
-                                        j = 1
+                                    while s == 0:
+                                        if is_close(mr.right):
+                                            mc.forward(fl)
+                                            i = i + 1
+                                        else:
+                                            time.sleep(1)
+                                            for k in range(y):
+                                                mc.right(fl)
+                                            y = 0
+                                            k = 0
+                                            s = 1
+                                            j = 1
                             
 
                         """elif is_close(mr.front) and is_close(mr.left) and is_close(mr.right):
