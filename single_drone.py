@@ -36,25 +36,28 @@ def rotate(mc, rotc, rotn):
     
     rot = 0
     deg = 90
-    d_rate = 45
-    k = 0
+    d_rate = 30
+    k = 0 
+    k = k + 0
 
     if rotc == rotn:
-        return
+        return rotc
     
     elif rotc < rotn:
         rot = rotn - rotc
         for k in range(rot):
             mc.turn_right(deg, d_rate)
         k = 0
-        return 
+        rotc = rotn
+        return rotc
     
     elif rotc > rotn:
         rot = rotc - rotn
         for k in range(rot):
             mc.turn_right(deg, d_rate)
         k = 0
-        return
+        rotc = rotn
+        return rotc
 
 
 def is_close(range):
