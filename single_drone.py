@@ -23,14 +23,15 @@ deck_attached_event = Event()
 def obs_avoid(mc, mr, fl):
 
     time.sleep(3)
+    i = 0
+    i = i + 0
+    x = 0
+    y = 0
 
     while ob != 2:
         
-        i = 0
-        i = i + 0
-        x = 0
         ob = 0
-        flag = 0
+        flag = 0 
 
         if is_close(mr.right) or is_close(mr.front):
 
@@ -46,39 +47,77 @@ def obs_avoid(mc, mr, fl):
                     time.sleep(2)
 
                 else:
-                    move_front_ob(mc, mr, fl*5)
-                    if is_close(mr.front):
+                    ob = move_front_ob(mc, mr, fl*5)
+                    y = y + 5
+                    if ob == 1:
+                        flag = 1
+                    elif is_close(mr.right):
                         time.sleep(2)
-                        while is_close(mr.front):
-                            move_front_ob(mc, mr, fl)
+                        while is_close(mr.right):
+                            ob = move_front_ob(mc, mr, fl)
+                            y =  y + 1
                             if ob == 1:
                                 flag = 1
                         time.sleep(2)
                     else: 
                         for i in range(x):
                             move_right_ob(mc, mr, fl)
+                        ob = 2
+
+        if is_close(mr.left) and is_close(mr.front):
+
+            move_right_ob(mc,mr, fl*2)
+
+            while flag != 1:
+                if is_close(mr.front):
+                    while is_close(mr.front):
+                        ob = move_right_ob(mc, mr, fl)
+                        x = x + 1
+                        if ob == 1:
+                            flag = 1
+                    time.sleep(2)
+
+                else:
+                    ob = move_front_ob(mc, mr, fl*5)
+                    y = y + 5
+                    if ob == 1:
                         flag = 1
-            ob = 2
-    return
+                    elif is_close(mr.left):
+                        time.sleep(2)
+                        while is_close(mr.left):
+                            ob = move_front_ob(mc, mr, fl)
+                            y =  y + 1
+                            if ob == 1:
+                                flag = 1
+                        time.sleep(2)
+                    else: 
+                        for i in range(x):
+                            move_left_ob(mc, mr, fl)
+                        ob = 2   
+
+    return y
 
 
 def move_forward(mc, mr, fl):
     mc.forward(fl)
     if is_close(mr.front):
         mc.stop()
-        obs_avoid(mc, mr, fl)
+        y = obs_avoid(mc, mr, fl)
+        return y
     elif is_close(mr.top):
         mc.stop()
+        time.sleep(20)
     else:
-        return
+        return 0
 
 def move_front_ob(mc, mr, fl):
     mc.front(fl)
     if is_close(mr.front):
         mc.stop()
-        
+        return 1
     elif is_close(mr.top):
         mc.stop()
+        time.sleep(20)
     else:
         return
     
@@ -89,7 +128,7 @@ def move_right_ob(mc, mr, fl):
         return 1
     elif is_close(mr.top):
         mc.stop()
-        return 2
+        time.sleep(20)
     else:
         return
     
@@ -101,7 +140,7 @@ def move_left_ob(mc, mr, fl):
         return 1
     elif is_close(mr.top):
         mc.stop()
-        return 2
+        time.sleep(20)
     else:
         return
     
@@ -172,27 +211,28 @@ if __name__ == '__main__':
 
         scf.cf.param.add_update_callback(group='deck', name='bcFlow2', cb=param_deck_flow)
 
-        logconf = LogConfig(name='Position', period_in_ms=500) #Callback setup for positional data
+        logconf = LogConfig(name='Position', period_in_ms=500) 
         logconf.add_variable('stateEstimate.x', 'float')
         logconf.add_variable('stateEstimate.y', 'float')
         scf.cf.log.add_config(logconf)
         logconf.data_received_cb.add_callback(log_pos_callback)
 
         
-        with MotionCommander(scf) as mc:    #Start take off of drone
+        with MotionCommander(scf) as mc:    
             with Multiranger(scf) as mr:
 
                 time.sleep(2)
-                logconf.start()             #start positional logging 
+                logconf.start()          
               
-                size = len(spX)             #used for pathing for loop
-                rotc = 1                    #current front of drone direction 
-                rotn = 0                    # North(1), East(2), South(3), West(4), relative to initial direction of the front of the drone
+                size = len(spX)            
+                rotc = 1                   
+                rotn = 0                   
                 j = 0
+                y = 0
 
                 for p in range(size):
                     
-                    xp = spX[p]         #set current and next x and y values for the setpoints
+                    xp = spX[p]       
                     yp = spY[p]
                     xn = spX[p+1]
                     yn = spY[p+1]
@@ -211,8 +251,11 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(ym):
-                            move_forward(mc, fl)
+                            y = move_forward(mc, fl)
+                            if y > 0:
+                                j = j + y
                         time.sleep(2)
+                        y = 0
                         j = 0
 
                     elif xp == xn and yp > yn:
@@ -226,8 +269,11 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(ym):
-                            move_forward(mc, fl)
+                            y = move_forward(mc, fl)
+                            if y > 0:
+                                j = j + y
                         time.sleep(2)
+                        y = 0
                         j = 0
 
                     elif xp < xn and yp == yn:
@@ -241,8 +287,11 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
                         
                         for j in range(xm):
-                            move_forward(mc, fl)
+                            y = move_forward(mc, fl)
+                            if y > 0:
+                                j = j + y
                         time.sleep(2)
+                        y = 0
                         j = 0
 
                     elif xp > xn and yp == yn:
@@ -256,8 +305,11 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for m in range(xm):
-                            move_forward(mc, fl)
+                            y = move_forward(mc, fl)
+                            if y > 0:
+                                j = j + y
                         time.sleep(2)
+                        y = 0
                         j = 0
 
                     elif xp < xn and yp < yn:
@@ -271,10 +323,12 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(ym):
-                            move_forward(mc, fl)
+                            y = move_forward(mc, fl)
+                            if y > 0:
+                                j = j + y
                         time.sleep(2)
                         j = 0
-
+                        y = 0
                         rotn = 2
 
                         xd = xn - xp
@@ -284,8 +338,11 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(xm):
-                            move_forward(mc, fl)
+                            y = move_forward(mc, fl)
+                            if y > 0:
+                                j = j + y
                         time.sleep(2)
+                        y = 0
                         j = 0
 
                     elif xp > xn and yp > yn:
@@ -299,8 +356,11 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(ym):
-                            move_forward(mc, fl)
+                            y = move_forward(mc, fl)
+                            if y > 0:
+                                j = j + y
                         time.sleep(2)
+                        y = 0
                         j = 0
 
                         rotn = 4
@@ -312,8 +372,11 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(xm):
-                            move_forward(mc, fl)
+                            y = move_forward(mc, fl)
+                            if y > 0:
+                                j = j + y
                         time.sleep(2)
+                        y = 0
                         j = 0
 
                     elif xp > xn and yp < yn:
@@ -327,8 +390,11 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(ym):
-                            move_forward(mc,fl)
+                            y = move_forward(mc,fl)
+                            if y > 0:
+                                j = j + y
                         time.sleep(2)
+                        y = 0
                         j = 0
 
                         rotn = 4
@@ -340,8 +406,11 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(xm):
-                            move_forward(mc,fl)
+                            y = move_forward(mc,fl)
+                            if y > 0:
+                                j = j + y
                         time.sleep(2)
+                        y = 0
                         j = 0
 
                     elif xp < xn and yp > yn:
@@ -355,7 +424,9 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(ym):
-                            move_forward(mc,fl)
+                            y = move_forward(mc,fl)
+                            if y > 0:
+                                j = j + y
                         time.sleep(2)
                         j = 0
 
@@ -368,8 +439,11 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(xm):
-                            move_forward(mc,fl)
+                            y = move_forward(mc,fl)
+                            if y > 0:
+                                j = j + y
                         time.sleep(2)
+                        y = 0
                         j = 0
 
                 logconf.stop()
