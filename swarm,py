@@ -12,8 +12,8 @@ from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils.multiranger import Multiranger
 
 uris = {
-    'radio://0/20/2M/E7E7E7E701',
-    'radio://0/20/2M/E7E7E7E702',
+    'radio://0/80/2M/E7E7E7E7E8',
+    'radio://0/80/2M/E7E7E7E7E7'
     # Add more URIs if you want more copters in the swarm
 }
 
@@ -31,7 +31,8 @@ def deactivate_led_bit_mask(scf):
 
 def run_sequence(scf):
     with MotionCommander(scf) as mc:
-        time.sleep(10)
+        time.sleep(2)
+        mc.forward(1)
 
 if __name__ == '__main__':
     cflib.crtp.init_drivers()
