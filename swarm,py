@@ -17,6 +17,68 @@ uris = {
     # Add more URIs if you want more copters in the swarm
 }
 
+drone1 = [
+    (0, 0, 1), #X coordinate
+    (0, 1, 1), #Y coordinate
+]
+
+drone2 = [
+    (1, 2, 2)
+    (0, 0, 1),
+]
+
+seq_args = {
+    uris[0]: [drone1],
+    uris[1]: [drone2],
+}
+
+def move_forward(mc, mr, fl):
+    mc.forward(fl)
+    if is_close(mr.front):
+        mc.stop()
+        #y = obs_avoid(mc, mr, fl)
+        return y
+    #elif is_close(mr.top):
+       # mc.stop()
+       # time.sleep(20)
+    else:
+        return 0
+    
+def rotate(mc, rotc, rotn):
+    
+    rot = 0
+    deg = 90
+    d_rate = 30
+    k = 0 
+    k = k + 0
+
+    if rotc == rotn:
+        return rotc
+    
+    elif rotc < rotn:
+        rot = rotn - rotc
+        for k in range(rot):
+            mc.turn_right(deg, d_rate)
+        k = 0
+        rotc = rotn
+        return rotc
+    
+    elif rotc > rotn:
+        rot = rotc - rotn
+        for k in range(rot):
+            mc.turn_right(deg, d_rate)
+        k = 0
+        rotc = rotn
+        return rotc
+
+def is_close(range):
+    MIN_DISTANCE = 0.3
+
+    if range is None:
+        return False
+    else:
+        return range < MIN_DISTANCE
+    
 def light_check(scf):
     activate_led_bit_mask(scf)
     time.sleep(2)
@@ -29,10 +91,236 @@ def deactivate_led_bit_mask(scf):
     scf.cf.param.set_value('led.bitmask', 0)
 
 
-def run_sequence(scf):
+def run_sequence(scf, path):
+    spX = path[0]
+    spY = path[1]
     with MotionCommander(scf) as mc:
-        time.sleep(2)
-        mc.forward(1)
+        with Multiranger(scf) as mr:
+                time.sleep(2)
+                        
+                fl = 0.1
+                size = len(spX) - 1            
+                rotc = 1                   
+                rotn = 0                   
+                j = 0
+                y = 0
+
+                for p in range(size):
+                    
+                    xp = spX[p]       
+                    yp = spY[p]
+                    xn = spX[p+1]
+                    yn = spY[p+1]
+
+                    yd, xd = 0, 0
+                    ym, xm = 0, 0
+
+                    if xp == xn and yp < yn:       
+                        
+                        rotn = 1
+
+                        yd = yn - yp
+                        ym = yd/fl
+                        ym = int(ym)
+
+                        rotc = rotate(mc, rotc, rotn)
+
+                        for j in range(ym):
+                            y = move_forward(mc, mr, fl)
+                            if y > 0:
+                                j = j + y
+                        time.sleep(2)
+                        y = 0
+                        j = 0
+
+                    elif xp == xn and yp > yn:
+
+                        rotn = 3
+
+                        yd = yp - yn
+                        ym = yd/fl
+                        ym = int(ym)
+
+                        rotc = rotate(mc, rotc, rotn)
+
+                        for j in range(ym):
+                            y = move_forward(mc, mr, fl)
+                            if y > 0:
+                                j = j + y
+                        time.sleep(2)
+                        y = 0
+                        j = 0
+
+                    elif xp < xn and yp == yn:
+
+                        rotn = 2
+
+                        xd = xn - xp
+                        xm = xd/fl
+                        xm = int(xm)
+
+                        rotc = rotate(mc, rotc, rotn)
+                        
+                        for j in range(xm):
+                            y = move_forward(mc, mr, fl)
+                            if y > 0:
+                                j = j + y
+                        time.sleep(2)
+                        y = 0
+                        j = 0
+
+                    elif xp > xn and yp == yn:
+
+                        rotn = 4
+
+                        xd = xp - xn
+                        xm = xd/fl
+                        xm = int(xm)
+
+                        rotc = rotate(mc, rotc, rotn)
+
+                        for m in range(xm):
+                            y = move_forward(mc, mr, fl)
+                            if y > 0:
+                                j = j + y
+                        time.sleep(2)
+                        y = 0
+                        j = 0
+
+                    elif xp < xn and yp < yn:
+
+                        rotn = 1
+
+                        yd = yn - yp
+                        ym = yd/fl
+                        ym = int(ym)
+
+                        rotc = rotate(mc, rotc, rotn)
+
+                        for j in range(ym):
+                            y = move_forward(mc, mr, fl)
+                            if y > 0:
+                                j = j + y
+                        time.sleep(2)
+                        j = 0
+                        y = 0
+                        rotn = 2
+
+                        xd = xn - xp
+                        xm = xd/fl
+                        xm = int(xm)
+
+                        rotc = rotate(mc, rotc, rotn)
+
+                        for j in range(xm):
+                            y = move_forward(mc, mr, fl)
+                            if y > 0:
+                                j = j + y
+                        time.sleep(2)
+                        y = 0
+                        j = 0
+
+                    elif xp > xn and yp > yn:
+
+                        rotn = 3
+
+                        yd = yp - yn
+                        ym = yd/fl
+                        ym = int(ym)
+
+                        rotc = rotate(mc, rotc, rotn)
+
+                        for j in range(ym):
+                            y = move_forward(mc, mr, fl)
+                            if y > 0:
+                                j = j + y
+                        time.sleep(2)
+                        y = 0
+                        j = 0
+
+                        rotn = 4
+
+                        xd = xp - xn
+                        xm = xd/fl
+                        xm = int(xm)
+
+                        rotc = rotate(mc, rotc, rotn)
+
+                        for j in range(xm):
+                            y = move_forward(mc, mr, fl)
+                            if y > 0:
+                                j = j + y
+                        time.sleep(2)
+                        y = 0
+                        j = 0
+
+                    elif xp > xn and yp < yn:
+
+                        rotn = 1
+
+                        yd = yn - yp
+                        ym = yd/fl
+                        ym = int(ym)
+
+                        rotc = rotate(mc, rotc, rotn)
+
+                        for j in range(ym):
+                            y = move_forward(mc, mr, fl)
+                            if y > 0:
+                                j = j + y
+                        time.sleep(2)
+                        y = 0
+                        j = 0
+
+                        rotn = 4
+
+                        xd = xp - xn
+                        xm = xd/fl
+                        xm = int(xm)
+
+                        rotc = rotate(mc, rotc, rotn)
+
+                        for j in range(xm):
+                            y = move_forward(mc, mr, fl)
+                            if y > 0:
+                                j = j + y
+                        time.sleep(2)
+                        y = 0
+                        j = 0
+
+                    elif xp < xn and yp > yn:
+
+                        rotn = 3
+
+                        yd = yp - yn
+                        ym = yd/fl
+                        ym = int(ym)
+
+                        rotc = rotate(mc, rotc, rotn)
+
+                        for j in range(ym):
+                            y = move_forward(mc, mr, fl)
+                            if y > 0:
+                                j = j + y
+                        time.sleep(2)
+                        j = 0
+
+                        rotn = 2
+
+                        xd = xn - xp
+                        xm = xd/fl
+                        xm = int(xm)
+
+                        rotc = rotate(mc, rotc, rotn)
+
+                        for j in range(xm):
+                            y = move_forward(mc, mr, fl)
+                            if y > 0:
+                                j = j + y
+                        time.sleep(2)
+                        y = 0
+                        j = 0
+
 
 if __name__ == '__main__':
     cflib.crtp.init_drivers()
@@ -43,5 +331,5 @@ if __name__ == '__main__':
 
         time.sleep(5)
 
-        #swarm.sequential(run_sequence)
-        #swarm.parallel_safe(run_sequence)
+        #swarm.sequential(run_sequence, args_dict=seq_args)
+        #swarm.parallel_safe(run_sequence, args_dict=seq_args)
