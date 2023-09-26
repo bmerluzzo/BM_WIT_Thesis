@@ -13,8 +13,8 @@ from cflib.utils.multiranger import Multiranger
 URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
 
 position_estimate = [0, 0]
-spX = [0]
-spY = [0]
+spX = [0, 0, 1, 1, 0]
+spY = [0, 1, 1, 0, 0]
 fl = 0.1
 
 
@@ -104,9 +104,9 @@ def move_forward(mc, mr, fl):
         mc.stop()
         y = obs_avoid(mc, mr, fl)
         return y
-    elif is_close(mr.top):
-        mc.stop()
-        time.sleep(20)
+    #elif is_close(mr.top):
+       # mc.stop()
+       # time.sleep(20)
     else:
         return 0
 
@@ -224,7 +224,7 @@ if __name__ == '__main__':
                 time.sleep(2)
                 logconf.start()          
               
-                size = len(spX)            
+                size = len(spX) - 1            
                 rotc = 1                   
                 rotn = 0                   
                 j = 0
@@ -251,7 +251,7 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(ym):
-                            y = move_forward(mc, fl)
+                            y = move_forward(mc, mr, fl)
                             if y > 0:
                                 j = j + y
                         time.sleep(2)
@@ -269,7 +269,7 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(ym):
-                            y = move_forward(mc, fl)
+                            y = move_forward(mc, mr, fl)
                             if y > 0:
                                 j = j + y
                         time.sleep(2)
@@ -287,7 +287,7 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
                         
                         for j in range(xm):
-                            y = move_forward(mc, fl)
+                            y = move_forward(mc, mr, fl)
                             if y > 0:
                                 j = j + y
                         time.sleep(2)
@@ -305,7 +305,7 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for m in range(xm):
-                            y = move_forward(mc, fl)
+                            y = move_forward(mc, mr, fl)
                             if y > 0:
                                 j = j + y
                         time.sleep(2)
@@ -323,7 +323,7 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(ym):
-                            y = move_forward(mc, fl)
+                            y = move_forward(mc, mr, fl)
                             if y > 0:
                                 j = j + y
                         time.sleep(2)
@@ -338,7 +338,7 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(xm):
-                            y = move_forward(mc, fl)
+                            y = move_forward(mc, mr, fl)
                             if y > 0:
                                 j = j + y
                         time.sleep(2)
@@ -356,7 +356,7 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(ym):
-                            y = move_forward(mc, fl)
+                            y = move_forward(mc, mr, fl)
                             if y > 0:
                                 j = j + y
                         time.sleep(2)
@@ -372,7 +372,7 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(xm):
-                            y = move_forward(mc, fl)
+                            y = move_forward(mc, mr, fl)
                             if y > 0:
                                 j = j + y
                         time.sleep(2)
@@ -390,7 +390,7 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(ym):
-                            y = move_forward(mc,fl)
+                            y = move_forward(mc, mr, fl)
                             if y > 0:
                                 j = j + y
                         time.sleep(2)
@@ -406,7 +406,7 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(xm):
-                            y = move_forward(mc,fl)
+                            y = move_forward(mc, mr, fl)
                             if y > 0:
                                 j = j + y
                         time.sleep(2)
@@ -424,7 +424,7 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(ym):
-                            y = move_forward(mc,fl)
+                            y = move_forward(mc, mr, fl)
                             if y > 0:
                                 j = j + y
                         time.sleep(2)
@@ -439,7 +439,7 @@ if __name__ == '__main__':
                         rotc = rotate(mc, rotc, rotn)
 
                         for j in range(xm):
-                            y = move_forward(mc,fl)
+                            y = move_forward(mc, mr, fl)
                             if y > 0:
                                 j = j + y
                         time.sleep(2)
