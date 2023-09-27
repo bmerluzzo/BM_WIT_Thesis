@@ -32,11 +32,93 @@ seq_args = {
     uris[1]: [drone2],
 }
 
+def obs_avoid(mc, mr, fl):
+
+    time.sleep(3)
+    ob = 0
+    i = 0
+    i = i + 0
+    x = 0
+    y = 0
+
+    while ob != 2:
+        
+        ob = 0
+        flag = 0 
+
+        if is_close(mr.right) or is_close(mr.front):
+
+            move_left_ob(mc,mr, fl*2)
+            x = x + 2
+
+            while flag != 1:
+                if is_close(mr.front):
+                    while is_close(mr.front):
+                        ob = move_left_ob(mc, mr, fl)
+                        x = x + 1
+                        if ob == 1:
+                            flag = 1
+                    time.sleep(2)
+
+                else:
+                    ob = move_front_ob(mc, mr, fl*5)
+                    y = y + 5
+                    if ob == 1:
+                        flag = 1
+                    elif is_close(mr.right):
+                        time.sleep(2)
+                        while is_close(mr.right):
+                            ob = move_front_ob(mc, mr, fl)
+                            y =  y + 1
+                            if ob == 1:
+                                flag = 1
+                        time.sleep(2)
+                    else: 
+                        for i in range(x):
+                            move_right_ob(mc, mr, fl)
+                        flag = 1
+                        ob = 2
+
+        if is_close(mr.left) and is_close(mr.front):
+
+            move_right_ob(mc,mr, fl*2)
+            x = x + 2
+
+            while flag != 1:
+                if is_close(mr.front):
+                    while is_close(mr.front):
+                        ob = move_right_ob(mc, mr, fl)
+                        x = x + 1
+                        if ob == 1:
+                            flag = 1
+                    time.sleep(2)
+
+                else:
+                    ob = move_front_ob(mc, mr, fl*5)
+                    y = y + 5
+                    if ob == 1:
+                        flag = 1
+                    elif is_close(mr.left):
+                        time.sleep(2)
+                        while is_close(mr.left):
+                            ob = move_front_ob(mc, mr, fl)
+                            y =  y + 1
+                            if ob == 1:
+                                flag = 1
+                        time.sleep(2)
+                    else: 
+                        for i in range(x):
+                            move_left_ob(mc, mr, fl)
+                        flag = 1
+                        ob = 2   
+
+    return y
+
 def move_forward(mc, mr, fl):
     mc.forward(fl)
     if is_close(mr.front):
         mc.stop()
-        #y = obs_avoid(mc, mr, fl)
+        y = obs_avoid(mc, mr, fl)
         return y
     #elif is_close(mr.top):
        # mc.stop()
@@ -70,6 +152,48 @@ def rotate(mc, rotc, rotn):
         k = 0
         rotc = rotn
         return rotc
+    
+def move_front_ob(mc, mr, fl):
+    mc.forward(fl)
+    if is_close(mr.front):
+        mc.stop()
+        return 1
+    #elif is_close(mr.top):
+      #  mc.stop()
+        #time.sleep(20)
+    else:
+        return
+    
+def move_right_ob(mc, mr, fl):
+    mc.right(fl)
+    if is_close(mr.right):
+        mc.stop()
+        return 1
+    # is_close(mr.top):
+     #   mc.stop()
+      #  time.sleep(20)
+    else:
+        return
+    
+    
+def move_left_ob(mc, mr, fl):
+    mc.left(fl)
+    if is_close(mr.left):
+        mc.stop()
+        return 1
+    #elif is_close(mr.top):
+      #  mc.stop()
+        #time.sleep(20)
+    else:
+        return
+    
+def move_back_ob(mc, mr, fl):
+    mc.back(fl)
+    if is_close(mr.top):
+        mc.stop()
+        return 2
+    else:
+        return
 
 def is_close(range):
     MIN_DISTANCE = 0.3
