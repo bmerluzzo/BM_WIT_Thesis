@@ -70,6 +70,7 @@ def obs_avoid(mc, mr, fl):
         if is_close(mr.left) and is_close(mr.front):
 
             move_right_ob(mc,mr, fl*2)
+            x = x + 2
 
             while flag != 1:
                 if is_close(mr.front):
@@ -96,6 +97,7 @@ def obs_avoid(mc, mr, fl):
                     else: 
                         for i in range(x):
                             move_left_ob(mc, mr, fl)
+                        flag = 1
                         ob = 2   
 
     return y
