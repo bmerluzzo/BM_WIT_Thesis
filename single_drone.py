@@ -13,8 +13,8 @@ from cflib.utils.multiranger import Multiranger
 URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
 
 position_estimate = [0, 0]
-spX = [0, 0, 1, 1, 0]
-spY = [0, 1, 1, 0, 0]
+spX = [0, 0]
+spY = [0, 2.5]
 fl = 0.1
 
 
@@ -23,6 +23,7 @@ deck_attached_event = Event()
 def obs_avoid(mc, mr, fl):
 
     time.sleep(3)
+    ob = 0
     i = 0
     i = i + 0
     x = 0
@@ -36,6 +37,7 @@ def obs_avoid(mc, mr, fl):
         if is_close(mr.right) or is_close(mr.front):
 
             move_left_ob(mc,mr, fl*2)
+            x = x + 2
 
             while flag != 1:
                 if is_close(mr.front):
@@ -62,6 +64,7 @@ def obs_avoid(mc, mr, fl):
                     else: 
                         for i in range(x):
                             move_right_ob(mc, mr, fl)
+                        flag = 1
                         ob = 2
 
         if is_close(mr.left) and is_close(mr.front):
@@ -111,13 +114,13 @@ def move_forward(mc, mr, fl):
         return 0
 
 def move_front_ob(mc, mr, fl):
-    mc.front(fl)
+    mc.forward(fl)
     if is_close(mr.front):
         mc.stop()
         return 1
-    elif is_close(mr.top):
-        mc.stop()
-        time.sleep(20)
+    #elif is_close(mr.top):
+      #  mc.stop()
+        #time.sleep(20)
     else:
         return
     
@@ -126,9 +129,9 @@ def move_right_ob(mc, mr, fl):
     if is_close(mr.right):
         mc.stop()
         return 1
-    elif is_close(mr.top):
-        mc.stop()
-        time.sleep(20)
+    # is_close(mr.top):
+     #   mc.stop()
+      #  time.sleep(20)
     else:
         return
     
@@ -138,9 +141,9 @@ def move_left_ob(mc, mr, fl):
     if is_close(mr.left):
         mc.stop()
         return 1
-    elif is_close(mr.top):
-        mc.stop()
-        time.sleep(20)
+    #elif is_close(mr.top):
+      #  mc.stop()
+        #time.sleep(20)
     else:
         return
     
