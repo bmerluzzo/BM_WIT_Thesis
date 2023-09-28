@@ -19,7 +19,6 @@
 static bool isInit;
 void mlx90640Task(void* arg);
 
-// Deck driver init function
 static void mlx90640Init()
 {
   if (isInit)
@@ -35,7 +34,6 @@ static void mlx90640Init()
 
 }
 
-//Deck Driver Test Function 
 static bool mlx90640Test()
 {
   DEBUG_PRINT("MLX90640Deck test\n");
@@ -46,7 +44,6 @@ static bool mlx90640Test()
   return true;
 }
 
-//Deck driver task function (collecting data and calculating temperature)
 void mlx90640Task(void* arg)
 {
   float emissivity = 0.95;
@@ -55,6 +52,7 @@ void mlx90640Task(void* arg)
   static uint16_t mlx90640Frame[834];
   paramsMLX90640 mlx90640;
   static float mlx90640To[768];
+  float To[768];
   int status;
   
   systemWaitStart();
@@ -74,6 +72,8 @@ void mlx90640Task(void* arg)
     tr = MLX90640_GetTa(mlx90640Frame, &mlx90640) - TA_SHIFT;//check TA Shift or set hardcoded value
 
     MLX90640_CalculateTo(mlx90640Frame, &mlx90640, emissivity, tr, mlx90640To);
+
+    To = mlx90640To;
   }
 
 }
@@ -85,4 +85,7 @@ static const DeckDriver mlx90640Driver = {
 };
 
 DECK_DRIVER(mlx90640Driver);
-//add LOG functions of crazyflie
+
+LOG_GROUP_START(MLX90640)
+LOG_ADD(LOG_FLOAT, To, &To)
+LOG_GROUP_STOP(MLX90640)
