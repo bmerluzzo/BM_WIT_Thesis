@@ -205,4 +205,17 @@ bool i2cdevWriteBit(I2C_Dev *dev, uint8_t devAddress, uint8_t memAddress,
 bool i2cdevWriteBits(I2C_Dev *dev, uint8_t devAddress, uint8_t memAddress,
                      uint8_t bitStart, uint8_t length, uint8_t data);
 
+/**
+ * Read bytes from MLX90640 with a 16bit internal reg/mem address
+ * @param dev  Pointer to I2C peripheral to read from
+ * @param devAddress  The device address to read from
+ * @param memAddress  The internal address to read from, I2CDEV_NO_MEM_ADDR if none.
+ * @param len  Number of bytes to read.
+ * @param data  Pointer to a buffer to read the data to.
+ *
+ * @return TRUE if read was successful, otherwise FALSE.
+ */
+bool MLX90640_I2CRead(I2C_Dev *dev, uint8_t devAddress, uint16_t memAddress,
+               uint16_t len, uint16_t *data);
+
 #endif //__I2CDEV_H__

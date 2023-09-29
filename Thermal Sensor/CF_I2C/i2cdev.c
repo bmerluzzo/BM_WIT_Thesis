@@ -111,6 +111,16 @@ bool i2cdevReadReg16(I2C_Dev *dev, uint8_t devAddress, uint16_t memAddress,
   return i2cdrvMessageTransfer(dev, &message);
 }
 
+bool MLX90640_I2CRead(I2C_Dev *dev, uint8_t devAddress, uint16_t memAddress, uint16_t len, uint16_t *data)
+{
+  I2cMessage message;
+
+  i2cdrvCreateMessageIntAddr(&message, devAddress, true, memAddress,
+                          i2cRead, len, data);
+
+  return i2cdrvMessageTransfer(dev, &message);
+}
+
 bool i2cdevWriteByte(I2C_Dev *dev, uint8_t devAddress, uint8_t memAddress,
                     uint8_t data)
 {
