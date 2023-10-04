@@ -48,8 +48,9 @@ int MLX90640_SynchFrame(uint8_t slaveAddr)
     uint16_t dataReady = 0;
     uint16_t statusRegister;
     int error = 1;
-    
-    error = MLX90640_I2CWrite(slaveAddr, MLX90640_STATUS_REG, MLX90640_INIT_STATUS_VALUE);
+    uint8_t init_status_value[2] = {MLX90640_INIT_STATUS_VALUE1, MLX90640_INIT_STATUS_VALUE2};
+
+    error = MLX90640_I2CWrite(slaveAddr, MLX90640_STATUS_REG, init_status_value);
     if(error == -MLX90640_I2C_NACK_ERROR)
     {
         return error;
@@ -119,6 +120,7 @@ int MLX90640_GetFrameData(uint8_t slaveAddr, uint16_t *frameData)
     int error = 1;
     uint16_t data[64];
     uint8_t cnt = 0;
+    uint8_t init_status_value[2] = {MLX90640_INIT_STATUS_VALUE1, MLX90640_INIT_STATUS_VALUE2};
     
     while(dataReady == 0)
     {
@@ -131,7 +133,7 @@ int MLX90640_GetFrameData(uint8_t slaveAddr, uint16_t *frameData)
         dataReady = MLX90640_GET_DATA_READY(statusRegister); 
     }      
     
-    error = MLX90640_I2CWrite(slaveAddr, MLX90640_STATUS_REG, MLX90640_INIT_STATUS_VALUE);
+    error = MLX90640_I2CWrite(slaveAddr, MLX90640_STATUS_REG, init_status_value);
     if(error == -MLX90640_I2C_NACK_ERROR)
     {
         return error;

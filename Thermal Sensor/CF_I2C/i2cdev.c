@@ -129,7 +129,13 @@ bool MLX90640_I2CRead(I2C_Dev *dev, uint8_t devAddress, uint16_t memAddress, uin
     nMemAddressRead++;
   }
 
-  return status;
+  if(status == true){
+    return 0;
+  }
+  else if{status == false}{
+    return -1;
+  }
+
 }
 
 bool i2cdevWriteByte(I2C_Dev *dev, uint8_t devAddress, uint8_t memAddress,
@@ -195,4 +201,18 @@ bool i2cdevWriteReg16(I2C_Dev *dev, uint8_t devAddress, uint16_t memAddress,
                              i2cWrite, len, data);
 
   return i2cdrvMessageTransfer(dev, &message);
+}
+
+bool MLX90640_I2CWrite(I2C_Dev *dev, uint8_t devAddress, uint16_t memAddress, uint8_t *data){
+
+  bool status = false;
+
+  status = i2cdevWriteReg16(dev, devAddress, memAddress, 2, &data);
+
+  if(status == true){
+    return 0;
+  }
+  else if{status == false}{
+    return -1;
+  }
 }
