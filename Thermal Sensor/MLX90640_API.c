@@ -74,6 +74,8 @@ int MLX90640_TriggerMeasurement(uint8_t slaveAddr)
 {
     int error = 1;
     uint16_t ctrlReg;
+    uint16_t cR1, cR2, cR3;
+    uint8_t cR[2];
     
     error = MLX90640_I2CRead(I2C1_DEV, slaveAddr, MLX90640_CTRL_REG, 1, &ctrlReg);
     
@@ -83,7 +85,15 @@ int MLX90640_TriggerMeasurement(uint8_t slaveAddr)
     }    
                                                 
     ctrlReg |= MLX90640_CTRL_TRIG_READY_MASK;
-    error = MLX90640_I2CWrite(slaveAddr, MLX90640_CTRL_REG, ctrlReg);
+    cR1 = ctrlReg;
+    cR2 = ctrlReg;
+    cR1 = cR1 << 8;
+    cR3 = cR1 >> 8;
+    cR2 = cR2 >> 8 ;
+    cR[0] = cR2;
+    cR[1] = cR3;
+
+    error = MLX90640_I2CWrite(slaveAddr, MLX90640_CTRL_REG, cR);
     
     if ( error != MLX90640_NO_ERROR)
     {
@@ -261,7 +271,9 @@ int MLX90640_SetResolution(uint8_t slaveAddr, uint8_t resolution)
     uint16_t controlRegister1;
     uint16_t value;
     int error;
-    
+    uint16_t v1, v2, v3;
+    uint8_t v[2];
+
     //value = (resolution & 0x03) << 10;
     value = ((uint16_t)resolution << MLX90640_CTRL_RESOLUTION_SHIFT);
     value &= ~MLX90640_CTRL_RESOLUTION_MASK;
@@ -271,7 +283,15 @@ int MLX90640_SetResolution(uint8_t slaveAddr, uint8_t resolution)
     if(error == MLX90640_NO_ERROR)
     {
         value = (controlRegister1 & MLX90640_CTRL_RESOLUTION_MASK) | value;
-        error = MLX90640_I2CWrite(slaveAddr, MLX90640_CTRL_REG, value);        
+        v1 = value;
+        v2 = value;
+        v1 = v1 << 8;
+        v3 = v1 >> 8;
+        v2 = v2 >> 8 ;
+        v[0] = v2;
+        v[1] = v3;
+
+        error = MLX90640_I2CWrite(slaveAddr, MLX90640_CTRL_REG, v);        
     }    
     
     return error;
@@ -302,6 +322,8 @@ int MLX90640_SetRefreshRate(uint8_t slaveAddr, uint8_t refreshRate)
     uint16_t controlRegister1;
     uint16_t value;
     int error;
+    uint16_t v1, v2, v3;
+    uint8_t v[2];
     
     //value = (refreshRate & 0x07)<<7;
     value = ((uint16_t)refreshRate << MLX90640_CTRL_REFRESH_SHIFT);
@@ -311,7 +333,15 @@ int MLX90640_SetRefreshRate(uint8_t slaveAddr, uint8_t refreshRate)
     if(error == MLX90640_NO_ERROR)
     {
         value = (controlRegister1 & MLX90640_CTRL_REFRESH_MASK) | value;
-        error = MLX90640_I2CWrite(slaveAddr, MLX90640_CTRL_REG, value);
+        v1 = value;
+        v2 = value;
+        v1 = v1 << 8;
+        v3 = v1 >> 8;
+        v2 = v2 >> 8 ;
+        v[0] = v2;
+        v[1] = v3;
+
+        error = MLX90640_I2CWrite(slaveAddr, MLX90640_CTRL_REG, v);
     }    
     
     return error;
@@ -342,13 +372,23 @@ int MLX90640_SetInterleavedMode(uint8_t slaveAddr)
     uint16_t controlRegister1;
     uint16_t value;
     int error;
+    uint16_t v1, v2, v3;
+    uint8_t v[2];
     
     error = MLX90640_I2CRead(I2C1_DEV, slaveAddr, MLX90640_CTRL_REG, 1, &controlRegister1);
     
     if(error == 0)
     {
         value = (controlRegister1 & ~MLX90640_CTRL_MEAS_MODE_MASK);
-        error = MLX90640_I2CWrite(slaveAddr, MLX90640_CTRL_REG, value);        
+        v1 = value;
+        v2 = value;
+        v1 = v1 << 8;
+        v3 = v1 >> 8;
+        v2 = v2 >> 8 ;
+        v[0] = v2;
+        v[1] = v3;
+
+        error = MLX90640_I2CWrite(slaveAddr, MLX90640_CTRL_REG, v);        
     }    
     
     return error;
@@ -361,13 +401,23 @@ int MLX90640_SetChessMode(uint8_t slaveAddr)
     uint16_t controlRegister1;
     uint16_t value;
     int error;
+    uint16_t v1, v2, v3;
+    uint8_t v[2];
         
     error = MLX90640_I2CRead(I2C1_DEV, slaveAddr, MLX90640_CTRL_REG, 1, &controlRegister1);
     
     if(error == 0)
     {
         value = (controlRegister1 | MLX90640_CTRL_MEAS_MODE_MASK);
-        error = MLX90640_I2CWrite(slaveAddr, MLX90640_CTRL_REG, value);        
+        v1 = value;
+        v2 = value;
+        v1 = v1 << 8;
+        v3 = v1 >> 8;
+        v2 = v2 >> 8 ;
+        v[0] = v2;
+        v[1] = v3;
+
+        error = MLX90640_I2CWrite(slaveAddr, MLX90640_CTRL_REG, v);        
     }    
     
     return error;
