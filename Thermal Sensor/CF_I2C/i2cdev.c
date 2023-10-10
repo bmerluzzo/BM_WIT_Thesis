@@ -119,14 +119,12 @@ bool MLX90640_I2CRead(I2C_Dev *dev, uint8_t devAddress, uint16_t memAddress, uin
   for( i = 0; i < nMemAddressRead; i = i + 1 ){
 
     status = i2cdevReadReg16(dev, devAddress, memAddress, 2, &rdata);
-    data[i] = rdata[0] << 8;
-    data[i] |= rdata[1];
+    data[i] = rdata[0] << 8 | rdata[1];
 
     if(status == false){
       break;
     }
-
-    nMemAddressRead++;
+    memAddress++;
   }
 
   if(status == true){
