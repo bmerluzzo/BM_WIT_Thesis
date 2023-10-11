@@ -10,12 +10,12 @@ from cflib.utils import uri_helper
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils.multiranger import Multiranger
 
-URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
+URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 
 position_estimate = [0, 0, 0]
 t = 0
-spX = [0, 0]
-spY = [0, 2.5]
+spX = [0, 0, 1, 1, 2, 2, 3, 3]
+spY = [0, 3, 3, 1, 1, 3, 3, 0]
 fl = 0.1
 
 
@@ -37,7 +37,7 @@ def obs_avoid(mc, mr, fl):
 
         if is_close(mr.right) or is_close(mr.front):
 
-            move_left_ob(mc,mr, fl*2)
+            move_left_ob(mc, mr, fl*2)
             x = x + 2
 
             while flag != 1:
@@ -106,15 +106,15 @@ def obs_avoid(mc, mr, fl):
 
 def move_forward(mc, mr, fl):
     mc.forward(fl)
-    if is_close(mr.front):
-        mc.stop()
-        y = obs_avoid(mc, mr, fl)
-        return y
+    #if is_close(mr.front):
+        #mc.stop()
+        #y = obs_avoid(mc, mr, fl)
+        #return y
     #elif is_close(mr.top):
        # mc.stop()
        # time.sleep(20)
-    else:
-        return 0
+    #else:
+    return 0
 
 def move_front_ob(mc, mr, fl):
     mc.forward(fl)
@@ -195,7 +195,7 @@ def is_close(range):
         return range < MIN_DISTANCE
 
 def log_pos_callback(timestamp, data, logconf):
-    pos_file.write("{},{},{},{}\n".format(timestamp, data['stateEstimate.x'], data['stateEstimate.y'], data['stateEstimate.z']))
+    pos_file.write("Y:{},X:{},Z:{}\n".format(data['stateEstimate.x'], data['stateEstimate.y'], data['stateEstimate.z']))
     global position_estimate
     global t
     position_estimate[0] = data['stateEstimate.x']
@@ -221,13 +221,14 @@ if __name__ == '__main__':
 
         pos_file = open('pos_data.txt', "w")
         pos_file.close()
-        pos_file = open('pso_data.txt', "a")
+        pos_file = open('pos_data.txt', "a")
 
         scf.cf.param.add_update_callback(group='deck', name='bcFlow2', cb=param_deck_flow)
 
         logconf = LogConfig(name='Position', period_in_ms=500) 
         logconf.add_variable('stateEstimate.x', 'float')
         logconf.add_variable('stateEstimate.y', 'float')
+        logconf.add_variable('stateEstimate.z', 'float')
         scf.cf.log.add_config(logconf)
         logconf.data_received_cb.add_callback(log_pos_callback)
 
@@ -461,3 +462,4 @@ if __name__ == '__main__':
                         j = 0
 
                 logconf.stop()
+                pos_file.close()
