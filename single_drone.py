@@ -12,7 +12,8 @@ from cflib.utils.multiranger import Multiranger
 
 URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
 
-position_estimate = [0, 0]
+position_estimate = [0, 0, 0]
+t = 0
 spX = [0, 0]
 spY = [0, 2.5]
 fl = 0.1
@@ -179,7 +180,7 @@ def rotate(mc, rotc, rotn):
     elif rotc > rotn:
         rot = rotc - rotn
         for k in range(rot):
-            mc.turn_right(deg, d_rate)
+            mc.turn_left(deg, d_rate)
         k = 0
         rotc = rotn
         return rotc
@@ -194,10 +195,14 @@ def is_close(range):
         return range < MIN_DISTANCE
 
 def log_pos_callback(timestamp, data, logconf):
-    print(data)
+    pos_file.write("{},{},{},{}\n".format(timestamp, data['stateEstimate.x'], data['stateEstimate.y'], data['stateEstimate.z']))
     global position_estimate
+    global t
     position_estimate[0] = data['stateEstimate.x']
     position_estimate[1] = data['stateEstimate.y']
+    position_estimate[2] = data['stateEstimate.z']
+    t = timestamp
+
 
 
 def param_deck_flow(_, value_str):
@@ -213,6 +218,10 @@ if __name__ == '__main__':
     cflib.crtp.init_drivers()
 
     with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+
+        pos_file = open('pos_data.txt', "w")
+        pos_file.close()
+        pos_file = open('pso_data.txt', "a")
 
         scf.cf.param.add_update_callback(group='deck', name='bcFlow2', cb=param_deck_flow)
 
