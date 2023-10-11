@@ -14,6 +14,8 @@
  * limitations under the License.
  *
  */
+
+//Add file to /src/drivers/interface
 #ifndef _MLX90640_API_H_
 #define _MLX90640_API_H_
 

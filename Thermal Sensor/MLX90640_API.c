@@ -14,6 +14,9 @@
  * limitations under the License.
  *
  */
+
+ //Add file to /src/drivers/src
+ //Add to KBuild: obj-y += MLX90640_API.o
 #include <i2cdev.h>
 #include <MLX90640_API.h>
 #include <math.h>
