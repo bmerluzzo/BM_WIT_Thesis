@@ -1,13 +1,21 @@
 #Swarm Code - Brandon Merluzzo
+import sys
+import logging
 import time
+from threading import Event
+import cflib.crtp
 
 import cflib.crtp
 from cflib.crazyflie.swarm import CachedCfFactory
 from cflib.crazyflie.swarm import Swarm
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
-
+from cflib.crazyflie.log import LogConfig
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils.multiranger import Multiranger
+
+position_estimate = [0, 0, 0]
+t = 0
+deck_attached_event = Event()
 
 uri_list = {
     'radio://0/80/2M/E7E7E7E7E8',
@@ -20,11 +28,13 @@ uris = list(uri_list)
 drone1 = [
     (0, 0, 1), #X coordinate
     (0, 1, 1), #Y coordinate
+    'drone1_pos.txt',
 ]
 
 drone2 = [
     (1, 2),
     (0, 0),
+    'drone2_pos.txt',
 ]
 
 seq_args = {
@@ -218,6 +228,21 @@ def deactivate_led_bit_mask(scf):
 def run_sequence(scf, path):
     spX = path[0]
     spY = path[1]
+    file = path[2]
+
+    pos_file = open(file, "w")
+    pos_file.close()
+    pos_file = open(file, "a")
+
+    scf.cf.param.add_update_callback(group='deck', name='bcFlow2', cb=param_deck_flow)
+
+    logconf = LogConfig(name='Position', period_in_ms=500) 
+    logconf.add_variable('stateEstimate.x', 'float')
+    logconf.add_variable('stateEstimate.y', 'float')
+    logconf.add_variable('stateEstimate.z', 'float')
+    scf.cf.log.add_config(logconf)
+    logconf.data_received_cb.add_callback(log_pos_callback)
+
     with MotionCommander(scf) as mc:
         with Multiranger(scf) as mr:
                 time.sleep(2)
@@ -228,6 +253,8 @@ def run_sequence(scf, path):
                 rotn = 0                   
                 j = 0
                 y = 0
+
+                logconf.start()
 
                 for p in range(size):
                     
@@ -251,6 +278,7 @@ def run_sequence(scf, path):
 
                         for j in range(ym):
                             y = move_forward(mc, mr, fl)
+                            pos_file.write("Y:{},X:{},Z:{}\n".format(position_estimate[1], position_estimate[0], position_estimate[2]))
                             if y > 0:
                                 j = j + y
                         time.sleep(2)
@@ -444,7 +472,28 @@ def run_sequence(scf, path):
                         time.sleep(2)
                         y = 0
                         j = 0
+                logconf.stop()
+    pos_file.close()
 
+def log_pos_callback(timestamp, data, logconf):
+    #pos_file.write("Y:{},X:{},Z:{}\n".format(data['stateEstimate.x'], data['stateEstimate.y'], data['stateEstimate.z']))
+    global position_estimate
+    global t
+    position_estimate[0] = data['stateEstimate.x']
+    position_estimate[1] = data['stateEstimate.y']
+    position_estimate[2] = data['stateEstimate.z']
+    t = timestamp
+
+
+
+def param_deck_flow(_, value_str):
+    value = int(value_str)
+    print(value)
+    if value:
+        deck_attached_event.set()
+        print('Deck is attached!')
+    else:
+        print('Deck is NOT attached!')
 
 if __name__ == '__main__':
     cflib.crtp.init_drivers()
