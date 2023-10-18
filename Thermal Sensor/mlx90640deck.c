@@ -12,7 +12,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "system.h"
-#include "MLX90640_API.h"
+//#include "MLX90640_API.h"
 
 #define MLX90640I2CAddr 0x33
 #define MLX90640_TASK_STACKSIZE    (2 * configMINIMAL_STACK_SIZE)
@@ -32,7 +32,6 @@ static void mlx90640Init()
   i2cdevInit(I2C1_DEV);
 
   //xTaskCreate(mlx90640Task, MLX90640_TASK_NAME, MLX90640_TASK_STACKSIZE, NULL, MLX90640_TASK_PRI, NULL);
-  //check on stack size needed
 
   isInit = true;
   DEBUG_PRINT("MLX90640 initialization complete!\n");
@@ -43,18 +42,28 @@ static bool mlx90640Test()
 {
   DEBUG_PRINT("MLX90640Deck test\n");
 
-  /*uint16_t test_read;
+  int curResolution, curRR, mode;
 
-  status = MLX90640_I2CRead(I2C1_DEV, MLX90640I2CAddr, MLX90640_CTRL_REG, 1, &test_read)
-  DEBUG_PRINT(test_read) //Default value 6401
-  */
-  if (!isInit)
+  curResolution - MLX90640_GetCurResolution(MLX90640I2CAddr);
+  DEBUG_PRINT("Current Resolution:\n");
+  DEBUG_PRINT("%i\n", curResolution);
+
+  curRR = MLX90640_GetRefreshRate(MLX90640I2CAddr);
+  DEBUG_PRINT("Current Refresh Rate:\n");
+  DEBUG_PRINT("%i\n", curRR);
+
+  mode = MLX90640_GetCurMode(MLX90640I2CAddr);
+  DEBUG_PRINT("Current Mode (1 if Chess Mode):\n");
+  DEBUG_PRINT("%i\n", mode);
+
+
+  if (!isInit && status == -1)
     return false;
 
   return true;
 }
 
-/*void mlx90640Task(void* arg)
+void mlx90640Task(void* arg)
 {
   float emissivity = 0.95;
   float tr;
@@ -62,31 +71,30 @@ static bool mlx90640Test()
   static uint16_t mlx90640Frame[834];
   paramsMLX90640 mlx90640;
   static float mlx90640To[768];
-  float To[768];
+  float To;
   int status;
   
   systemWaitStart();
   TickType_t xLastWakeTime;
 
-//Potentially write mode - might not because of default already set
+  status = MLX90640_DumpEE(MLX90640I2CAddr, eeMLX90640);
+  status = MLX90640_ExtractParameters(eeMLX90640, &mlx90640);
 
   xLastWakeTime = xTaskGetTickCount();
 
   while(1) {
-    vTaskDelayUntil(&xLastWakeTime, M2T()); //check on M2T function
+    vTaskDelayUntil(&xLastWakeTime, M2T());
 
-    status = MLX90640_DumpEE(MLX90640I2CAddr, eeMLX90640);
-    status = MLX90640_ExtractParameters(eeMLX90640, &mlx90640);
     status = MLX90640_GetFrameData(MLX90640I2CAddr, mlx90640Frame);
 
-    tr = MLX90640_GetTa(mlx90640Frame, &mlx90640) - TA_SHIFT;//check TA Shift or set hardcoded value
+    tr = MLX90640_GetTa(mlx90640Frame, &mlx90640) - TA_SHIFT;
 
     MLX90640_CalculateTo(mlx90640Frame, &mlx90640, emissivity, tr, mlx90640To);
 
-    To = mlx90640To;
+    To = mlx90640To[0];
   }
 
-}*/
+}
 
 static const DeckDriver mlx90640Driver = {
   .name = "mlx90640Deck",
