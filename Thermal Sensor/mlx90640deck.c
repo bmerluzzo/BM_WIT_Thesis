@@ -12,7 +12,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "system.h"
-//#include "MLX90640_API.h"
+#include "MLX90640_API.h"
 
 #define MLX90640I2CAddr 0x33
 #define MLX90640_TASK_STACKSIZE    (2 * configMINIMAL_STACK_SIZE)
@@ -31,7 +31,7 @@ static void mlx90640Init()
   DEBUG_PRINT("Initializing MLX90640...\n");
   i2cdevInit(I2C1_DEV);
 
-  //xTaskCreate(mlx90640Task, MLX90640_TASK_NAME, MLX90640_TASK_STACKSIZE, NULL, MLX90640_TASK_PRI, NULL);
+  xTaskCreate(mlx90640Task, MLX90640_TASK_NAME, MLX90640_TASK_STACKSIZE, NULL, MLX90640_TASK_PRI, NULL);
 
   isInit = true;
   DEBUG_PRINT("MLX90640 initialization complete!\n");
@@ -83,7 +83,7 @@ void mlx90640Task(void* arg)
   xLastWakeTime = xTaskGetTickCount();
 
   while(1) {
-    vTaskDelayUntil(&xLastWakeTime, M2T());
+    vTaskDelayUntil(&xLastWakeTime, M2T(500));
 
     status = MLX90640_GetFrameData(MLX90640I2CAddr, mlx90640Frame);
 
@@ -104,6 +104,6 @@ static const DeckDriver mlx90640Driver = {
 
 DECK_DRIVER(mlx90640Driver);
 
-/*LOG_GROUP_START(MLX90640)
+LOG_GROUP_START(MLX90640)
 LOG_ADD(LOG_FLOAT, To, &To)
-LOG_GROUP_STOP(MLX90640)*/
+LOG_GROUP_STOP(MLX90640)
