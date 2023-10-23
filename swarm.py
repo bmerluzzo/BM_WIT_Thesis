@@ -15,7 +15,8 @@ from cflib.utils.multiranger import Multiranger
 
 position_estimate1 = [0, 0, 0]
 position_estimate2 = [0, 0, 0]
-t1, t2 = 0
+t1 = 0
+t2 = 0
 deck_attached_event = Event()
 
 uri_list = {
@@ -27,15 +28,15 @@ uri_list = {
 uris = list(uri_list) 
 
 drone1 = [
-    (0, 0, 1), #X coordinate
-    (0, 1, 1), #Y coordinate
+    (0, 0), #X coordinate
+    (0, 1), #Y coordinate
     'drone1_pos.txt',
     'drone1',
 ]
 
 drone2 = [
-    (1, 2),
-    (0, 0),
+    (0, 0, 0),
+    (0, 1, 0),
     'drone2_pos.txt',
     'drone2',
 ]
@@ -241,28 +242,30 @@ def run_sequence(scf, path):
 
         scf.cf.param.add_update_callback(name= path[3], cb=param_deck_flow)
 
-        logconf = LogConfig(name='Position', period_in_ms=500) 
-        logconf.add_variable('stateEstimate.x', 'float')
-        logconf.add_variable('stateEstimate.y', 'float')
-        logconf.add_variable('stateEstimate.z', 'float')
-        scf.cf.log.add_config(logconf)
-        logconf.data_received_cb.add_callback(log_pos_callback1)
-    elif scf.cf.link_uri == 'radio://0/80/2M/E7E7E7E7E8':
+        logconf1 = LogConfig(name='Position', period_in_ms=500) 
+        logconf1.add_variable('stateEstimate.x', 'float')
+        logconf1.add_variable('stateEstimate.y', 'float')
+        logconf1.add_variable('stateEstimate.z', 'float')
+        scf.cf.log.add_config(logconf1)
+        logconf1.data_received_cb.add_callback(log_pos_callback1)
+        logconf1.start()
+
+    elif scf.cf.link_uri == 'radio://0/80/2M/E7E7E7E7E7':
         global pos_file2
         pos_file2 = open(file, "w")
         pos_file2.close()
         pos_file2 = open(file, "a")
 
-        scf.cf.param.add_update_callback( name= path[3], cb=param_deck_flow)
+        scf.cf.param.add_update_callback(name= path[3], cb=param_deck_flow)
 
-        logconf = LogConfig(name='Position', period_in_ms=500) 
-        logconf.add_variable('stateEstimate.x', 'float')
-        logconf.add_variable('stateEstimate.y', 'float')
-        logconf.add_variable('stateEstimate.z', 'float')
-        scf.cf.log.add_config(logconf)
-        logconf.data_received_cb.add_callback(log_pos_callback2)
+        logconf2 = LogConfig(name='Position', period_in_ms=500) 
+        logconf2.add_variable('stateEstimate.x', 'float')
+        logconf2.add_variable('stateEstimate.y', 'float')
+        logconf2.add_variable('stateEstimate.z', 'float')
+        scf.cf.log.add_config(logconf2)
+        logconf2.data_received_cb.add_callback(log_pos_callback2)
+        logconf2.start()
         
-
     with MotionCommander(scf) as mc:
         with Multiranger(scf) as mr:
                 time.sleep(2)
@@ -273,8 +276,6 @@ def run_sequence(scf, path):
                 rotn = 0                   
                 j = 0
                 y = 0
-
-                logconf.start()
 
                 for p in range(size):
                     
@@ -491,10 +492,12 @@ def run_sequence(scf, path):
                         time.sleep(2)
                         y = 0
                         j = 0
-                logconf.stop()
+                
     if scf.cf.link_uri == 'radio://0/80/2M/E7E7E7E7E8':
+        logconf1.stop()
         pos_file1.close()
     elif scf.cf.link_uri == 'radio://0/80/2M/E7E7E7E7E7':
+        logconf2.stop()
         pos_file2.close()
 
 def log_pos_callback1(timestamp, data, logconf):
@@ -535,4 +538,4 @@ if __name__ == '__main__':
         time.sleep(5)
 
         #swarm.sequential(run_sequence, args_dict=seq_args)
-        swarm.parallel_safe(run_sequence, args_dict=seq_args)
+        swarm.parallel(run_sequence, args_dict=seq_args)
