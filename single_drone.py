@@ -35,7 +35,7 @@ def obs_avoid(mc, mr, fl):
         ob = 0
         flag = 0 
 
-        if is_close(mr.right) or is_close(mr.front):
+        if is_close(mr.right) and is_close(mr.front) or is_close(mr.front):
 
             move_left_ob(mc, mr, fl*2)
             x = x + 2
@@ -65,7 +65,6 @@ def obs_avoid(mc, mr, fl):
                     else: 
                         for i in range(x):
                             move_right_ob(mc, mr, fl)
-                        flag = 1
                         ob = 2
 
         if is_close(mr.left) and is_close(mr.front):
@@ -98,32 +97,90 @@ def obs_avoid(mc, mr, fl):
                     else: 
                         for i in range(x):
                             move_left_ob(mc, mr, fl)
-                        flag = 1
                         ob = 2   
 
+        if is_close(mr.left) and is_close(mr.right):
+
+            move_back_ob(mc,mr, fl*2)
+            y = y - 2
+
+            while flag != 1:
+                if is_close(mr.left) and is_close(mr.right):
+                    while is_close(mr.left) and is_close(mr.right):
+                        ob = move_back_ob(mc, mr, fl)
+                        y = y - 1
+                    time.sleep(2)
+
+                elif is_close(mr.left) and not is_close(mr.right):
+                    ob = move_right_ob(mc, mr, fl*2)
+                    x = x + 2
+                    if ob == 1:
+                        flag = 1
+                    if is_close(mr.front):
+                        time.sleep(2)
+                        while is_close(mr.front):
+                            ob = move_right_ob(mc, mr, fl)
+                            x =  x + 1
+                            if ob == 1:
+                                flag = 1
+                        time.sleep(2)
+                    else: 
+                        ob = move_front_ob(mc, mr, fl*5)
+                        y = y + 5
+                        if is_close(mr.left):
+                            while is_close(mr.left):
+                                ob = move_front_ob(mc, mr, fl)
+                                y = y + 1
+                                if ob == 1:
+                                    flag = 1
+                            
+                            for i in range(x):
+                                move_left_ob(mc, mr, fl)
+                            ob = 2   
+                        
+                elif not is_close(mr.left) and is_close(mr.right):
+                    ob = move_left_ob(mc, mr, fl*2)
+                    x = x + 2
+                    if ob == 1:
+                        flag = 1
+                    if is_close(mr.front):
+                        time.sleep(2)
+                        while is_close(mr.front):
+                            ob = move_left_ob(mc, mr, fl)
+                            x =  x + 1
+                            if ob == 1:
+                                flag = 1
+                        time.sleep(2)
+                    else: 
+                        ob = move_front_ob(mc, mr, fl*5)
+                        y = y + 5
+                        if is_close(mr.right):
+                            while is_close(mr.right):
+                                ob = move_front_ob(mc, mr, fl)
+                                y = y + 1
+                                if ob == 1:
+                                    flag = 1
+                            
+                            for i in range(x):
+                                move_right_ob(mc, mr, fl)
+                            ob = 2
     return y
 
 
 def move_forward(mc, mr, fl):
     mc.forward(fl)
-    #if is_close(mr.front):
-        #mc.stop()
-        #y = obs_avoid(mc, mr, fl)
-        #return y
-    #elif is_close(mr.top):
-       # mc.stop()
-       # time.sleep(20)
-    #else:
-    return 0
+    if is_close(mr.front):
+        mc.stop()
+        y = obs_avoid(mc, mr, fl)
+        return y
+    else:
+        return 0
 
 def move_front_ob(mc, mr, fl):
     mc.forward(fl)
     if is_close(mr.front):
         mc.stop()
         return 1
-    #elif is_close(mr.top):
-      #  mc.stop()
-        #time.sleep(20)
     else:
         return
     
@@ -132,9 +189,6 @@ def move_right_ob(mc, mr, fl):
     if is_close(mr.right):
         mc.stop()
         return 1
-    # is_close(mr.top):
-     #   mc.stop()
-      #  time.sleep(20)
     else:
         return
     
@@ -144,19 +198,12 @@ def move_left_ob(mc, mr, fl):
     if is_close(mr.left):
         mc.stop()
         return 1
-    #elif is_close(mr.top):
-      #  mc.stop()
-        #time.sleep(20)
     else:
         return
     
 def move_back_ob(mc, mr, fl):
     mc.back(fl)
-    if is_close(mr.top):
-        mc.stop()
-        return 2
-    else:
-        return
+    return
 
 def rotate(mc, rotc, rotn):
     
