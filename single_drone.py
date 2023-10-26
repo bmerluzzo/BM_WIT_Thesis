@@ -14,8 +14,8 @@ URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 
 position_estimate = [0, 0, 0]
 t = 0
-spX = [0, 0, 1, 1, 0]
-spY = [0, 1, 1, 2, 0]
+spX = [0, 0]
+spY = [0, 2]
 fl = 0.1
 
 
@@ -65,6 +65,7 @@ def obs_avoid(mc, mr, fl):
                     else: 
                         for i in range(x):
                             move_right_ob(mc, mr, fl)
+                        flag = 1
                         ob = 2
 
         if is_close(mr.left) and is_close(mr.front):
@@ -97,6 +98,7 @@ def obs_avoid(mc, mr, fl):
                     else: 
                         for i in range(x):
                             move_left_ob(mc, mr, fl)
+                        flag = 1
                         ob = 2   
 
         if is_close(mr.left) and is_close(mr.right):
@@ -136,6 +138,7 @@ def obs_avoid(mc, mr, fl):
                             
                             for i in range(x):
                                 move_left_ob(mc, mr, fl)
+                            flag = 1
                             ob = 2   
                         
                 elif not is_close(mr.left) and is_close(mr.right):
@@ -163,6 +166,7 @@ def obs_avoid(mc, mr, fl):
                             
                             for i in range(x):
                                 move_right_ob(mc, mr, fl)
+                            flag = 1
                             ob = 2
     return y
 
