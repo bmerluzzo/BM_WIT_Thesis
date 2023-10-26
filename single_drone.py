@@ -250,7 +250,8 @@ def log_pos_callback(timestamp, data, logconf):
     position_estimate[2] = data['stateEstimate.z']
     t = timestamp
 
-
+def log_temp_callback(timestamp, data, logconf):
+    temp_file.write(data)
 
 def param_deck_flow(_, value_str):
     value = int(value_str)
@@ -270,6 +271,10 @@ if __name__ == '__main__':
         pos_file.close()
         pos_file = open('pos_data.txt', "a")
 
+        temp_file = open('temp_data.txt', "w")
+        temp_file.close()
+        temp_file = open('temp_data.txt', "a")
+
         scf.cf.param.add_update_callback(group='deck', name='bcFlow2', cb=param_deck_flow)
 
         logconf = LogConfig(name='Position', period_in_ms=500) 
@@ -279,12 +284,78 @@ if __name__ == '__main__':
         scf.cf.log.add_config(logconf)
         logconf.data_received_cb.add_callback(log_pos_callback)
 
+        logconf1 = LogConfig(name='Temp1', period_in_ms=500) 
+        logconf1.add_variable('MLX1.To1', 'float')
+        logconf1.add_variable('MLX1.To2', 'float')
+        logconf1.add_variable('MLX1.To3', 'float')
+        logconf1.add_variable('MLX1.To4', 'float')
+        logconf1.add_variable('MLX1.To5', 'float')
+        logconf1.add_variable('MLX1.To6', 'float')
+        scf.cf.log.add_config(logconf1)
+        logconf1.data_received_cb.add_callback(log_temp_callback)
+
+        logconf2 = LogConfig(name='Temp2', period_in_ms=500) 
+        logconf2.add_variable('MLX2.To1', 'float')
+        logconf2.add_variable('MLX2.To2', 'float')
+        logconf2.add_variable('MLX2.To3', 'float')
+        logconf2.add_variable('MLX2.To4', 'float')
+        logconf2.add_variable('MLX2.To5', 'float')
+        logconf2.add_variable('MLX2.To6', 'float')
+        scf.cf.log.add_config(logconf2)
+        logconf2.data_received_cb.add_callback(log_temp_callback)
+
+        logconf3 = LogConfig(name='Temp3', period_in_ms=500) 
+        logconf3.add_variable('MLX3.To1', 'float')
+        logconf3.add_variable('MLX3.To2', 'float')
+        logconf3.add_variable('MLX3.To3', 'float')
+        logconf3.add_variable('MLX3.To4', 'float')
+        logconf3.add_variable('MLX3.To5', 'float')
+        logconf3.add_variable('MLX3.To6', 'float')
+        scf.cf.log.add_config(logconf3)
+        logconf3.data_received_cb.add_callback(log_temp_callback)
+
+        logconf4 = LogConfig(name='Temp4', period_in_ms=500) 
+        logconf4.add_variable('MLX4.To1', 'float')
+        logconf4.add_variable('MLX4.To2', 'float')
+        logconf4.add_variable('MLX4.To3', 'float')
+        logconf4.add_variable('MLX4.To4', 'float')
+        logconf4.add_variable('MLX4.To5', 'float')
+        logconf4.add_variable('MLX4.To6', 'float')
+        scf.cf.log.add_config(logconf4)
+        logconf4.data_received_cb.add_callback(log_temp_callback)
+
+        logconf5 = LogConfig(name='Temp5', period_in_ms=500) 
+        logconf5.add_variable('MLX5.To1', 'float')
+        logconf5.add_variable('MLX5.To2', 'float')
+        logconf5.add_variable('MLX5.To3', 'float')
+        logconf5.add_variable('MLX5.To4', 'float')
+        logconf5.add_variable('MLX5.To5', 'float')
+        logconf5.add_variable('MLX5.To6', 'float')
+        scf.cf.log.add_config(logconf5)
+        logconf5.data_received_cb.add_callback(log_temp_callback)
+
+        logconf6 = LogConfig(name='Temp6', period_in_ms=500) 
+        logconf6.add_variable('MLX6.To1', 'float')
+        logconf6.add_variable('MLX6.To2', 'float')
+        logconf6.add_variable('MLX6.To3', 'float')
+        logconf6.add_variable('MLX6.To4', 'float')
+        logconf6.add_variable('MLX6.To5', 'float')
+        logconf6.add_variable('MLX6.To6', 'float')
+        scf.cf.log.add_config(logconf6)
+        logconf6.data_received_cb.add_callback(log_temp_callback)
+
         
         with MotionCommander(scf) as mc:    
             with Multiranger(scf) as mr:
 
                 time.sleep(2)
-                logconf.start()          
+                logconf.start()  
+                logconf1.start()
+                logconf2.start()
+                logconf3.start()
+                logconf4.start()
+                logconf5.start()
+                logconf6.start()        
               
                 size = len(spX) - 1            
                 rotc = 1                   
@@ -509,4 +580,11 @@ if __name__ == '__main__':
                         j = 0
 
                 logconf.stop()
+                logconf1.stop()
+                logconf2.stop()
+                logconf3.stop()
+                logconf5.stop()
+                logconf5.stop()
+                logconf6.stop()
                 pos_file.close()
+                temp_file.close()
