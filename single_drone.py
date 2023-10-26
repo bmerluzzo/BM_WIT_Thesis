@@ -251,7 +251,7 @@ def log_pos_callback(timestamp, data, logconf):
     t = timestamp
 
 def log_temp_callback(timestamp, data, logconf):
-    temp_file.write(data)
+    temp_file.write("{}\n".format(data))
 
 def param_deck_flow(_, value_str):
     value = int(value_str)
