@@ -14,8 +14,8 @@ URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 
 position_estimate = [0, 0, 0]
 t = 0
-spX = [0, 0, 1, 1, 2, 2, 3, 3]
-spY = [0, 3, 3, 1, 1, 3, 3, 0]
+spX = [0, 0, 1, 1, 0]
+spY = [0, 1, 1, 2, 0]
 fl = 0.1
 
 
