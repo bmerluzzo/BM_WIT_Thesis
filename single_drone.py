@@ -13,6 +13,8 @@ from cflib.utils.multiranger import Multiranger
 URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 
 position_estimate = [0, 0, 0]
+temp = [0,0,0,0,0,0]
+thres = 25
 t = 0
 spX = [0, 0]
 spY = [0, 2]
@@ -172,7 +174,12 @@ def obs_avoid(mc, mr, fl):
 
 
 def move_forward(mc, mr, fl):
+    i = 0
     mc.forward(fl)
+    for i in range(6):
+        if temp[i] > thres:
+            mc.stop()
+            time.sleep(20)
     if is_close(mr.front):
         mc.stop()
         y = obs_avoid(mc, mr, fl)
@@ -256,6 +263,12 @@ def log_pos_callback(timestamp, data, logconf):
 
 def log_temp_callback(timestamp, data, logconf):
     temp_file.write("{}\n".format(data))
+
+    i = 0
+    global temp
+    for i in range(6):
+        temp[i] = data[i]
+
 
 def param_deck_flow(_, value_str):
     value = int(value_str)
@@ -361,18 +374,20 @@ if __name__ == '__main__':
                 logconf5.start()
                 logconf6.start()        
               
-                size = len(spX) - 1            
+                size = len(spX) - 1
+                point = 0
+
                 rotc = 1                   
                 rotn = 0                   
                 j = 0
                 y = 0
 
-                for p in range(size):
+                while point != size:
                     
-                    xp = spX[p]       
-                    yp = spY[p]
-                    xn = spX[p+1]
-                    yn = spY[p+1]
+                    xp = spX[point]       
+                    yp = spY[point]
+                    xn = spX[point+1]
+                    yn = spY[point+1]
 
                     yd, xd = 0, 0
                     ym, xm = 0, 0
@@ -582,6 +597,8 @@ if __name__ == '__main__':
                         time.sleep(2)
                         y = 0
                         j = 0
+
+                    point = point + 1
 
                 logconf.stop()
                 logconf1.stop()
