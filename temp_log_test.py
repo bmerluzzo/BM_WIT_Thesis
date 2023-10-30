@@ -10,11 +10,24 @@ from cflib.utils import uri_helper
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils.multiranger import Multiranger
 
-URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E9')
+URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
+
+temp = [0,0,0,0,0,0]
 
 def log_temp_callback(timestamp, data, logconf):
-    print(data)
-    
+    global temp
+    temp[0] = data['MLX1.To1']
+    temp[1] = data['MLX1.To2']
+    temp[2] = data['MLX1.To3']
+    temp[3] = data['MLX1.To4']
+    temp[4] = data['MLX1.To5']
+    temp[5] = data['MLX1.To6']
+
+    print(temp[0], ' | ',temp[1], ' | ',temp[2], ' | ',temp[3], ' | ',temp[4], ' | ',temp[5], '\n')
+
+    if (temp[0] or temp[1] or temp[2] or temp[3] or temp[4] or temp[5]) > 25:
+        print('Exceeded\n')
+   
     
 
 if __name__ == '__main__':
@@ -32,7 +45,7 @@ if __name__ == '__main__':
         scf.cf.log.add_config(logconf)
         logconf.data_received_cb.add_callback(log_temp_callback)
 
-        logconf2 = LogConfig(name='Temp2', period_in_ms=500) 
+        '''logconf2 = LogConfig(name='Temp2', period_in_ms=500) 
         logconf2.add_variable('MLX2.To1', 'float')
         logconf2.add_variable('MLX2.To2', 'float')
         logconf2.add_variable('MLX2.To3', 'float')
@@ -80,20 +93,20 @@ if __name__ == '__main__':
         logconf6.add_variable('MLX6.To5', 'float')
         logconf6.add_variable('MLX6.To6', 'float')
         scf.cf.log.add_config(logconf6)
-        logconf6.data_received_cb.add_callback(log_temp_callback)
+        logconf6.data_received_cb.add_callback(log_temp_callback)'''
 
         logconf.start()
-        logconf2.start()
-        logconf3.start()
-        logconf4.start()
-        logconf5.start()
-        logconf6.start()
+        #logconf2.start()
+        #logconf3.start()
+        #logconf4.start()
+        #logconf5.start()
+        #logconf6.start()
 
         time.sleep(20)
 
         logconf.stop()
-        logconf2.stop()
-        logconf3.stop()
-        logconf5.stop()
-        logconf5.stop()
-        logconf6.stop()
+        #logconf2.stop()
+        #logconf3.stop()
+        #logconf5.stop()
+        #logconf5.stop()
+        #logconf6.stop()

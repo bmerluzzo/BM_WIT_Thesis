@@ -14,11 +14,12 @@ URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 
 position_estimate = [0, 0, 0]
 temp = [0,0,0,0,0,0]
-thres = 25
+thres = 24
 t = 0
 spX = [0, 0]
-spY = [0, 2]
+spY = [0, 3]
 fl = 0.1
+df = 0.3
 
 
 deck_attached_event = Event()
@@ -176,10 +177,8 @@ def obs_avoid(mc, mr, fl):
 def move_forward(mc, mr, fl):
     i = 0
     mc.forward(fl)
-    for i in range(6):
-        if temp[i] > thres:
-            mc.stop()
-            time.sleep(20)
+    if (temp[0] or temp[1] or temp[2] or temp[3] or temp[4] or temp[5]) > 24:
+        print('Exceeded\n')
     if is_close(mr.front):
         mc.stop()
         y = obs_avoid(mc, mr, fl)
@@ -264,10 +263,15 @@ def log_pos_callback(timestamp, data, logconf):
 def log_temp_callback(timestamp, data, logconf):
     temp_file.write("{}\n".format(data))
 
-    i = 0
     global temp
-    for i in range(6):
-        temp[i] = data[i]
+    temp[0] = data['MLX1.To1']
+    temp[1] = data['MLX1.To2']
+    temp[2] = data['MLX1.To3']
+    temp[3] = data['MLX1.To4']
+    temp[4] = data['MLX1.To5']
+    temp[5] = data['MLX1.To6']
+
+    
 
 
 def param_deck_flow(_, value_str):
@@ -311,7 +315,7 @@ if __name__ == '__main__':
         scf.cf.log.add_config(logconf1)
         logconf1.data_received_cb.add_callback(log_temp_callback)
 
-        logconf2 = LogConfig(name='Temp2', period_in_ms=500) 
+        """logconf2 = LogConfig(name='Temp2', period_in_ms=500) 
         logconf2.add_variable('MLX2.To1', 'float')
         logconf2.add_variable('MLX2.To2', 'float')
         logconf2.add_variable('MLX2.To3', 'float')
@@ -359,7 +363,7 @@ if __name__ == '__main__':
         logconf6.add_variable('MLX6.To5', 'float')
         logconf6.add_variable('MLX6.To6', 'float')
         scf.cf.log.add_config(logconf6)
-        logconf6.data_received_cb.add_callback(log_temp_callback)
+        logconf6.data_received_cb.add_callback(log_temp_callback)"""
 
         
         with MotionCommander(scf) as mc:    
@@ -368,11 +372,11 @@ if __name__ == '__main__':
                 time.sleep(2)
                 logconf.start()  
                 logconf1.start()
-                logconf2.start()
+                """logconf2.start()
                 logconf3.start()
                 logconf4.start()
                 logconf5.start()
-                logconf6.start()        
+                logconf6.start()"""        
               
                 size = len(spX) - 1
                 point = 0
@@ -602,10 +606,10 @@ if __name__ == '__main__':
 
                 logconf.stop()
                 logconf1.stop()
-                logconf2.stop()
+                """logconf2.stop()
                 logconf3.stop()
                 logconf5.stop()
                 logconf5.stop()
-                logconf6.stop()
+                logconf6.stop()"""
                 pos_file.close()
                 temp_file.close()
