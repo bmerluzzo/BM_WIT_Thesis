@@ -20,6 +20,7 @@ spX = [0, 0]
 spY = [0, 3]
 fl = 0.1
 df = 0.3
+chh = 0
 
 
 deck_attached_event = Event()
@@ -175,11 +176,15 @@ def obs_avoid(mc, mr, fl):
 
 
 def move_forward(mc, mr, fl):
-    i = 0
     mc.forward(fl)
-    if (temp[0] or temp[1] or temp[2] or temp[3] or temp[4] or temp[5]) > 24:
-        print('Exceeded\n')
-    if is_close(mr.front):
+    #if (temp[0] or temp[1] or temp[2] or temp[3] or temp[4] or temp[5]) > 24:t
+        #print('Exceeded\n')
+    if position_estimate[3] < mc.default_height:
+        mc.stop()
+        chh = mc.default_height - position_estimate[3]
+        time.sleep(2)
+        mc.down(chh)
+    elif is_close(mr.front):
         mc.stop()
         y = obs_avoid(mc, mr, fl)
         return y
@@ -292,9 +297,9 @@ if __name__ == '__main__':
         pos_file.close()
         pos_file = open('pos_data.txt', "a")
 
-        temp_file = open('temp_data.txt', "w")
+        """temp_file = open('temp_data.txt', "w")
         temp_file.close()
-        temp_file = open('temp_data.txt', "a")
+        temp_file = open('temp_data.txt', "a")"""
 
         scf.cf.param.add_update_callback(group='deck', name='bcFlow2', cb=param_deck_flow)
 
@@ -305,7 +310,7 @@ if __name__ == '__main__':
         scf.cf.log.add_config(logconf)
         logconf.data_received_cb.add_callback(log_pos_callback)
 
-        logconf1 = LogConfig(name='Temp1', period_in_ms=500) 
+        """ogconf1 = LogConfig(name='Temp1', period_in_ms=500) 
         logconf1.add_variable('MLX1.To1', 'float')
         logconf1.add_variable('MLX1.To2', 'float')
         logconf1.add_variable('MLX1.To3', 'float')
@@ -315,7 +320,7 @@ if __name__ == '__main__':
         scf.cf.log.add_config(logconf1)
         logconf1.data_received_cb.add_callback(log_temp_callback)
 
-        """logconf2 = LogConfig(name='Temp2', period_in_ms=500) 
+        logconf2 = LogConfig(name='Temp2', period_in_ms=500) 
         logconf2.add_variable('MLX2.To1', 'float')
         logconf2.add_variable('MLX2.To2', 'float')
         logconf2.add_variable('MLX2.To3', 'float')
@@ -371,8 +376,8 @@ if __name__ == '__main__':
 
                 time.sleep(2)
                 logconf.start()  
-                logconf1.start()
-                """logconf2.start()
+                """logconf1.start()
+                logconf2.start()
                 logconf3.start()
                 logconf4.start()
                 logconf5.start()
@@ -605,11 +610,11 @@ if __name__ == '__main__':
                     point = point + 1
 
                 logconf.stop()
-                logconf1.stop()
-                """logconf2.stop()
+                """logconf1.stop()
+                logconf2.stop()
                 logconf3.stop()
                 logconf5.stop()
                 logconf5.stop()
                 logconf6.stop()"""
                 pos_file.close()
-                temp_file.close()
+                #temp_file.close()
