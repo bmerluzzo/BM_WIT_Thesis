@@ -23,8 +23,8 @@ height_estimate = 0
 temp = [0,0,0,0,0,0]
 thres = 24
 t = 0
-spX = [0, 0]
-spY = [0, 3]
+spX = [0, 0, 2]
+spY = [0, 2, 2]
 fl = 0.1
 df = 0.3
 chh = 0
@@ -32,8 +32,8 @@ chh = 0
 
 deck_attached_event = Event()
 
-def my_plotter(ax, data1, data2, data3, param_dict):
-    out = ax.plot3D(data1, data2, data3, **param_dict)
+def my_plotter(ax, data1, data2, data3):
+    out = ax.plot3D(data1, data2, data3, 'blue')
     return out
 
 def obs_avoid(mc, mr, fl):
@@ -190,12 +190,12 @@ def move_forward(mc, mr, fl):
     mc.forward(fl)
     #if (temp[0] or temp[1] or temp[2] or temp[3] or temp[4] or temp[5]) > 24:t
         #print('Exceeded\n')
-    if height_estimate < mc.default_height:
+    """if height_estimate < mc.default_height:
         mc.stop()
         chh = mc.default_height - height_estimate[3]
         time.sleep(2)
-        mc.down(chh)
-    elif is_close(mr.front):
+        mc.down(chh)"""
+    if is_close(mr.front):
         mc.stop()
         y = obs_avoid(mc, mr, fl)
         return y
@@ -637,5 +637,6 @@ if __name__ == '__main__':
                 logconf6.stop()"""
                 pos_file.close()
                 temp_file.close()
-                my_plotter(ax, x_pos, y_pos, z_pos,  {'marker': 'x'})
+                my_plotter(ax, x_pos, y_pos, z_pos)
+                ax.set_title('Drone Trajectory')
                 plt.show()
