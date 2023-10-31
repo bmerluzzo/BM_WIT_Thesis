@@ -10,9 +10,16 @@ from cflib.utils import uri_helper
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils.multiranger import Multiranger
 
-URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib as mpl
 
-position_estimate = [0, 0, 0]
+URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
+
+x_pos = [0]
+y_pos = [0]
+z_pos = [0]
+height_estimate = 0
 temp = [0,0,0,0,0,0]
 thres = 24
 t = 0
@@ -24,6 +31,10 @@ chh = 0
 
 
 deck_attached_event = Event()
+
+def my_plotter(ax, data1, data2, data3, param_dict):
+    out = ax.plot3D(data1, data2, data3, **param_dict)
+    return out
 
 def obs_avoid(mc, mr, fl):
 
@@ -179,9 +190,9 @@ def move_forward(mc, mr, fl):
     mc.forward(fl)
     #if (temp[0] or temp[1] or temp[2] or temp[3] or temp[4] or temp[5]) > 24:t
         #print('Exceeded\n')
-    if position_estimate[3] < mc.default_height:
+    if height_estimate < mc.default_height:
         mc.stop()
-        chh = mc.default_height - position_estimate[3]
+        chh = mc.default_height - height_estimate[3]
         time.sleep(2)
         mc.down(chh)
     elif is_close(mr.front):
@@ -258,12 +269,17 @@ def is_close(range):
 
 def log_pos_callback(timestamp, data, logconf):
     pos_file.write("Y:{},X:{},Z:{}\n".format(data['stateEstimate.x'], data['stateEstimate.y'], data['stateEstimate.z']))
-    global position_estimate
+    global x_pos
+    global y_pos
+    global z_pos
     global t
-    position_estimate[0] = data['stateEstimate.x']
-    position_estimate[1] = data['stateEstimate.y']
-    position_estimate[2] = data['stateEstimate.z']
+    global height_estimate
+    height_estimate = data['stateEstimate.z']
+    x_pos.append(data['stateEstimate.x'])
+    y_pos.append(data['stateEstimate.y'])
+    z_pos.append(data['stateEstimate.z'])
     t = timestamp
+    
 
 def log_temp_callback(timestamp, data, logconf):
     temp_file.write("{}\n".format(data))
@@ -293,13 +309,16 @@ if __name__ == '__main__':
 
     with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
 
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+
         pos_file = open('pos_data.txt', "w")
         pos_file.close()
         pos_file = open('pos_data.txt', "a")
 
-        """temp_file = open('temp_data.txt', "w")
+        temp_file = open('temp_data.txt', "w")
         temp_file.close()
-        temp_file = open('temp_data.txt', "a")"""
+        temp_file = open('temp_data.txt', "a")
 
         scf.cf.param.add_update_callback(group='deck', name='bcFlow2', cb=param_deck_flow)
 
@@ -617,4 +636,6 @@ if __name__ == '__main__':
                 logconf5.stop()
                 logconf6.stop()"""
                 pos_file.close()
-                #temp_file.close()
+                temp_file.close()
+                my_plotter(ax, x_pos, y_pos, z_pos,  {'marker': 'x'})
+                plt.show()
