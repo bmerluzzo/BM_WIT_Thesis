@@ -14,55 +14,69 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib as mpl
 
-URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
+URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 
 x_pos = [0]
 y_pos = [0]
 z_pos = [0]
 height_estimate = 0
-temp = [0,0,0,0,0,0]
+temp1 = [0,0,0,0,0,0]
+temp2 = [0,0,0,0,0,0]
+temp3 = [0,0,0,0,0,0]
+temp4 = [0,0,0,0,0,0]
+temp5 = [0,0,0,0,0,0]
+temp6 = [0,0,0,0,0,0]
 thres = 24
 t = 0
-spX = [0, 0, 2]
-spY = [0, 2, 2]
-fl = 0.1
+spX = [0, 0]
+spY = [0, 1]
 grid_size = 1 
-partition = 4
-
+partition = 2
+temp_flag = 0
+fl = 0.1
 
 deck_attached_event = Event()
 
 def sweep(mc, mr, fl, rotc, grid_size, partition):
     swX = [0]
     swY = [0]
+    swY.append(0)
     i = 0
     i = i + 1
     point = 0
     p_size = grid_size/partition
     pn_size = p_size
+
     
     for i in range(partition):
-        swY.append(0)
-        swY.append(1)
+        
+        if i % 2 == 0:
+            swY.append(grid_size)
+            swY.append(grid_size)
+        else:
+            swY.append(0)
+            swY.append(0)
 
         swX.append(pn_size)
         swX.append(pn_size)
 
         pn_size = pn_size + p_size
 
-    swY.append(0)
     swX.append(0)
 
     size = len(swX) - 1
 
+    time.sleep(2)
+
     while point != size:
                     
-                    xp = spX[point]       
-                    yp = spY[point]
-                    xn = spX[point+1]
-                    yn = spY[point+1]
+                    xp = swX[point]       
+                    yp = swY[point]
+                    xn = swX[point+1]
+                    yn = swY[point+1]
 
                     rotc = pathing(mc, mr, fl, xn, xp, yn, yp, rotc)
+                    point = point + 1
 
     return rotc
           
@@ -433,12 +447,7 @@ def obs_avoid(mc, mr, fl):
 
 def move_forward(mc, mr, fl):
     mc.forward(fl)
-    """if (temp[0] or temp[1] or temp[2] or temp[3] or temp[4] or temp[5]) > 24:
-    if height_estimate < mc.default_height:
-        mc.stop()
-        chh = mc.default_height - height_estimate[3]
-        time.sleep(2)
-        mc.down(chh)"""
+
     if is_close(mr.front):
         mc.stop()
         y = obs_avoid(mc, mr, fl)
@@ -479,7 +488,7 @@ def rotate(mc, rotc, rotn):
     
     rot = 0
     deg = 90
-    d_rate = 30
+    d_rate = 45
     k = 0 
     k = k + 0
 
@@ -529,14 +538,73 @@ def log_temp_callback(timestamp, data, logconf):
     temp_file.write("{}\n".format(data))
 
     global temp
-    temp[0] = data['MLX1.To1']
-    temp[1] = data['MLX1.To2']
-    temp[2] = data['MLX1.To3']
-    temp[3] = data['MLX1.To4']
-    temp[4] = data['MLX1.To5']
-    temp[5] = data['MLX1.To6']
+
+    if logconf.name == 'Temp1':
+        temp1[0] = data['MLX1.To1']
+        temp1[1] = data['MLX1.To2']
+        temp1[2] = data['MLX1.To3']
+        temp1[3] = data['MLX1.To4']
+        temp1[4] = data['MLX1.To5']
+        temp1[5] = data['MLX1.To6']
+        print(temp1[0], ' | ',temp1[1], ' | ',temp1[2], ' | ',temp1[3], ' | ',temp1[4], ' | ',temp1[5], '\n')
+        if (temp1[0] or temp1[1] or temp1[2] or temp1[3] or temp1[4] or temp1[5]) > 24:
+            temp_flag = 1
+
+    elif logconf.name == 'Temp2':
+        temp2[0] = data['MLX2.To1']
+        temp2[1] = data['MLX2.To2']
+        temp2[2] = data['MLX2.To3']
+        temp2[3] = data['MLX2.To4']
+        temp2[4] = data['MLX2.To5']
+        temp2[5] = data['MLX2.To6']
+        print(temp2[0], ' | ',temp2[1], ' | ',temp2[2], ' | ',temp2[3], ' | ',temp2[4], ' | ',temp2[5], '\n')
+        if (temp2[0] or temp2[1] or temp2[2] or temp2[3] or temp2[4] or temp2[5]) > 24:
+            temp_flag = 1
 
     
+    elif logconf.name == 'Temp3':
+        temp3[0] = data['MLX3.To1']
+        temp3[1] = data['MLX3.To2']
+        temp3[2] = data['MLX3.To3']
+        temp3[3] = data['MLX3.To4']
+        temp3[4] = data['MLX3.To5']
+        temp3[5] = data['MLX3.To6']
+        print(temp3[0], ' | ',temp3[1], ' | ',temp3[2], ' | ',temp3[3], ' | ',temp3[4], ' | ',temp3[5], '\n')
+        if (temp3[0] or temp3[1] or temp3[2] or temp3[3] or temp3[4] or temp3[5]) > 24:
+            temp_flag = 1
+
+    elif logconf.name == 'Temp4':
+        temp4[0] = data['MLX4.To1']
+        temp4[1] = data['MLX4.To2']
+        temp4[2] = data['MLX4.To3']
+        temp4[3] = data['MLX4.To4']
+        temp4[4] = data['MLX4.To5']
+        temp4[5] = data['MLX4.To6']
+        print(temp4[0], ' | ',temp4[1], ' | ',temp4[2], ' | ',temp4[3], ' | ',temp4[4], ' | ',temp4[5], '\n')
+        if (temp4[0] or temp4[1] or temp4[2] or temp4[3] or temp4[4] or temp4[5]) > 24:
+            temp_flag = 1
+
+    elif logconf.name == 'Temp5':
+        temp5[0] = data['MLX5.To1']
+        temp5[1] = data['MLX5.To2']
+        temp5[2] = data['MLX5.To3']
+        temp5[3] = data['MLX5.To4']
+        temp5[4] = data['MLX5.To5']
+        temp5[5] = data['MLX5.To6']
+        print(temp5[0], ' | ',temp5[1], ' | ',temp5[2], ' | ',temp5[3], ' | ',temp5[4], ' | ',temp5[5], '\n')
+        if (temp5[0] or temp5[1] or temp5[2] or temp5[3] or temp5[4] or temp5[5]) > 24:
+            temp_flag = 1
+
+    elif logconf.name == 'Temp6':
+        temp6[0] = data['MLX6.To1']
+        temp6[1] = data['MLX6.To2']
+        temp6[2] = data['MLX6.To3']
+        temp6[3] = data['MLX6.To4']
+        temp6[4] = data['MLX6.To5']
+        temp6[5] = data['MLX6.To6']
+        print(temp5[0], ' | ',temp5[1], ' | ',temp5[2], ' | ',temp5[3], ' | ',temp5[4], ' | ',temp5[5], '\n')
+        if (temp6[0] or temp6[1] or temp6[2] or temp6[3] or temp6[4] or temp6[5]) > 24:
+            temp_flag = 1
 
 
 def param_deck_flow(_, value_str):
@@ -573,7 +641,7 @@ if __name__ == '__main__':
         scf.cf.log.add_config(logconf)
         logconf.data_received_cb.add_callback(log_pos_callback)
 
-        """ogconf1 = LogConfig(name='Temp1', period_in_ms=500) 
+        logconf1 = LogConfig(name='Temp1', period_in_ms=500) 
         logconf1.add_variable('MLX1.To1', 'float')
         logconf1.add_variable('MLX1.To2', 'float')
         logconf1.add_variable('MLX1.To3', 'float')
@@ -631,7 +699,7 @@ if __name__ == '__main__':
         logconf6.add_variable('MLX6.To5', 'float')
         logconf6.add_variable('MLX6.To6', 'float')
         scf.cf.log.add_config(logconf6)
-        logconf6.data_received_cb.add_callback(log_temp_callback)"""
+        logconf6.data_received_cb.add_callback(log_temp_callback)
 
         
         with MotionCommander(scf) as mc:    
@@ -639,12 +707,12 @@ if __name__ == '__main__':
 
                 time.sleep(2)
                 logconf.start()  
-                """logconf1.start()
+                logconf1.start()
                 logconf2.start()
                 logconf3.start()
                 logconf4.start()
                 logconf5.start()
-                logconf6.start()"""        
+                logconf6.start()        
               
                 size = len(spX) - 1
                 point = 0
@@ -657,19 +725,22 @@ if __name__ == '__main__':
                     xn = spX[point+1]
                     yn = spY[point+1]
 
-                    rotc = sweep(mc, mr, fl, grid_size, partition)
+                    rotc = sweep(mc, mr, fl, rotc, grid_size, partition)
 
                     rotc = pathing(mc, mr, fl, xn, xp, yn, yp, rotc)
 
+                    point = point + 1
+
                 logconf.stop()
-                """logconf1.stop()
+                logconf1.stop()
                 logconf2.stop()
                 logconf3.stop()
                 logconf5.stop()
                 logconf5.stop()
-                logconf6.stop()"""
+                logconf6.stop()
                 pos_file.close()
                 temp_file.close()
+                print("Temperature Flag: ", temp_flag, "\n")
                 my_plotter(ax, x_pos, y_pos, z_pos)
                 ax.set_title('Drone Trajectory')
                 plt.show()
