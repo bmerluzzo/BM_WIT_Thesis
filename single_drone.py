@@ -26,11 +26,256 @@ t = 0
 spX = [0, 0, 2]
 spY = [0, 2, 2]
 fl = 0.1
-df = 0.3
-chh = 0
+grid_size = 1 
+partition = 4
 
 
 deck_attached_event = Event()
+
+def sweep(mc, mr, fl, rotc, grid_size, partition):
+    swX = [0]
+    swY = [0]
+    i = 0
+    i = i + 1
+    point = 0
+    p_size = grid_size/partition
+    pn_size = p_size
+    
+    for i in range(partition):
+        swY.append(0)
+        swY.append(1)
+
+        swX.append(pn_size)
+        swX.append(pn_size)
+
+        pn_size = pn_size + p_size
+
+    swY.append(0)
+    swX.append(0)
+
+    size = len(swX) - 1
+
+    while point != size:
+                    
+                    xp = spX[point]       
+                    yp = spY[point]
+                    xn = spX[point+1]
+                    yn = spY[point+1]
+
+                    rotc = pathing(mc, mr, fl, xn, xp, yn, yp, rotc)
+
+    return rotc
+          
+
+def pathing(mc, mr, fl, xn, xp, yn, yp, rotc):
+
+    j = 0
+    y = 0
+    yd, xd = 0, 0
+    ym, xm = 0, 0
+    if xp == xn and yp < yn:       
+                        
+        rotn = 1
+        yd = yn - yp
+        ym = yd/fl
+        ym = int(ym)
+
+        rotc = rotate(mc, rotc, rotn)
+
+        for j in range(ym):
+            y = move_forward(mc, mr, fl)
+            if y > 0:
+                j = j + y
+        time.sleep(2)
+        y = 0
+        j = 0
+
+    elif xp == xn and yp > yn:
+
+        rotn = 3
+        yd = yp - yn
+        ym = yd/fl
+        ym = int(ym)
+
+        rotc = rotate(mc, rotc, rotn)
+
+        for j in range(ym):
+            y = move_forward(mc, mr, fl)
+            if y > 0:
+                j = j + y
+        time.sleep(2)
+        y = 0
+        j = 0
+
+    elif xp < xn and yp == yn:
+
+        rotn = 2
+        xd = xn - xp
+        xm = xd/fl
+        xm = int(xm)
+
+        rotc = rotate(mc, rotc, rotn)
+                        
+        for j in range(xm):
+            y = move_forward(mc, mr, fl)
+            if y > 0:
+                j = j + y
+        time.sleep(2)
+        y = 0
+        j = 0
+
+    elif xp > xn and yp == yn:
+
+        rotn = 4
+        xd = xp - xn
+        xm = xd/fl
+        xm = int(xm)
+
+        rotc = rotate(mc, rotc, rotn)
+
+        for m in range(xm):
+            y = move_forward(mc, mr, fl)
+            if y > 0:
+                j = j + y
+        time.sleep(2)
+        y = 0
+        j = 0
+
+    elif xp < xn and yp < yn:
+
+        rotn = 1
+        yd = yn - yp
+        ym = yd/fl
+        ym = int(ym)
+
+        rotc = rotate(mc, rotc, rotn)
+
+        for j in range(ym):
+            y = move_forward(mc, mr, fl)
+            if y > 0:
+                j = j + y
+        time.sleep(2)
+        j = 0
+        y = 0
+        rotn = 2
+
+        xd = xn - xp
+        xm = xd/fl
+        xm = int(xm)
+
+        rotc = rotate(mc, rotc, rotn)
+
+        for j in range(xm):
+            y = move_forward(mc, mr, fl)
+            if y > 0:
+                j = j + y
+        time.sleep(2)
+        y = 0
+        j = 0
+
+    elif xp > xn and yp > yn:
+
+        rotn = 3
+
+        yd = yp - yn
+        ym = yd/fl
+        ym = int(ym)
+
+        rotc = rotate(mc, rotc, rotn)
+
+        for j in range(ym):
+            y = move_forward(mc, mr, fl)
+            if y > 0:
+                j = j + y
+        time.sleep(2)
+        y = 0
+        j = 0
+
+        rotn = 4
+
+        xd = xp - xn
+        xm = xd/fl
+        xm = int(xm)
+
+        rotc = rotate(mc, rotc, rotn)
+
+        for j in range(xm):
+            y = move_forward(mc, mr, fl)
+            if y > 0:
+                j = j + y
+        time.sleep(2)
+        y = 0
+        j = 0
+
+    elif xp > xn and yp < yn:
+
+        rotn = 1
+
+        yd = yn - yp
+        ym = yd/fl
+        ym = int(ym)
+
+        rotc = rotate(mc, rotc, rotn)
+
+        for j in range(ym):
+            y = move_forward(mc, mr, fl)
+            if y > 0:
+                j = j + y
+        time.sleep(2)
+        y = 0
+        j = 0
+
+        rotn = 4
+
+        xd = xp - xn
+        xm = xd/fl
+        xm = int(xm)
+
+        rotc = rotate(mc, rotc, rotn)
+
+        for j in range(xm):
+            y = move_forward(mc, mr, fl)
+            if y > 0:
+                j = j + y
+        time.sleep(2)
+        y = 0
+        j = 0
+
+    elif xp < xn and yp > yn:
+
+        rotn = 3
+
+        yd = yp - yn
+        ym = yd/fl
+        ym = int(ym)
+
+        rotc = rotate(mc, rotc, rotn)
+
+        for j in range(ym):
+            y = move_forward(mc, mr, fl)
+            if y > 0:
+                j = j + y
+        time.sleep(2)
+        j = 0
+
+        rotn = 2
+
+        xd = xn - xp
+        xm = xd/fl
+        xm = int(xm)
+
+        rotc = rotate(mc, rotc, rotn)
+
+        for j in range(xm):
+            y = move_forward(mc, mr, fl)
+            if y > 0:
+                j = j + y
+        time.sleep(2)
+        y = 0
+        j = 0
+
+    return rotc
+
 
 def my_plotter(ax, data1, data2, data3):
     out = ax.plot3D(data1, data2, data3, 'blue')
@@ -188,9 +433,8 @@ def obs_avoid(mc, mr, fl):
 
 def move_forward(mc, mr, fl):
     mc.forward(fl)
-    #if (temp[0] or temp[1] or temp[2] or temp[3] or temp[4] or temp[5]) > 24:t
-        #print('Exceeded\n')
-    """if height_estimate < mc.default_height:
+    """if (temp[0] or temp[1] or temp[2] or temp[3] or temp[4] or temp[5]) > 24:
+    if height_estimate < mc.default_height:
         mc.stop()
         chh = mc.default_height - height_estimate[3]
         time.sleep(2)
@@ -404,11 +648,7 @@ if __name__ == '__main__':
               
                 size = len(spX) - 1
                 point = 0
-
-                rotc = 1                   
-                rotn = 0                   
-                j = 0
-                y = 0
+                rotc = 1                                     
 
                 while point != size:
                     
@@ -417,216 +657,9 @@ if __name__ == '__main__':
                     xn = spX[point+1]
                     yn = spY[point+1]
 
-                    yd, xd = 0, 0
-                    ym, xm = 0, 0
+                    rotc = sweep(mc, mr, fl, grid_size, partition)
 
-                    if xp == xn and yp < yn:       
-                        
-                        rotn = 1
-
-                        yd = yn - yp
-                        ym = yd/fl
-                        ym = int(ym)
-
-                        rotc = rotate(mc, rotc, rotn)
-
-                        for j in range(ym):
-                            y = move_forward(mc, mr, fl)
-                            if y > 0:
-                                j = j + y
-                        time.sleep(2)
-                        y = 0
-                        j = 0
-
-                    elif xp == xn and yp > yn:
-
-                        rotn = 3
-
-                        yd = yp - yn
-                        ym = yd/fl
-                        ym = int(ym)
-
-                        rotc = rotate(mc, rotc, rotn)
-
-                        for j in range(ym):
-                            y = move_forward(mc, mr, fl)
-                            if y > 0:
-                                j = j + y
-                        time.sleep(2)
-                        y = 0
-                        j = 0
-
-                    elif xp < xn and yp == yn:
-
-                        rotn = 2
-
-                        xd = xn - xp
-                        xm = xd/fl
-                        xm = int(xm)
-
-                        rotc = rotate(mc, rotc, rotn)
-                        
-                        for j in range(xm):
-                            y = move_forward(mc, mr, fl)
-                            if y > 0:
-                                j = j + y
-                        time.sleep(2)
-                        y = 0
-                        j = 0
-
-                    elif xp > xn and yp == yn:
-
-                        rotn = 4
-
-                        xd = xp - xn
-                        xm = xd/fl
-                        xm = int(xm)
-
-                        rotc = rotate(mc, rotc, rotn)
-
-                        for m in range(xm):
-                            y = move_forward(mc, mr, fl)
-                            if y > 0:
-                                j = j + y
-                        time.sleep(2)
-                        y = 0
-                        j = 0
-
-                    elif xp < xn and yp < yn:
-
-                        rotn = 1
-
-                        yd = yn - yp
-                        ym = yd/fl
-                        ym = int(ym)
-
-                        rotc = rotate(mc, rotc, rotn)
-
-                        for j in range(ym):
-                            y = move_forward(mc, mr, fl)
-                            if y > 0:
-                                j = j + y
-                        time.sleep(2)
-                        j = 0
-                        y = 0
-                        rotn = 2
-
-                        xd = xn - xp
-                        xm = xd/fl
-                        xm = int(xm)
-
-                        rotc = rotate(mc, rotc, rotn)
-
-                        for j in range(xm):
-                            y = move_forward(mc, mr, fl)
-                            if y > 0:
-                                j = j + y
-                        time.sleep(2)
-                        y = 0
-                        j = 0
-
-                    elif xp > xn and yp > yn:
-
-                        rotn = 3
-
-                        yd = yp - yn
-                        ym = yd/fl
-                        ym = int(ym)
-
-                        rotc = rotate(mc, rotc, rotn)
-
-                        for j in range(ym):
-                            y = move_forward(mc, mr, fl)
-                            if y > 0:
-                                j = j + y
-                        time.sleep(2)
-                        y = 0
-                        j = 0
-
-                        rotn = 4
-
-                        xd = xp - xn
-                        xm = xd/fl
-                        xm = int(xm)
-
-                        rotc = rotate(mc, rotc, rotn)
-
-                        for j in range(xm):
-                            y = move_forward(mc, mr, fl)
-                            if y > 0:
-                                j = j + y
-                        time.sleep(2)
-                        y = 0
-                        j = 0
-
-                    elif xp > xn and yp < yn:
-
-                        rotn = 1
-
-                        yd = yn - yp
-                        ym = yd/fl
-                        ym = int(ym)
-
-                        rotc = rotate(mc, rotc, rotn)
-
-                        for j in range(ym):
-                            y = move_forward(mc, mr, fl)
-                            if y > 0:
-                                j = j + y
-                        time.sleep(2)
-                        y = 0
-                        j = 0
-
-                        rotn = 4
-
-                        xd = xp - xn
-                        xm = xd/fl
-                        xm = int(xm)
-
-                        rotc = rotate(mc, rotc, rotn)
-
-                        for j in range(xm):
-                            y = move_forward(mc, mr, fl)
-                            if y > 0:
-                                j = j + y
-                        time.sleep(2)
-                        y = 0
-                        j = 0
-
-                    elif xp < xn and yp > yn:
-
-                        rotn = 3
-
-                        yd = yp - yn
-                        ym = yd/fl
-                        ym = int(ym)
-
-                        rotc = rotate(mc, rotc, rotn)
-
-                        for j in range(ym):
-                            y = move_forward(mc, mr, fl)
-                            if y > 0:
-                                j = j + y
-                        time.sleep(2)
-                        j = 0
-
-                        rotn = 2
-
-                        xd = xn - xp
-                        xm = xd/fl
-                        xm = int(xm)
-
-                        rotc = rotate(mc, rotc, rotn)
-
-                        for j in range(xm):
-                            y = move_forward(mc, mr, fl)
-                            if y > 0:
-                                j = j + y
-                        time.sleep(2)
-                        y = 0
-                        j = 0
-
-                    point = point + 1
+                    rotc = pathing(mc, mr, fl, xn, xp, yn, yp, rotc)
 
                 logconf.stop()
                 """logconf1.stop()
