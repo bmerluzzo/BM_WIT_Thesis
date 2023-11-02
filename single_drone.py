@@ -28,14 +28,20 @@ temp5 = [0,0,0,0,0,0]
 temp6 = [0,0,0,0,0,0]
 thres = 24
 t = 0
-spX = [0, 0]
-spY = [0, 1]
 grid_size = 1 
 partition = 2
 temp_flag = 0
+map_length_y = 2
+map_length_x = 1
+grid_num = 0
+grid_order = [1]
 fl = 0.1
 
 deck_attached_event = Event()
+
+def temp_flag():
+    print("Hotspot Detected in Grid ", gn)
+    return 
 
 def sweep(mc, mr, fl, rotc, grid_size, partition):
     swX = [0]
@@ -47,6 +53,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
     p_size = grid_size/partition
     pn_size = p_size
 
+    print("Surveilling Grid ", gn, "\n")
     
     for i in range(partition):
         
@@ -548,7 +555,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp1[5] = data['MLX1.To6']
         print(temp1[0], ' | ',temp1[1], ' | ',temp1[2], ' | ',temp1[3], ' | ',temp1[4], ' | ',temp1[5], '\n')
         if (temp1[0] or temp1[1] or temp1[2] or temp1[3] or temp1[4] or temp1[5]) > 24:
-            temp_flag = 1
+            temp_flag()
 
     elif logconf.name == 'Temp2':
         temp2[0] = data['MLX2.To1']
@@ -559,7 +566,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp2[5] = data['MLX2.To6']
         print(temp2[0], ' | ',temp2[1], ' | ',temp2[2], ' | ',temp2[3], ' | ',temp2[4], ' | ',temp2[5], '\n')
         if (temp2[0] or temp2[1] or temp2[2] or temp2[3] or temp2[4] or temp2[5]) > 24:
-            temp_flag = 1
+            temp_flag()
 
     
     elif logconf.name == 'Temp3':
@@ -571,7 +578,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp3[5] = data['MLX3.To6']
         print(temp3[0], ' | ',temp3[1], ' | ',temp3[2], ' | ',temp3[3], ' | ',temp3[4], ' | ',temp3[5], '\n')
         if (temp3[0] or temp3[1] or temp3[2] or temp3[3] or temp3[4] or temp3[5]) > 24:
-            temp_flag = 1
+            temp_flag()
 
     elif logconf.name == 'Temp4':
         temp4[0] = data['MLX4.To1']
@@ -582,7 +589,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp4[5] = data['MLX4.To6']
         print(temp4[0], ' | ',temp4[1], ' | ',temp4[2], ' | ',temp4[3], ' | ',temp4[4], ' | ',temp4[5], '\n')
         if (temp4[0] or temp4[1] or temp4[2] or temp4[3] or temp4[4] or temp4[5]) > 24:
-            temp_flag = 1
+            temp_flag()
 
     elif logconf.name == 'Temp5':
         temp5[0] = data['MLX5.To1']
@@ -593,7 +600,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp5[5] = data['MLX5.To6']
         print(temp5[0], ' | ',temp5[1], ' | ',temp5[2], ' | ',temp5[3], ' | ',temp5[4], ' | ',temp5[5], '\n')
         if (temp5[0] or temp5[1] or temp5[2] or temp5[3] or temp5[4] or temp5[5]) > 24:
-            temp_flag = 1
+            temp_flag()
 
     elif logconf.name == 'Temp6':
         temp6[0] = data['MLX6.To1']
@@ -604,7 +611,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp6[5] = data['MLX6.To6']
         print(temp5[0], ' | ',temp5[1], ' | ',temp5[2], ' | ',temp5[3], ' | ',temp5[4], ' | ',temp5[5], '\n')
         if (temp6[0] or temp6[1] or temp6[2] or temp6[3] or temp6[4] or temp6[5]) > 24:
-            temp_flag = 1
+            temp_flag ()
 
 
 def param_deck_flow(_, value_str):
@@ -712,18 +719,45 @@ if __name__ == '__main__':
                 logconf3.start()
                 logconf4.start()
                 logconf5.start()
-                logconf6.start()        
-              
+                logconf6.start()    
+
+                i = 0
+                j = 0
+                
+                pointX = 0
+                pointY = grid_size
+                grid_num_y = map_length_y/grid_size
+                grid_num_x = map_length_x/grid_size
+                spY = [0] 
+                spX = [0] 
+
+                for i in range(grid_num_x):
+                    
+                    for j in range(grid_num_y):
+                        spY.append(pointY)
+                        spX.append(pointX)
+                        pointY = pointY + grid_size
+                    pointX = pointX + grid_size
+                    pointY = 0
+
+                grid_num = map_length_x * map_length_y
+
+                i = 1
+                for i in range(grid_num):
+                    grid_order.append(i + 1)
+
                 size = len(spX) - 1
                 point = 0
-                rotc = 1                                     
+                rotc = 1     
+                global gn                                
 
                 while point != size:
                     
                     xp = spX[point]       
                     yp = spY[point]
                     xn = spX[point+1]
-                    yn = spY[point+1]
+                    yn = spY[point+1] 
+                    gn = grid_num[point + 1]
 
                     rotc = sweep(mc, mr, fl, rotc, grid_size, partition)
 
