@@ -31,12 +31,12 @@ t = 0
 grid_size = 1 
 partition = 2
 temp_flag = 0
-map_length_y = 2
+map_length_y = 1
 map_length_x = 1
 grid_num = 0
 grid_order = [1]
 fl = 0.1
-velocity = 0.1
+velocity = 0.2
 
 deck_attached_event = Event()
 
@@ -95,6 +95,7 @@ def pathing(mc, mr, fl, xn, xp, yn, yp, rotc):
     y = 0
     yd, xd = 0, 0
     ym, xm = 0, 0
+    rotn = 0
     if xp == xn and yp < yn:       
                         
         rotn = 1
@@ -496,34 +497,39 @@ def rotate(mc, rotc, rotn):
     
     rot = 0
     deg = 90
-    d_rate = 45
+    d_rate = 30
     k = 0 
     k = k + 0
+    d = 3
+    c = rotc
+    n = rotn
 
-    if rotc == rotn:
+    if c == n:
         return rotc
     
-    elif rotc == 4 and rotn == 1:
-        mc.turn_right(deg, d_rate)
-
-    elif rotc < rotn:
-        rot = rotn - rotc
-        if rot < 3:
+    elif c < n:
+        rot = n - c
+        
+        if rot == d:
+            mc.turn_left(deg, d_rate)
+        
+        else:
             for k in range(rot):
                 mc.turn_right(deg, d_rate)
             k = 0
-            rotc = rotn
-        elif rot == 3:
-            mc.turn_left(deg, d_rate)
-        return rotc
     
-    elif rotc > rotn:
-        rot = rotc - rotn
-        for k in range(rot):
-            mc.turn_left(deg, d_rate)
-        k = 0
-        rotc = rotn
-        return rotc
+    elif c > n:
+        rot = c - n
+        if rot == d:
+            mc.turn_right(deg, d_rate)
+        else: 
+            for k in range(rot):
+                mc.turn_left(deg, d_rate)
+            k = 0
+    
+    rotc = rotn
+    return rotc
+        
 
 
 def is_close(range):
@@ -715,8 +721,44 @@ if __name__ == '__main__':
         scf.cf.log.add_config(logconf6)
         logconf6.data_received_cb.add_callback(log_temp_callback)
 
-        
-        with MotionCommander(scf) as mc:    
+        i = 0
+        j = 0
+                
+        pointX = 0
+        pointY = grid_size
+        grid_num_y = map_length_y/grid_size
+        grid_num_x = map_length_x/grid_size
+        grid_num_y = int(grid_num_y)
+        grid_num_x = int(grid_num_x)
+        spY = [0] 
+        spX = [0] 
+
+        for i in range(grid_num_x):
+                    
+            for j in range(grid_num_y):
+                spY.append(pointY)
+                spX.append(pointX)
+                pointY = pointY + grid_size
+            pointX = pointX + grid_size
+            pointY = 0
+
+        grid_num = map_length_x * map_length_y
+
+        i = 1
+        for i in range(grid_num):
+                    grid_order.append(i + 1)
+
+        size = len(spX) - 1
+        point = 0
+        rotc = 1
+        rotc = int(rotc)     
+        global gn   
+
+        print(spX, "\n")
+        print(spY, "\n")  
+        print(grid_order, "\n")  
+
+        with MotionCommander(scf, default_height = 0.3) as mc:    
             with Multiranger(scf) as mr:
 
                 time.sleep(2)
@@ -727,41 +769,7 @@ if __name__ == '__main__':
                 logconf4.start()
                 logconf5.start()
                 logconf6.start()    
-
-                i = 0
-                j = 0
-                
-                pointX = 0
-                pointY = grid_size
-                grid_num_y = map_length_y/grid_size
-                grid_num_x = map_length_x/grid_size
-                spY = [0] 
-                spX = [0] 
-
-                for i in range(grid_num_x):
-                    
-                    for j in range(grid_num_y):
-                        spY.append(pointY)
-                        spX.append(pointX)
-                        pointY = pointY + grid_size
-                    pointX = pointX + grid_size
-                    pointY = 0
-
-                grid_num = map_length_x * map_length_y
-
-                i = 1
-                for i in range(grid_num):
-                    grid_order.append(i + 1)
-
-                size = len(spX) - 1
-                point = 0
-                rotc = 1     
-                global gn   
-
-                print(spX, "\n")
-                print(spY, "\n")    
-
-                time.sleep(20)                         
+                        
 
                 while point != size:
                     
@@ -769,7 +777,7 @@ if __name__ == '__main__':
                     yp = spY[point]
                     xn = spX[point+1]
                     yn = spY[point+1] 
-                    gn = grid_num[point + 1]
+                    gn = grid_order[point + 1]
 
                     rotc = sweep(mc, mr, fl, rotc, grid_size, partition)
 
