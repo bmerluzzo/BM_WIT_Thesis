@@ -36,6 +36,7 @@ map_length_x = 1
 grid_num = 0
 grid_order = [1]
 fl = 0.1
+velocity = 0.1
 
 deck_attached_event = Event()
 
@@ -453,7 +454,7 @@ def obs_avoid(mc, mr, fl):
 
 
 def move_forward(mc, mr, fl):
-    mc.forward(fl)
+    mc.forward(fl, velocity)
 
     if is_close(mr.front):
         mc.stop()
@@ -463,7 +464,7 @@ def move_forward(mc, mr, fl):
         return 0
 
 def move_front_ob(mc, mr, fl):
-    mc.forward(fl)
+    mc.forward(fl, velocity)
     if is_close(mr.front):
         mc.stop()
         return 1
@@ -471,7 +472,7 @@ def move_front_ob(mc, mr, fl):
         return
     
 def move_right_ob(mc, mr, fl):
-    mc.right(fl)
+    mc.right(fl, velocity)
     if is_close(mr.right):
         mc.stop()
         return 1
@@ -480,7 +481,7 @@ def move_right_ob(mc, mr, fl):
     
     
 def move_left_ob(mc, mr, fl):
-    mc.left(fl)
+    mc.left(fl, velocity)
     if is_close(mr.left):
         mc.stop()
         return 1
@@ -488,7 +489,7 @@ def move_left_ob(mc, mr, fl):
         return
     
 def move_back_ob(mc, mr, fl):
-    mc.back(fl)
+    mc.back(fl, velocity)
     return
 
 def rotate(mc, rotc, rotn):
@@ -502,12 +503,18 @@ def rotate(mc, rotc, rotn):
     if rotc == rotn:
         return rotc
     
+    elif rotc == 4 and rotn == 1:
+        mc.turn_right(deg, d_rate)
+
     elif rotc < rotn:
         rot = rotn - rotc
-        for k in range(rot):
-            mc.turn_right(deg, d_rate)
-        k = 0
-        rotc = rotn
+        if rot < 3:
+            for k in range(rot):
+                mc.turn_right(deg, d_rate)
+            k = 0
+            rotc = rotn
+        elif rot == 3:
+            mc.turn_left(deg, d_rate)
         return rotc
     
     elif rotc > rotn:
@@ -749,7 +756,12 @@ if __name__ == '__main__':
                 size = len(spX) - 1
                 point = 0
                 rotc = 1     
-                global gn                                
+                global gn   
+
+                print(spX, "\n")
+                print(spY, "\n")    
+
+                time.sleep(20)                         
 
                 while point != size:
                     
