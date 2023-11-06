@@ -343,19 +343,19 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
 
         for j in range(ym):
             mc.forward(fl)
-            y = position_estimate[1]
+        y = position_estimate[0] 
         time.sleep(2)
         error = abs(yn - y)
         if error < pos_error:
             print("Error in Y Value\n")
             error_flag = 1
-            mc.forward(pos_error)
-            y = position_estimate[1]
+            mc.forward(pos_error/3)
+            y = position_estimate[0]
             while error_flag == 1:
                 error = abs(yn - y)
-                if error < pos_error:
-                    mc.forward(pos_error)
-                    y = position_estimate[1]
+                if error > pos_error:
+                    mc.forward(pos_error/3)
+                    y = position_estimate[0]
                 else:
                     error_flag = 0
              
@@ -369,19 +369,19 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
 
         for j in range(ym):
             mc.back(fl)
-            y = position_estimate[1]
+        y = position_estimate[1]
         time.sleep(2)
         error = abs(yn - y)
         if error < pos_error:
             print("Error in Y Value\n")
             error_flag = 1
-            mc.back(pos_error)
-            y = position_estimate[1]
+            mc.back(pos_error/3)
+            y = position_estimate[0]
             while error_flag == 1:
                 error = abs(yn - y)
-                if error < pos_error:
-                    mc.back(pos_error)
-                    y = position_estimate[1]
+                if error > pos_error:
+                    mc.back(pos_error/3)
+                    y = position_estimate[0]
                 else:
                     error_flag = 0
         j = 0
@@ -394,19 +394,23 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
                         
         for j in range(xm):
             mc.right(fl)
-            x = position_estimate[0]
+        x = position_estimate[1]
         time.sleep(2)
-        error = abs(xn - x)
-        if error < pos_error:
-            print("Error in X Value\n")
+        error = abs(xn - abs(x))
+        
+        if error > pos_error:
+            
             error_flag = 1
-            mc.right(pos_error)
-            x = position_estimate[0]
+            mc.right(pos_error/3)
+            x = position_estimate[1]
+           
             while error_flag == 1:
-                error = abs(xn - x)
-                if error < pos_error:
-                    mc.right(pos_error)
-                    x = position_estimate[0]
+                error = abs(xn - abs(x))
+                
+                if error > pos_error:
+                    mc.right(pos_error/3)
+                    x = position_estimate[1]
+        
                 else:
                     error_flag = 0
             
@@ -422,17 +426,21 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
             mc.left(fl)
             x = position_estimate[0]
         time.sleep(2)
-        error = abs(xn - x)
-        if error < pos_error:
-            print("Error in X Value\n")
+        error = abs(xn - abs(x))
+        
+        if error > pos_error:
+            
             error_flag = 1
-            mc.left(pos_error)
-            x = position_estimate[0]
+            mc.left(pos_error/3)
+            x = position_estimate[1]
+           
             while error_flag == 1:
-                error = abs(xn - x)
-                if error < pos_error:
-                    mc.left(pos_error)
-                    x = position_estimate[0]
+                error = abs(xn - abs(x))
+                
+                if error > pos_error:
+                    mc.left(pos_error/3)
+                    x = position_estimate[1]
+        
                 else:
                     error_flag = 0
         j = 0
