@@ -19,6 +19,8 @@ URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 x_pos = [0]
 y_pos = [0]
 z_pos = [0]
+position_estimate = [0,0]
+pos_error = 0.05
 temp1 = [0,0,0,0,0,0]
 temp2 = [0,0,0,0,0,0]
 temp3 = [0,0,0,0,0,0]
@@ -327,64 +329,86 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
 
     j = 0
     y = 0
+    x = 0
+    error = 0
     yd, xd = 0, 0
     ym, xm = 0, 0
-    rotn = 0
+   
     if xp == xn and yp < yn:       
                         
-        rotn = 1
         yd = yn - yp
         ym = yd/fl
         ym = int(ym)
 
         for j in range(ym):
             mc.forward(fl)
-        time.sleep(2)
-        y = 0
+            y = position_estimate[1]
+            print(y, "\n")
+        time.sleep(10)
+        error = abs(yn - y)
+        if error < pos_error:
+            if yn > y:
+                mc.forward(error)
+            elif yn < y:
+                mc.back(error)
         j = 0
 
     elif xp == xn and yp > yn:
 
-        rotn = 3
         yd = yp - yn
         ym = yd/fl
         ym = int(ym)
 
         for j in range(ym):
             mc.back(fl)
+            y = position_estimate[1]
         time.sleep(2)
-        y = 0
+        error = abs(yn - y)
+        if error < pos_error:
+            if yn > y:
+                mc.forward(error)
+            elif yn < y:
+                mc.back(error)
         j = 0
 
     elif xp < xn and yp == yn:
 
-        rotn = 2
         xd = xn - xp
         xm = xd/fl
         xm = int(xm)
                         
         for j in range(xm):
             mc.right(fl)
+            x = position_estimate[0]
         time.sleep(2)
-        y = 0
+        error = abs(xn - x)
+        if error < pos_error:
+            if xn > x:
+                mc.right(error)
+            elif xn < x:
+                mc.left(error)
         j = 0
 
     elif xp > xn and yp == yn:
 
-        rotn = 4
         xd = xp - xn
         xm = xd/fl
         xm = int(xm)
 
         for j in range(xm):
             mc.left(fl)
+            x = position_estimate[0]
         time.sleep(2)
-        y = 0
+        error = abs(xn - x)
+        if error < pos_error:
+            if xn > x:
+                mc.right(error)
+            elif xn < x:
+                mc.left(error)
         j = 0
 
     elif xp < xn and yp < yn:
 
-        rotn = 1
         yd = yn - yp
         ym = yd/fl
         ym = int(ym)
@@ -393,8 +417,6 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
             mc.forward(fl)
         time.sleep(2)
         j = 0
-        y = 0
-        rotn = 2
 
         xd = xn - xp
         xm = xd/fl
@@ -403,7 +425,6 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         for j in range(xm):
             mc.right(fl)
         time.sleep(2)
-        y = 0
         j = 0
 
     elif xp > xn and yp > yn:
@@ -415,7 +436,6 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         for j in range(ym):
             mc.back(fl)
         time.sleep(2)
-        y = 0
         j = 0
 
         xd = xp - xn
@@ -425,7 +445,6 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         for j in range(xm):
             mc.left(fl)
         time.sleep(2)
-        y = 0
         j = 0
 
     elif xp > xn and yp < yn:
@@ -437,7 +456,6 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         for j in range(ym):
            mc.forward(fl)
         time.sleep(2)
-        y = 0
         j = 0
 
         xd = xp - xn
@@ -447,7 +465,6 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         for j in range(xm):
             mc.left(fl)
         time.sleep(2)
-        y = 0
         j = 0
 
     elif xp < xn and yp > yn:
@@ -468,7 +485,6 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         for j in range(xm):
             mc.right(fl)
         time.sleep(2)
-        y = 0
         j = 0
 
 
@@ -718,9 +734,11 @@ def log_pos_callback(timestamp, data, logconf):
     global x_pos
     global y_pos
     global z_pos
+    global position_estimate
     global t
-    global height_estimate
-    height_estimate = data['stateEstimate.z']
+
+    position_estimate[0] = data['stateEstimate.x']
+    position_estimate[1] = data['stateEstimate.y']
     x_pos.append(data['stateEstimate.x'])
     y_pos.append(data['stateEstimate.y'])
     z_pos.append(data['stateEstimate.z'])
@@ -739,7 +757,6 @@ def log_temp_callback(timestamp, data, logconf):
         temp1[3] = data['MLX1.To4']
         temp1[4] = data['MLX1.To5']
         temp1[5] = data['MLX1.To6']
-        print(temp1[0], ' | ',temp1[1], ' | ',temp1[2], ' | ',temp1[3], ' | ',temp1[4], ' | ',temp1[5], '\n')
         if (temp1[0] or temp1[1] or temp1[2] or temp1[3] or temp1[4] or temp1[5]) > 24 and hold == 0:
             hold = 1
             temp_det = temp_det + 1
@@ -752,7 +769,6 @@ def log_temp_callback(timestamp, data, logconf):
         temp2[3] = data['MLX2.To4']
         temp2[4] = data['MLX2.To5']
         temp2[5] = data['MLX2.To6']
-        print(temp2[0], ' | ',temp2[1], ' | ',temp2[2], ' | ',temp2[3], ' | ',temp2[4], ' | ',temp2[5], '\n')
         if (temp2[0] or temp2[1] or temp2[2] or temp2[3] or temp2[4] or temp2[5]) > 24 and hold == 0:
             hold = 1
             temp_det = temp_det + 1
@@ -766,7 +782,6 @@ def log_temp_callback(timestamp, data, logconf):
         temp3[3] = data['MLX3.To4']
         temp3[4] = data['MLX3.To5']
         temp3[5] = data['MLX3.To6']
-        print(temp3[0], ' | ',temp3[1], ' | ',temp3[2], ' | ',temp3[3], ' | ',temp3[4], ' | ',temp3[5], '\n')
         if (temp3[0] or temp3[1] or temp3[2] or temp3[3] or temp3[4] or temp3[5]) > 24 and hold == 0:
             hold = 1
             temp_det = temp_det + 1
@@ -779,7 +794,6 @@ def log_temp_callback(timestamp, data, logconf):
         temp4[3] = data['MLX4.To4']
         temp4[4] = data['MLX4.To5']
         temp4[5] = data['MLX4.To6']
-        print(temp4[0], ' | ',temp4[1], ' | ',temp4[2], ' | ',temp4[3], ' | ',temp4[4], ' | ',temp4[5], '\n')
         if (temp4[0] or temp4[1] or temp4[2] or temp4[3] or temp4[4] or temp4[5]) > 24 and hold == 0:
             hold = 1
             temp_det = temp_det + 1
@@ -792,7 +806,6 @@ def log_temp_callback(timestamp, data, logconf):
         temp5[3] = data['MLX5.To4']
         temp5[4] = data['MLX5.To5']
         temp5[5] = data['MLX5.To6']
-        print(temp5[0], ' | ',temp5[1], ' | ',temp5[2], ' | ',temp5[3], ' | ',temp5[4], ' | ',temp5[5], '\n')
         if (temp5[0] or temp5[1] or temp5[2] or temp5[3] or temp5[4] or temp5[5]) > 24 and hold == 0:
             hold = 1
             temp_det = temp_det + 1
@@ -805,7 +818,6 @@ def log_temp_callback(timestamp, data, logconf):
         temp6[3] = data['MLX6.To4']
         temp6[4] = data['MLX6.To5']
         temp6[5] = data['MLX6.To6']
-        print(temp5[0], ' | ',temp5[1], ' | ',temp5[2], ' | ',temp5[3], ' | ',temp5[4], ' | ',temp5[5], '\n')
         if (temp6[0] or temp6[1] or temp6[2] or temp6[3] or temp6[4] or temp6[5]) > 24 and hold == 0:
             hold = 1
             temp_det = temp_det + 1
@@ -939,10 +951,6 @@ if __name__ == '__main__':
         rotc = 1
         rotc = int(rotc)     
         global gn   
-
-        print(spX, "\n")
-        print(spY, "\n")  
-        print(grid_order, "\n")  
         
         global temp_det
         temp_det = 0
