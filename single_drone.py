@@ -21,6 +21,7 @@ y_pos = [0]
 z_pos = [0]
 position_estimate = [0,0]
 pos_error = 0.05
+error_flag = 0
 temp1 = [0,0,0,0,0,0]
 temp2 = [0,0,0,0,0,0]
 temp3 = [0,0,0,0,0,0]
@@ -31,7 +32,7 @@ t = 0
 
 grid_size = 1 
 partition = 2
-map_length_y = 1
+map_length_y = 2
 map_length_x = 1
 grid_num = 0
 grid_order = [1]
@@ -45,7 +46,7 @@ def temp_flag():
     print("Hotspot Detected in Grid ", gn)
     return 
 
-def sweep(mc, fl, mr, rotc, grid_size, partition):
+def sweep(mc, mr, fl, rotc, grid_size, partition):
     swX = [0]
     swY = [0]
     swY.append(0)
@@ -343,14 +344,21 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         for j in range(ym):
             mc.forward(fl)
             y = position_estimate[1]
-            print(y, "\n")
-        time.sleep(10)
+        time.sleep(2)
         error = abs(yn - y)
         if error < pos_error:
-            if yn > y:
-                mc.forward(error)
-            elif yn < y:
-                mc.back(error)
+            print("Error in Y Value\n")
+            error_flag = 1
+            mc.forward(pos_error)
+            y = position_estimate[1]
+            while error_flag == 1:
+                error = abs(yn - y)
+                if error < pos_error:
+                    mc.forward(pos_error)
+                    y = position_estimate[1]
+                else:
+                    error_flag = 0
+             
         j = 0
 
     elif xp == xn and yp > yn:
@@ -365,10 +373,17 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         time.sleep(2)
         error = abs(yn - y)
         if error < pos_error:
-            if yn > y:
-                mc.forward(error)
-            elif yn < y:
-                mc.back(error)
+            print("Error in Y Value\n")
+            error_flag = 1
+            mc.back(pos_error)
+            y = position_estimate[1]
+            while error_flag == 1:
+                error = abs(yn - y)
+                if error < pos_error:
+                    mc.back(pos_error)
+                    y = position_estimate[1]
+                else:
+                    error_flag = 0
         j = 0
 
     elif xp < xn and yp == yn:
@@ -383,10 +398,18 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         time.sleep(2)
         error = abs(xn - x)
         if error < pos_error:
-            if xn > x:
-                mc.right(error)
-            elif xn < x:
-                mc.left(error)
+            print("Error in X Value\n")
+            error_flag = 1
+            mc.right(pos_error)
+            x = position_estimate[0]
+            while error_flag == 1:
+                error = abs(xn - x)
+                if error < pos_error:
+                    mc.right(pos_error)
+                    x = position_estimate[0]
+                else:
+                    error_flag = 0
+            
         j = 0
 
     elif xp > xn and yp == yn:
@@ -401,10 +424,17 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         time.sleep(2)
         error = abs(xn - x)
         if error < pos_error:
-            if xn > x:
-                mc.right(error)
-            elif xn < x:
-                mc.left(error)
+            print("Error in X Value\n")
+            error_flag = 1
+            mc.left(pos_error)
+            x = position_estimate[0]
+            while error_flag == 1:
+                error = abs(xn - x)
+                if error < pos_error:
+                    mc.left(pos_error)
+                    x = position_estimate[0]
+                else:
+                    error_flag = 0
         j = 0
 
     elif xp < xn and yp < yn:
