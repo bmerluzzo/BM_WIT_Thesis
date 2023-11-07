@@ -21,7 +21,7 @@ x_pos = [0]
 y_pos = [0]
 z_pos = [0]
 position_estimate = [0,0]
-pos_error = 0.05
+pos_error = 0.075
 error_flag = 0
 temp1 = [0,0,0,0,0,0]
 temp2 = [0,0,0,0,0,0]
@@ -30,6 +30,8 @@ temp4 = [0,0,0,0,0,0]
 temp5 = [0,0,0,0,0,0]
 temp6 = [0,0,0,0,0,0]
 t = 0
+temp_det = 0
+hold = 0
 
 #Setpoint variables (for gridded map)
 grid_size = 1 
@@ -47,7 +49,9 @@ deck_attached_event = Event()
 
 def temp_flag():
     print("Hotspot Detected in Grid ", gn)
-    return 
+    global temp_det
+    temp_det = 1
+    
 
 def sweep(mc, mr, fl, rotc, grid_size, partition):
     swX = [0]
@@ -82,6 +86,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
     time.sleep(2)
 
     if temp_det == 0:
+        print("Level 2\n")
         while point != size:
                     
                         xp = swX[point]       
@@ -93,11 +98,13 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
 
                         if temp_det == 1:
                             pathing_level2(mc, fl, 0, xn, 0, yn)
-                            mc.down(mc.default_height/2)
+                            mc.down(0.1)
                             return
                         point = point + 1
 
     elif temp_det == 1:
+        print("Level 1\n")
+        print(swX, " | ", swY)
         while point != size:
                     
                         xp = swX[point]       
@@ -105,7 +112,9 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
                         xn = swX[point+1]
                         yn = swY[point+1]
 
-                        pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc)
+                        print(xp, ",", yp, " | ", xn, ",", yn)
+
+                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc)
 
                         point = point + 1
 
@@ -327,6 +336,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
                         time.sleep(2)
                         y = 0
                         j = 0
+                return rotc
           
 
 def pathing_level2(mc, fl, xn, xp, yn, yp):
@@ -338,6 +348,9 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
     yd, xd = 0, 0
     ym, xm = 0, 0
    
+    yh = gn
+    yl = gn - 1
+
     if xp == xn and yp < yn:       
                         
         yd = yn - yp
@@ -347,15 +360,17 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         for j in range(ym):
             mc.forward(fl)
         y = position_estimate[0] 
+        
         time.sleep(2)
-        error = abs(yn - y)
-        if error < pos_error:
+        error = abs(yh - y)
+        
+        if error > pos_error:
             print("Error in Y Value\n")
             error_flag = 1
             mc.forward(pos_error/3)
             y = position_estimate[0]
             while error_flag == 1:
-                error = abs(yn - y)
+                error = abs(yh - y)
                 if error > pos_error:
                     mc.forward(pos_error/3)
                     y = position_estimate[0]
@@ -374,14 +389,14 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
             mc.back(fl)
         y = position_estimate[0]
         time.sleep(2)
-        error = abs(yn - y)
+        error = abs(yl - y)
         if error < pos_error:
             print("Error in Y Value\n")
             error_flag = 1
             mc.back(pos_error/3)
             y = position_estimate[0]
             while error_flag == 1:
-                error = abs(yn - y)
+                error = abs(yl - y)
                 if error > pos_error:
                     mc.back(pos_error/3)
                     y = position_estimate[0]
@@ -788,8 +803,9 @@ def log_pos_callback(timestamp, data, logconf):
 
 def log_temp_callback(timestamp, data, logconf):
     temp_file.write("{}\n".format(data))
-    hold = 0
     global temp
+    global hold
+    hold = 0
 
     if logconf.name == 'Temp1':
         temp1[0] = data['MLX1.To1']
@@ -800,7 +816,6 @@ def log_temp_callback(timestamp, data, logconf):
         temp1[5] = data['MLX1.To6']
         if (temp1[0] or temp1[1] or temp1[2] or temp1[3] or temp1[4] or temp1[5]) > 24 and hold == 0:
             hold = 1
-            temp_det = temp_det + 1
             temp_flag()
 
     elif logconf.name == 'Temp2':
@@ -812,7 +827,6 @@ def log_temp_callback(timestamp, data, logconf):
         temp2[5] = data['MLX2.To6']
         if (temp2[0] or temp2[1] or temp2[2] or temp2[3] or temp2[4] or temp2[5]) > 24 and hold == 0:
             hold = 1
-            temp_det = temp_det + 1
             temp_flag()
 
     
@@ -825,7 +839,6 @@ def log_temp_callback(timestamp, data, logconf):
         temp3[5] = data['MLX3.To6']
         if (temp3[0] or temp3[1] or temp3[2] or temp3[3] or temp3[4] or temp3[5]) > 24 and hold == 0:
             hold = 1
-            temp_det = temp_det + 1
             temp_flag()
 
     elif logconf.name == 'Temp4':
@@ -837,7 +850,6 @@ def log_temp_callback(timestamp, data, logconf):
         temp4[5] = data['MLX4.To6']
         if (temp4[0] or temp4[1] or temp4[2] or temp4[3] or temp4[4] or temp4[5]) > 24 and hold == 0:
             hold = 1
-            temp_det = temp_det + 1
             temp_flag()
 
     elif logconf.name == 'Temp5':
@@ -849,7 +861,6 @@ def log_temp_callback(timestamp, data, logconf):
         temp5[5] = data['MLX5.To6']
         if (temp5[0] or temp5[1] or temp5[2] or temp5[3] or temp5[4] or temp5[5]) > 24 and hold == 0:
             hold = 1
-            temp_det = temp_det + 1
             temp_flag()
 
     elif logconf.name == 'Temp6':
@@ -861,7 +872,6 @@ def log_temp_callback(timestamp, data, logconf):
         temp6[5] = data['MLX6.To6']
         if (temp6[0] or temp6[1] or temp6[2] or temp6[3] or temp6[4] or temp6[5]) > 24 and hold == 0:
             hold = 1
-            temp_det = temp_det + 1
             temp_flag ()
 
 
@@ -992,9 +1002,6 @@ if __name__ == '__main__':
         rotc = 1
         rotc = int(rotc)     
         global gn   
-        
-        global temp_det
-        temp_det = 0
 
         with MotionCommander(scf, default_height = 0.3) as mc:    
             with Multiranger(scf) as mr:
@@ -1021,13 +1028,14 @@ if __name__ == '__main__':
 
                     if temp_det == 1:
                         sweep(mc, mr, fl, rotc, grid_size, partition)
-                        mc.up(mc.height*2)
+                        mc.up(0.1)
                         mc.turn_right(90, 30)
 
                     pathing_level2(mc, fl, xn, xp, yn, yp)
                     
                     if temp_det == 1:
                         temp_det = 0
+                        hold = 0
 
                     point = point + 1
 
