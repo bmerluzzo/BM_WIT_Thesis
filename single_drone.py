@@ -16,6 +16,7 @@ import matplotlib as mpl
 
 URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 
+#Logging variables
 x_pos = [0]
 y_pos = [0]
 z_pos = [0]
@@ -30,6 +31,7 @@ temp5 = [0,0,0,0,0,0]
 temp6 = [0,0,0,0,0,0]
 t = 0
 
+#Setpoint variables (for gridded map)
 grid_size = 1 
 partition = 2
 map_length_y = 2
@@ -37,6 +39,7 @@ map_length_x = 1
 grid_num = 0
 grid_order = [1]
 
+#Flight varibles - velocity and distance increment 
 fl = 0.1
 velocity = 0.2
 
@@ -369,7 +372,7 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
 
         for j in range(ym):
             mc.back(fl)
-        y = position_estimate[1]
+        y = position_estimate[0]
         time.sleep(2)
         error = abs(yn - y)
         if error < pos_error:
@@ -399,7 +402,7 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         error = abs(xn - abs(x))
         
         if error > pos_error:
-            
+            print("Error in X Value\n")
             error_flag = 1
             mc.right(pos_error/3)
             x = position_estimate[1]
@@ -424,12 +427,12 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
 
         for j in range(xm):
             mc.left(fl)
-            x = position_estimate[0]
+            x = position_estimate[1]
         time.sleep(2)
         error = abs(xn - abs(x))
         
         if error > pos_error:
-            
+            print("Error in X Value\n")
             error_flag = 1
             mc.left(pos_error/3)
             x = position_estimate[1]
