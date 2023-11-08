@@ -20,6 +20,7 @@ URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 x_pos = [0]
 y_pos = [0]
 z_pos = [0]
+yaw = 0
 position_estimate = [0,0]
 pos_error = 0.075
 error_flag = 0
@@ -786,15 +787,17 @@ def is_close(range):
         return range < MIN_DISTANCE
 
 def log_pos_callback(timestamp, data, logconf):
-    pos_file.write("Y:{},X:{},Z:{}\n".format(data['stateEstimate.x'], data['stateEstimate.y'], data['stateEstimate.z']))
+    pos_file.write("Yaw:{},Y:{},X:{},Z:{}\n".format(data['stateEstimate.yaw'], data['stateEstimate.x'], data['stateEstimate.y'], data['stateEstimate.z']))
     global x_pos
     global y_pos
     global z_pos
+    global yaw
     global position_estimate
     global t
 
     position_estimate[0] = data['stateEstimate.x']
     position_estimate[1] = data['stateEstimate.y']
+    yaw = data['stateEstimate.yaw']
     x_pos.append(data['stateEstimate.x'])
     y_pos.append(data['stateEstimate.y'])
     z_pos.append(data['stateEstimate.z'])
@@ -906,6 +909,7 @@ if __name__ == '__main__':
         logconf.add_variable('stateEstimate.x', 'float')
         logconf.add_variable('stateEstimate.y', 'float')
         logconf.add_variable('stateEstimate.z', 'float')
+        logconf.add_variable('stateEstimate.yaw', 'float')
         scf.cf.log.add_config(logconf)
         logconf.data_received_cb.add_callback(log_pos_callback)
 
