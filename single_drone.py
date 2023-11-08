@@ -33,6 +33,7 @@ temp6 = [0,0,0,0,0,0]
 t = 0
 temp_det = 0
 hold = 0
+thres = 30
 
 #Setpoint variables (for gridded map)
 grid_size = 1 
@@ -86,6 +87,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
 
     time.sleep(2)
 
+
     if temp_det == 0:
         print("Level 2\n")
         while point != size:
@@ -95,10 +97,10 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
                         xn = swX[point+1]
                         yn = swY[point+1]
 
-                        pathing_level2(mc, fl, xn, xp, yn, yp)
+                        pathing_level2(mc, fl, xn, xp, yn, yp, 1)
 
                         if temp_det == 1:
-                            pathing_level2(mc, fl, 0, xn, 0, yn)
+                            pathing_level2(mc, fl, 0, xn, 0, yn, 0)
                             mc.down(0.1)
                             return
                         point = point + 1
@@ -340,7 +342,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
                 return rotc
           
 
-def pathing_level2(mc, fl, xn, xp, yn, yp):
+def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
 
     j = 0
     y = 0
@@ -349,8 +351,15 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
     yd, xd = 0, 0
     ym, xm = 0, 0
    
-    yh = gn
-    yl = gn - 1
+    if mode == 1:
+        yl = gn - 1
+        ye = yn + yl
+        xe = -abs(xn)
+        if xn == 0:
+            xe = 0
+    elif mode == 0:
+        ye = yn
+        xe = xn
 
     if xp == xn and yp < yn:       
                         
@@ -476,62 +485,46 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         time.sleep(2)
         j = 0
 
-    y = position_estimate[0] 
+    y = position_estimate[0]
         
-    time.sleep(2)
-    error = abs(yh - y)
+    time.sleep(1)
+    error = abs(ye - y)
         
     if error > pos_error:
         print("Error in Y Value\n")
         error_flag = 1
-        if y < yh:
-            mc.forward(pos_error/3)
-            y = position_estimate[0]
-            while error_flag == 1:
-                error = abs(yh - y)
-                if error > pos_error:
-                    mc.forward(pos_error/3)
+        while error_flag == 1:
+            if error > pos_error:
+                if y < ye:
+                    mc.forward(pos_error/4)
                     y = position_estimate[0]
-                else:
-                    error_flag = 0
-        elif y > yh:
-            mc.back(pos_error/3)
-            y = position_estimate[0]
-            while error_flag == 1:
-                error = abs(yl - y)
-                if error > pos_error:
-                    mc.back(pos_error/3)
+                elif y > ye:
+                    mc.back(pos_error/4)
                     y = position_estimate[0]
-                else:
-                    error_flag = 0
+                error = abs(ye - y)
+            else:
+                error_flag = 0
 
     x = position_estimate[1]
-    time.sleep(2)
-    error = abs(xn - abs(x))
+    print(x, "\n")
+    time.sleep(1)
+    error = abs(xe - x)
+    print(error, "\n")
         
     if error > pos_error:
         print("Error in X Value\n")
         error_flag = 1
-        if x < xn:
-            mc.right(pos_error/3)
-            x = position_estimate[1]
-            while error_flag == 1:
-                error = abs(xn - abs(x))
-                if error > pos_error:
-                    mc.right(pos_error/3)
+        while error_flag == 1:
+            if error > pos_error:
+                if x > xe:
+                    mc.right(pos_error/4)
                     x = position_estimate[1]
-                else:
-                    error_flag = 0
-        elif x > xn:
-            mc.left(pos_error/3)
-            x = position_estimate[1]
-            while error_flag == 1:
-                error = abs(xn - abs(x))
-                if error > pos_error:
-                    mc.left(pos_error/3)
+                elif x < xe:
+                    mc.left(pos_error/4)
                     x = position_estimate[1]
-                else:
-                    error_flag = 0
+                error = abs(xe - x)
+            else:
+                error_flag = 0
 
 
 def my_plotter(ax, data1, data2, data3):
@@ -794,7 +787,8 @@ def log_pos_callback(timestamp, data, logconf):
 
 def log_temp_callback(timestamp, data, logconf):
     temp_file.write("{}\n".format(data))
-    global temp
+    global tem
+    global thres
     global hold
     hold = 0
 
@@ -805,7 +799,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp1[3] = data['MLX1.To4']
         temp1[4] = data['MLX1.To5']
         temp1[5] = data['MLX1.To6']
-        if (temp1[0] or temp1[1] or temp1[2] or temp1[3] or temp1[4] or temp1[5]) > 24 and hold == 0:
+        if (temp1[0] or temp1[1] or temp1[2] or temp1[3] or temp1[4] or temp1[5]) > thres and hold == 0:
             hold = 1
             temp_flag()
 
@@ -816,7 +810,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp2[3] = data['MLX2.To4']
         temp2[4] = data['MLX2.To5']
         temp2[5] = data['MLX2.To6']
-        if (temp2[0] or temp2[1] or temp2[2] or temp2[3] or temp2[4] or temp2[5]) > 24 and hold == 0:
+        if (temp2[0] or temp2[1] or temp2[2] or temp2[3] or temp2[4] or temp2[5]) > thres and hold == 0:
             hold = 1
             temp_flag()
 
@@ -828,7 +822,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp3[3] = data['MLX3.To4']
         temp3[4] = data['MLX3.To5']
         temp3[5] = data['MLX3.To6']
-        if (temp3[0] or temp3[1] or temp3[2] or temp3[3] or temp3[4] or temp3[5]) > 24 and hold == 0:
+        if (temp3[0] or temp3[1] or temp3[2] or temp3[3] or temp3[4] or temp3[5]) > thres and hold == 0:
             hold = 1
             temp_flag()
 
@@ -839,7 +833,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp4[3] = data['MLX4.To4']
         temp4[4] = data['MLX4.To5']
         temp4[5] = data['MLX4.To6']
-        if (temp4[0] or temp4[1] or temp4[2] or temp4[3] or temp4[4] or temp4[5]) > 24 and hold == 0:
+        if (temp4[0] or temp4[1] or temp4[2] or temp4[3] or temp4[4] or temp4[5]) > thres and hold == 0:
             hold = 1
             temp_flag()
 
@@ -850,7 +844,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp5[3] = data['MLX5.To4']
         temp5[4] = data['MLX5.To5']
         temp5[5] = data['MLX5.To6']
-        if (temp5[0] or temp5[1] or temp5[2] or temp5[3] or temp5[4] or temp5[5]) > 24 and hold == 0:
+        if (temp5[0] or temp5[1] or temp5[2] or temp5[3] or temp5[4] or temp5[5]) > thres and hold == 0:
             hold = 1
             temp_flag()
 
@@ -861,7 +855,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp6[3] = data['MLX6.To4']
         temp6[4] = data['MLX6.To5']
         temp6[5] = data['MLX6.To6']
-        if (temp6[0] or temp6[1] or temp6[2] or temp6[3] or temp6[4] or temp6[5]) > 24 and hold == 0:
+        if (temp6[0] or temp6[1] or temp6[2] or temp6[3] or temp6[4] or temp6[5]) > thres and hold == 0:
             hold = 1
             temp_flag ()
 
@@ -1023,7 +1017,7 @@ if __name__ == '__main__':
                         mc.up(0.1)
                         mc.turn_right(90, 30)
 
-                    pathing_level2(mc, fl, xn, xp, yn, yp)
+                    pathing_level2(mc, fl, xn, xp, yn, yp, 0)
                     
                     if temp_det == 1:
                         temp_det = 0
@@ -1040,7 +1034,7 @@ if __name__ == '__main__':
                 logconf6.stop()
                 pos_file.close()
                 temp_file.close()
-                print("Temperature Flag: ", temp_flag, "\n")
+                
                 my_plotter(ax, x_pos, y_pos, z_pos)
                 ax.set_title('Drone Trajectory')
                 plt.show()
