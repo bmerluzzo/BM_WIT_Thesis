@@ -783,7 +783,7 @@ def log_pos_callback(timestamp, data, logconf):
 
 def log_temp_callback(timestamp, data, logconf):
     temp_file.write("{}\n".format(data))
-    global tem
+    global temp
     global thres
     global hold
 
