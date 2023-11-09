@@ -97,11 +97,12 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
                         xn = swX[point+1]
                         yn = swY[point+1]
 
-                        #pathing_level2(mc, fl, xn, xp, yn, yp, 1)
-                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc)
+                        pathing_level2(mc, fl, xn, xp, yn, yp, 1)
 
                         if temp_det == 1:
+                            time.sleep(2)
                             pathing_level2(mc, fl, 0, xn, 0, yn, 0)
+                            time.sleep(2)
                             mc.down(0.1)
                             return
                         point = point + 1
@@ -502,10 +503,8 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
                 error_flag = 0
 
     x = position_estimate[1]
-    print(x, "\n")
     time.sleep(1)
     error = abs(xe - x)
-    print(error, "\n")
         
     if error > pos_error:
         print("Error in X Value\n")
@@ -984,7 +983,7 @@ if __name__ == '__main__':
         rotc = int(rotc)     
         global gn   
 
-        with MotionCommander(scf, default_height = 0.3) as mc:    
+        with MotionCommander(scf, default_height = 0.4) as mc:    
             with Multiranger(scf) as mr:
 
                 time.sleep(2)
@@ -1009,6 +1008,7 @@ if __name__ == '__main__':
 
                     if temp_det == 1:
                         sweep(mc, mr, fl, rotc, grid_size, partition)
+                        time.sleep(2)
                         mc.up(0.1)
                         mc.turn_right(90, 30)
 
