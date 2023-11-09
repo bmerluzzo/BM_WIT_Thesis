@@ -786,7 +786,6 @@ def log_temp_callback(timestamp, data, logconf):
     global tem
     global thres
     global hold
-    hold = 0
 
     if logconf.name == 'Temp1':
         temp1[0] = data['MLX1.To1']
