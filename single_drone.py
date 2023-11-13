@@ -119,17 +119,29 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
 
                         print(xp, ",", yp, " | ", xn, ",", yn)
 
-                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc)
+                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, 1)
 
                         point = point + 1
 
     return
 
-def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
+def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode):
                 
-
+    j = 0
+    y = 0
+    x = 0
     yd, xd = 0, 0
     ym, xm = 0, 0
+
+    if mode == 1:
+        yl = gn - 1
+        ye = yn + yl
+        xe = -abs(xn)
+        if xn == 0:
+            xe = 0
+    elif mode == 0:
+        ye = yn
+        xe = xn
 
     if xp == xn and yp < yn:       
                         
@@ -336,6 +348,167 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         time.sleep(2)
         y = 0
         j = 0
+
+    if rotc == 1:
+        y = position_estimate[0]
+        
+        time.sleep(1)
+        error = abs(ye - y)
+        
+        if error > pos_error:
+            print("Error in Y Value\n")
+            error_flag = 1
+            while error_flag == 1:
+                if error > pos_error:
+                    if y < ye:
+                        mc.forward(pos_error/4)
+                        y = position_estimate[0]
+                    elif y > ye:
+                        mc.back(pos_error/4)
+                        y = position_estimate[0]
+                    error = abs(ye - y)
+                else:
+                    error_flag = 0
+
+        x = position_estimate[1]
+        time.sleep(1)
+        error = abs(xe - x)
+        
+        if error > pos_error:
+            print("Error in X Value\n")
+            error_flag = 1
+            while error_flag == 1:
+                if error > pos_error:
+                    if x > xe:
+                        mc.right(pos_error/4)
+                        x = position_estimate[1]
+                    elif x < xe:
+                        mc.left(pos_error/4)
+                        x = position_estimate[1]
+                    error = abs(xe - x)
+                else:
+                    error_flag = 0
+
+    elif rotc == 2:
+        y = position_estimate[0]
+        
+        time.sleep(1)
+        error = abs(ye - y)
+        
+        if error > pos_error:
+            print("Error in Y Value\n")
+            error_flag = 1
+            while error_flag == 1:
+                if error > pos_error:
+                    if y < ye:
+                        mc.left(pos_error/4)
+                        y = position_estimate[0]
+                    elif y > ye:
+                        mc.right(pos_error/4)
+                        y = position_estimate[0]
+                    error = abs(ye - y)
+                else:
+                    error_flag = 0
+
+        x = position_estimate[1]
+        time.sleep(1)
+        error = abs(xe - x)
+        
+        if error > pos_error:
+            print("Error in X Value\n")
+            error_flag = 1
+            while error_flag == 1:
+                if error > pos_error:
+                    if x > xe:
+                        mc.forward(pos_error/4)
+                        x = position_estimate[1]
+                    elif x < xe:
+                        mc.back(pos_error/4)
+                        x = position_estimate[1]
+                    error = abs(xe - x)
+                else:
+                    error_flag = 0
+    
+    elif rotc == 3:
+        y = position_estimate[0]
+        
+        time.sleep(1)
+        error = abs(ye - y)
+        
+        if error > pos_error:
+            print("Error in Y Value\n")
+            error_flag = 1
+            while error_flag == 1:
+                if error > pos_error:
+                    if y < ye:
+                        mc.back(pos_error/4)
+                        y = position_estimate[0]
+                    elif y > ye:
+                        mc.forward(pos_error/4)
+                        y = position_estimate[0]
+                    error = abs(ye - y)
+                else:
+                    error_flag = 0
+
+        x = position_estimate[1]
+        time.sleep(1)
+        error = abs(xe - x)
+        
+        if error > pos_error:
+            print("Error in X Value\n")
+            error_flag = 1
+            while error_flag == 1:
+                if error > pos_error:
+                    if x > xe:
+                        mc.left(pos_error/4)
+                        x = position_estimate[1]
+                    elif x < xe:
+                        mc.right(pos_error/4)
+                        x = position_estimate[1]
+                    error = abs(xe - x)
+                else:
+                    error_flag = 0
+
+    elif rotc == 4:
+        y = position_estimate[0]
+        
+        time.sleep(1)
+        error = abs(ye - y)
+        
+        if error > pos_error:
+            print("Error in Y Value\n")
+            error_flag = 1
+            while error_flag == 1:
+                if error > pos_error:
+                    if y < ye:
+                        mc.right(pos_error/4)
+                        y = position_estimate[0]
+                    elif y > ye:
+                        mc.left(pos_error/4)
+                        y = position_estimate[0]
+                    error = abs(ye - y)
+                else:
+                    error_flag = 0
+
+        x = position_estimate[1]
+        time.sleep(1)
+        error = abs(xe - x)
+        
+        if error > pos_error:
+            print("Error in X Value\n")
+            error_flag = 1
+            while error_flag == 1:
+                if error > pos_error:
+                    if x > xe:
+                        mc.back(pos_error/4)
+                        x = position_estimate[1]
+                    elif x < xe:
+                        mc.forward(pos_error/4)
+                        x = position_estimate[1]
+                    error = abs(xe - x)
+                else:
+                    error_flag = 0
+    
     return rotc
           
 
