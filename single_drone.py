@@ -34,6 +34,16 @@ t = 0
 temp_det = 0
 hold = 0
 thres = 30
+temp_map = [0]
+pos_map_x = [0]
+pos_map_y = [0]
+
+rx = [0]
+ry = [0]
+ox = [0]
+oy = [0]
+bx = [0]
+by = [0]
 
 #Setpoint variables (for gridded map)
 grid_size = 1 
@@ -48,6 +58,53 @@ fl = 0.1
 velocity = 0.2
 
 deck_attached_event = Event()
+
+def color_coding(x, y, temp):
+    global rx
+    global ry
+
+    global ox
+    global oy
+
+    global bx
+    global by
+
+    if temp < 25:
+        bx.append[x]
+        by.append[y]
+
+    elif temp >=25 and temp < 30:
+        ox.append(x)
+        oy.append(y)
+
+    elif temp >= 30:
+        rx.append(x)
+        ry.append(y)
+
+    return
+
+def temp_mapping():
+    
+    global temp_map
+    global pos_map_x
+    global pos_map_y
+    
+    pos_map_x.append(position_estimate[1])
+    pos_map_y.append(position_estimate[0])
+
+    temp_map.append(temp3[2])
+    temp_map.append(temp3[1])
+    temp_map.append(temp3[0])
+    temp_map.append(temp3[3])
+    temp_map.append(temp3[4])
+    temp_map.append(temp3[5])
+
+    temp_map.append(temp4[2])
+    temp_map.append(temp4[1])
+    temp_map.append(temp4[0])
+    temp_map.append(temp4[3])
+    temp_map.append(temp4[4])
+    temp_map.append(temp4[5])
 
 def error_correction_level1(mc, xe, ye, rotc):
     if rotc == 1:
@@ -320,6 +377,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode):
 
         for j in range(ym):
             y = move_forward(mc, mr, fl)
+            temp_mapping()
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -339,6 +397,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode):
 
         for j in range(ym):
             y = move_forward(mc, mr, fl)
+            temp_mapping()
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -705,9 +764,98 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
                 error_flag = 0
 
 
-def my_plotter(ax, data1, data2, data3):
-    out = ax.plot3D(data1, data2, data3, 'blue')
-    return out
+def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
+
+    ax.plot3D(x_pos, y_pos, z_pos, 'blue')
+
+    x = 0
+    y = 0
+    temp = 0
+    x_change = 0.0233/2
+    y_change = 0.0357/2
+    pos_map_x.pop(0)
+    pos_map_y.pop(0)
+    it1 = 1
+    it2 = 1
+    
+    for i in range(2):
+        if i % 2 == 0:
+            for j in range(10):
+                for k in range(2):
+                    if k == 0:
+                        it1 = 1
+                        it2 = 2
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] - x_change*it1
+                                y = pos_map_y[j+i*10] + y_change
+                                temp = temp_map[l+k*6+j*12]
+                                color_coding(x,y,temp)
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] + x_change*it2
+                                y = pos_map_y[j+i*10] + y_change
+                                
+                                color_coding(x,y,temp)
+                                it1 = it1 + 2
+                    elif k == 1:
+                        it1 = 1
+                        it2 = 2
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] - x_change*it1
+                                y = pos_map_y[j+i*10] - y_change
+                                temp = temp_map[l+k*6+j*12]
+                                color_coding(x,y,temp)
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] + x_change*it2
+                                y = pos_map_y[j+i*10] - y_change
+                                
+                                color_coding(x,y,temp)
+                                it1 = it1 + 2
+
+        else:
+            for j in range(10):
+                for k in range(2):
+                    if k == 0:
+                        it1 = 1
+                        it2 = 2
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] + x_change*it1
+                                y = pos_map_y[j+i*10] - y_change
+                                temp = temp_map[l+k*6+j*12]
+                                color_coding(x,y,temp)
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] - x_change*it2
+                                y = pos_map_y[j+i*10] - y_change
+                                
+                                color_coding(x,y,temp)
+                                it1 = it1 + 2
+                    elif k == 1:
+                        it1 = 1
+                        it2 = 2
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] + x_change*it1
+                                y = pos_map_y[j+i*10] + y_change
+                                temp = temp_map[l+k*6+j*12]
+                                color_coding(x,y,temp)
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] - x_change*it2
+                                y = pos_map_y[j+i*10] + y_change
+                                
+                                color_coding(x,y,temp)
+                                it1 = it1 + 2
+
+    ax2.scatter(rx, ry, c = 'tab:red')
+    ax2.scatter(ox, oy, c = 'tab:orange')
+    ax2.scatter(bx, by, c = 'tab:blue')
+
+    return
 
 def obs_avoid(mc, mr, fl):
 
@@ -1051,8 +1199,9 @@ if __name__ == '__main__':
 
     with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
 
-        fig = plt.figure()
-        ax = fig.add_subplot(projection='3d')
+        fig = plt.figure(figsize=plt.figaspect(2.))
+        ax = fig.add_subplot(2, 1, 1, projection='3d')
+        ax2 = fig.add_subplot(2, 1, 2, projection='3d')
 
         pos_file = open('pos_data.txt', "w")
         pos_file.close()
@@ -1213,6 +1362,7 @@ if __name__ == '__main__':
                 pos_file.close()
                 temp_file.close()
                 
-                my_plotter(ax, x_pos, y_pos, z_pos)
+                my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map)
                 ax.set_title('Drone Trajectory')
+                ax2.set_title('Temperature Map')
                 plt.show()
