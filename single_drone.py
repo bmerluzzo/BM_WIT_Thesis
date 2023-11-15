@@ -776,15 +776,30 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
 
     ax.plot3D(x_pos, y_pos, z_pos, 'blue')
 
+    print("Pos X:\n")
+    print(pos_map_x, "\n\n")
+    print("Pos Y:\n")
+    print(pos_map_y, "\n\n")
+    print("Temp:\n")
+    print(temp_map, "\n\n")
+    
+
     x = 0
     y = 0
     temp = 0
-    x_change = 0.0233/2
-    y_change = 0.0357/2
+    x_change = 0.035/2
+    y_change = 0.0536/2
     pos_map_x.pop(0)
     pos_map_y.pop(0)
     it1 = 1
     it2 = 1
+
+    print("Pos X:\n")
+    print(pos_map_x, "\n\n")
+    print("Pos Y:\n")
+    print(pos_map_y, "\n\n")
+    print("Temp:\n")
+    print(temp_map, "\n\n")
     
     for i in range(partition):
         if i % 2 == 0:
