@@ -1238,7 +1238,7 @@ if __name__ == '__main__':
 
         fig = plt.figure(figsize=plt.figaspect(2.))
         ax = fig.add_subplot(2, 1, 1, projection='3d')
-        ax2 = fig.add_subplot(2, 1, 2, projection='3d')
+        ax2 = fig.add_subplot(2, 1, 2)
 
         pos_file = open('pos_data.txt', "w")
         pos_file.close()
