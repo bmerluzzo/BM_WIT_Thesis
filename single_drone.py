@@ -279,7 +279,8 @@ def temp_flag():
 def sweep(mc, mr, fl, rotc, grid_size, partition):
     swX = [0]
     swY = [0]
-    swY.append(0)
+    swY.append(1)
+    swX.append(0)
     i = 0
     i = i + 1
     point = 0
@@ -292,17 +293,17 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
         
         if i % 2 == 0:
             swY.append(grid_size)
-            swY.append(grid_size)
+            swY.append(0)
         else:
             swY.append(0)
-            swY.append(0)
+            swY.append(grid_size)
 
         swX.append(pn_size)
         swX.append(pn_size)
 
         pn_size = pn_size + p_size
 
-    swX.append(0)
+    print(swX, "   |   ", swY, "\n")
 
     size = len(swX) - 1
 
