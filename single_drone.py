@@ -303,11 +303,14 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
 
         pn_size = pn_size + p_size
 
+    swX.append(0)
+    swY.append(0)
+
     print(swX, "   |   ", swY, "\n")
 
     size = len(swX) - 1
 
-    time.sleep(2)
+    time.sleep(3)
 
 
     if temp_det == 0:
@@ -726,9 +729,11 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
         j = 0
 
     y = position_estimate[0]
+    print(y, "\n")
         
     time.sleep(1)
     error = abs(ye - y)
+    print(error, "\n")
         
     if error > pos_error:
         print("Error in Y Value\n")
@@ -746,8 +751,10 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
                 error_flag = 0
 
     x = position_estimate[1]
+    print(x, "\n")
     time.sleep(1)
     error = abs(xe - x)
+    print(error, "\n")
         
     if error > pos_error:
         print("Error in X Value\n")
@@ -1357,6 +1364,7 @@ if __name__ == '__main__':
                         sweep(mc, mr, fl, rotc, grid_size, partition)
                         time.sleep(2)
                         mc.up(0.1)
+                        time.sleep(2)
                         mc.turn_right(90, 30)
 
                     pathing_level2(mc, fl, xn, xp, yn, yp, 0)
