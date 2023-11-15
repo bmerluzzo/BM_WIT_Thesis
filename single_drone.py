@@ -47,7 +47,7 @@ by = [0]
 
 #Setpoint variables (for gridded map)
 grid_size = 1 
-partition = 2
+partition = 4
 map_length_y = 1
 map_length_x = 1
 grid_num = 0
@@ -779,7 +779,7 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
     it1 = 1
     it2 = 1
     
-    for i in range(2):
+    for i in range(partition):
         if i % 2 == 0:
             for j in range(10):
                 for k in range(2):
@@ -851,6 +851,20 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
                                 
                                 color_coding(x,y,temp)
                                 it1 = it1 + 2
+
+    rx.pop(0)
+    ry.pop(0)
+    bx.pop(0)
+    by.pop(0)
+    ox.pop(0)
+    oy.pop(0)
+
+    print("Red:\n")
+    print(rx, "  |  ", ry, "\n\n")
+    print("Orange:\n")
+    print(ox, "  |  ", oy, "\n\n")
+    print("Blue:\n")
+    print(bx, "  |  ", by, "\n\n")
 
     ax2.scatter(rx, ry, c = 'tab:red')
     ax2.scatter(ox, oy, c = 'tab:orange')
