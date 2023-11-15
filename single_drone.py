@@ -89,7 +89,7 @@ def temp_mapping():
     global pos_map_x
     global pos_map_y
     
-    pos_map_x.append(abs(position_estimate[1]))
+    pos_map_x.append((position_estimate[1])*-1)
     pos_map_y.append(position_estimate[0])
 
     temp_map.append(temp3[2])
@@ -728,12 +728,9 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
         time.sleep(2)
         j = 0
 
-    y = position_estimate[0]
-    print(y, "\n")
-        
+    y = position_estimate[0]  
     time.sleep(1)
     error = abs(ye - y)
-    print(error, "\n")
         
     if error > pos_error:
         print("Error in Y Value\n")
@@ -751,10 +748,8 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
                 error_flag = 0
 
     x = position_estimate[1]
-    print(x, "\n")
     time.sleep(1)
     error = abs(xe - x)
-    print(error, "\n")
         
     if error > pos_error:
         print("Error in X Value\n")
@@ -775,14 +770,6 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
 def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
 
     ax.plot3D(x_pos, y_pos, z_pos, 'blue')
-
-    print("Pos X:\n")
-    print(pos_map_x, "\n\n")
-    print("Pos Y:\n")
-    print(pos_map_y, "\n\n")
-    print("Temp:\n")
-    print(temp_map, "\n\n")
-    
 
     x = 0
     y = 0
@@ -812,13 +799,13 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
                             if l >= 0 and l < 3:
                                 x = pos_map_x[j+i*10] - x_change*it1
                                 y = pos_map_y[j+i*10] + y_change
-                                temp = temp_map[l+k*6+j*12]
+                                temp = temp_map[l+k*6+j*12+i*120]
                                 color_coding(x,y,temp)
                                 it1 = it1 + 2
                             elif l >= 3:
                                 x = pos_map_x[j+i*10] + x_change*it2
                                 y = pos_map_y[j+i*10] + y_change
-                                
+                                temp = temp_map[l+k*6+j*12+i*120]
                                 color_coding(x,y,temp)
                                 it1 = it1 + 2
                     elif k == 1:
@@ -828,13 +815,13 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
                             if l >= 0 and l < 3:
                                 x = pos_map_x[j+i*10] - x_change*it1
                                 y = pos_map_y[j+i*10] - y_change
-                                temp = temp_map[l+k*6+j*12]
+                                temp = temp_map[l+k*6+j*12+i*120]
                                 color_coding(x,y,temp)
                                 it1 = it1 + 2
                             elif l >= 3:
                                 x = pos_map_x[j+i*10] + x_change*it2
                                 y = pos_map_y[j+i*10] - y_change
-                                
+                                temp = temp_map[l+k*6+j*12+i*120]
                                 color_coding(x,y,temp)
                                 it1 = it1 + 2
 
