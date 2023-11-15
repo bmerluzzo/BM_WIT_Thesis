@@ -70,8 +70,8 @@ def color_coding(x, y, temp):
     global by
 
     if temp < 25:
-        bx.append[x]
-        by.append[y]
+        bx.append(x)
+        by.append(y)
 
     elif temp >=25 and temp < 30:
         ox.append(x)
@@ -89,7 +89,7 @@ def temp_mapping():
     global pos_map_x
     global pos_map_y
     
-    pos_map_x.append(position_estimate[1])
+    pos_map_x.append(abs(position_estimate[1]))
     pos_map_y.append(position_estimate[0])
 
     temp_map.append(temp3[2])
