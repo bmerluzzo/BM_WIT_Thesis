@@ -801,7 +801,7 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
     print("Temp:\n")
     print(temp_map, "\n\n")
     
-    for i in range(partition):
+    for i in range(partition*map_length_x*map_length_y):
         if i % 2 == 0:
             for j in range(10):
                 for k in range(2):
