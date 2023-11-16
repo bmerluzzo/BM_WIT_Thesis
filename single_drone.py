@@ -47,7 +47,8 @@ by = [0]
 
 #Setpoint variables (for gridded map)
 grid_size = 1 
-partition = 4
+partition1 = 2
+partition2 = 4
 map_length_y = 1
 map_length_x = 1
 grid_num = 0
@@ -55,7 +56,7 @@ grid_order = [1]
 
 #Flight varibles - velocity and distance increment 
 fl = 0.1
-velocity = 0.2
+velocity = 0.15
 
 deck_attached_event = Event()
 
@@ -788,7 +789,7 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
     print("Temp:\n")
     print(temp_map, "\n\n")
     
-    for i in range(partition*map_length_x*map_length_y):
+    for i in range(partition2*map_length_x*map_length_y):
         if i % 2 == 0:
             for j in range(10):
                 for k in range(2):
@@ -1360,10 +1361,10 @@ if __name__ == '__main__':
                     yn = spY[point+1] 
                     gn = grid_order[point + 1]
 
-                    sweep(mc, mr, fl, rotc, grid_size, partition)
+                    sweep(mc, mr, fl, rotc, grid_size, partition1)
 
                     if temp_det == 1:
-                        sweep(mc, mr, fl, rotc, grid_size, partition)
+                        sweep(mc, mr, fl, rotc, grid_size, partition2)
                         time.sleep(2)
                         mc.up(0.1)
                         time.sleep(2)
