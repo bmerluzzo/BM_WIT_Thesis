@@ -1,9 +1,4 @@
 #define DEBUG_MODULE "mlx90640Deck"
-//Put file in  /src/deck/drivers/src
-//Modify KBuild: obj-y += mlx90640deckc.o
-//Force driver using make menuconfig: write mlx90640Deck
-//If doesn't work solder ow memory
-
 
 #include "debug.h"
 #include "i2cdev.h"
@@ -15,13 +10,15 @@
 #include "MLX90640_API.h"
 
 #define MLX90640I2CAddr 0x33
-#define MLX90640_TASK_STACKSIZE    (2 * configMINIMAL_STACK_SIZE)
-#define MLX90640_TASK_PRI 3
+#define MLX90640_TASK_STACKSIZE    (18 * configMINIMAL_STACK_SIZE)
+#define MLX90640_TASK_PRI 1
 #define MLX90640_TASK_NAME "MLX90640"
 #define TA_SHIFT 8
 #define MLX90640_CTRL_REG 0x800D
 static bool isInit;
 void mlx90640Task(void* arg);
+float con = 4;
+float To[192];
 
 static void mlx90640Init()
 {
@@ -44,7 +41,7 @@ static bool mlx90640Test()
 
   int curResolution, curRR, mode;
 
-  curResolution - MLX90640_GetCurResolution(MLX90640I2CAddr);
+  curResolution = MLX90640_GetCurResolution(MLX90640I2CAddr);
   DEBUG_PRINT("Current Resolution:\n");
   DEBUG_PRINT("%i\n", curResolution);
 
@@ -55,9 +52,8 @@ static bool mlx90640Test()
   mode = MLX90640_GetCurMode(MLX90640I2CAddr);
   DEBUG_PRINT("Current Mode (1 if Chess Mode):\n");
   DEBUG_PRINT("%i\n", mode);
-
-
-  if (!isInit && status == -1)
+ 
+  if (!isInit)
     return false;
 
   return true;
@@ -68,10 +64,9 @@ void mlx90640Task(void* arg)
   float emissivity = 0.95;
   float tr;
   static uint16_t eeMLX90640[832];
-  static uint16_t mlx90640Frame[834];
+  uint16_t mlx90640Frame[834];
   paramsMLX90640 mlx90640;
   static float mlx90640To[768];
-  float To;
   int status;
   
   systemWaitStart();
@@ -91,7 +86,11 @@ void mlx90640Task(void* arg)
 
     MLX90640_CalculateTo(mlx90640Frame, &mlx90640, emissivity, tr, mlx90640To);
 
-    To = mlx90640To[0];
+    for(int i = 0;i < 24;i = i + 2){
+      for(int j = 0;j < 32;j = j + 2){
+        To[((16*i)+j)/2] = (mlx90640To[(i*32)+j] + mlx90640To[(i*32)+j+1] + mlx90640To[(i*32)+j+32] + mlx90640To[(i*32)+j+33])/con;
+      }
+    }
   }
 
 }
@@ -104,6 +103,56 @@ static const DeckDriver mlx90640Driver = {
 
 DECK_DRIVER(mlx90640Driver);
 
-LOG_GROUP_START(MLX90640)
-LOG_ADD(LOG_FLOAT, To, &To)
-LOG_GROUP_STOP(MLX90640)
+LOG_GROUP_START(MLX1)
+LOG_ADD(LOG_FLOAT, To1, &To[58])
+LOG_ADD(LOG_FLOAT, To2, &To[74])
+LOG_ADD(LOG_FLOAT, To3, &To[90])
+LOG_ADD(LOG_FLOAT, To4, &To[106])
+LOG_ADD(LOG_FLOAT, To5, &To[122])
+LOG_ADD(LOG_FLOAT, To6, &To[138])
+LOG_GROUP_STOP(MLX1)
+
+LOG_GROUP_START(MLX2)
+LOG_ADD(LOG_FLOAT, To1, &To[57])
+LOG_ADD(LOG_FLOAT, To2, &To[73])
+LOG_ADD(LOG_FLOAT, To3, &To[89])
+LOG_ADD(LOG_FLOAT, To4, &To[105])
+LOG_ADD(LOG_FLOAT, To5, &To[121])
+LOG_ADD(LOG_FLOAT, To6, &To[137])
+LOG_GROUP_STOP(MLX2)
+
+LOG_GROUP_START(MLX3)
+LOG_ADD(LOG_FLOAT, To1, &To[56])
+LOG_ADD(LOG_FLOAT, To2, &To[72])
+LOG_ADD(LOG_FLOAT, To3, &To[88])
+LOG_ADD(LOG_FLOAT, To4, &To[104])
+LOG_ADD(LOG_FLOAT, To5, &To[120])
+LOG_ADD(LOG_FLOAT, To6, &To[136])
+LOG_GROUP_STOP(MLX3)
+
+LOG_GROUP_START(MLX4)
+LOG_ADD(LOG_FLOAT, To1, &To[55])
+LOG_ADD(LOG_FLOAT, To2, &To[71])
+LOG_ADD(LOG_FLOAT, To3, &To[87])
+LOG_ADD(LOG_FLOAT, To4, &To[103])
+LOG_ADD(LOG_FLOAT, To5, &To[119])
+LOG_ADD(LOG_FLOAT, To6, &To[135])
+LOG_GROUP_STOP(MLX4)
+
+LOG_GROUP_START(MLX5)
+LOG_ADD(LOG_FLOAT, To1, &To[54])
+LOG_ADD(LOG_FLOAT, To2, &To[70])
+LOG_ADD(LOG_FLOAT, To3, &To[86])
+LOG_ADD(LOG_FLOAT, To4, &To[102])
+LOG_ADD(LOG_FLOAT, To5, &To[118])
+LOG_ADD(LOG_FLOAT, To6, &To[134])
+LOG_GROUP_STOP(MLX5)
+
+LOG_GROUP_START(MLX6)
+LOG_ADD(LOG_FLOAT, To1, &To[53])
+LOG_ADD(LOG_FLOAT, To2, &To[69])
+LOG_ADD(LOG_FLOAT, To3, &To[85])
+LOG_ADD(LOG_FLOAT, To4, &To[101])
+LOG_ADD(LOG_FLOAT, To5, &To[117])
+LOG_ADD(LOG_FLOAT, To6, &To[133])
+LOG_GROUP_STOP(MLX6)
