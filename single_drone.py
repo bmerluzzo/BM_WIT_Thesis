@@ -33,7 +33,6 @@ temp6 = [0,0,0,0,0,0]
 t = 0
 temp_det = 0
 hold = 0
-thres = 30
 temp_map = [0]
 pos_map_x = [0]
 pos_map_y = [0]
@@ -774,6 +773,8 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
     pos_map_y.pop(0)
     it1 = 1
     it2 = 1
+    count = 0
+    t_len = len(temp_map)
 
     print("Pos X:\n")
     print(pos_map_x, "\n\n")
@@ -782,8 +783,9 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
     print("Temp:\n")
     print(temp_map, "\n\n")
     
-    for i in range(partition2*map_length_x*map_length_y):
+    for i in range(partition2*map_length_x*map_length_y+1):
         if i % 2 == 0:
+
             for j in range(10):
                 for k in range(2):
                     if k == 0:
@@ -795,12 +797,14 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
                                 y = pos_map_y[j+i*10] + y_change
                                 temp = temp_map[l+k*6+j*12+i*120]
                                 color_coding(x,y,temp)
+                                count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
                                 x = pos_map_x[j+i*10] + x_change*it2
                                 y = pos_map_y[j+i*10] + y_change
                                 temp = temp_map[l+k*6+j*12+i*120]
                                 color_coding(x,y,temp)
+                                count = count + 1
                                 it1 = it1 + 2
                     elif k == 1:
                         it1 = 1
@@ -811,12 +815,14 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
                                 y = pos_map_y[j+i*10] - y_change
                                 temp = temp_map[l+k*6+j*12+i*120]
                                 color_coding(x,y,temp)
+                                count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
                                 x = pos_map_x[j+i*10] + x_change*it2
                                 y = pos_map_y[j+i*10] - y_change
                                 temp = temp_map[l+k*6+j*12+i*120]
                                 color_coding(x,y,temp)
+                                count = count + 1
                                 it1 = it1 + 2
 
         else:
@@ -831,12 +837,14 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
                                 y = pos_map_y[j+i*10] - y_change
                                 temp = temp_map[l+k*6+j*12]
                                 color_coding(x,y,temp)
+                                count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
                                 x = pos_map_x[j+i*10] - x_change*it2
                                 y = pos_map_y[j+i*10] - y_change
-                                
+                                temp = temp_map[l+k*6+j*12]
                                 color_coding(x,y,temp)
+                                count = count + 1
                                 it1 = it1 + 2
                     elif k == 1:
                         it1 = 1
@@ -847,12 +855,14 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
                                 y = pos_map_y[j+i*10] + y_change
                                 temp = temp_map[l+k*6+j*12]
                                 color_coding(x,y,temp)
+                                count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
                                 x = pos_map_x[j+i*10] - x_change*it2
                                 y = pos_map_y[j+i*10] + y_change
-                                
+                                temp = temp_map[l+k*6+j*12]
                                 color_coding(x,y,temp)
+                                count = count + 1
                                 it1 = it1 + 2
 
     rx.pop(0)
@@ -861,13 +871,12 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
     by.pop(0)
     ox.pop(0)
     oy.pop(0)
-
+    
+    print("Count: ", count, "Temp Array Length: ", t_len, "\n")
     print("Red:\n")
     print(rx, "  |  ", ry, "\n\n")
     print("Orange:\n")
     print(ox, "  |  ", oy, "\n\n")
-    print("Blue:\n")
-    print(bx, "  |  ", by, "\n\n")
 
     ax2.scatter(rx, ry, c = 'tab:red')
     ax2.scatter(ox, oy, c = 'tab:orange')
@@ -1131,7 +1140,7 @@ def log_pos_callback(timestamp, data, logconf):
 def log_temp_callback(timestamp, data, logconf):
     temp_file.write("{}\n".format(data))
     global temp
-    global thres
+    thres = 25
     global hold
 
     if logconf.name == 'Temp1':
