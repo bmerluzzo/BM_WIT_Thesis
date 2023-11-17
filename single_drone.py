@@ -67,14 +67,7 @@ def color_coding(x, y, temp):
     global ox
     global oy
 
-    global bx
-    global by
-
-    if temp < 25:
-        bx.append(x)
-        by.append(y)
-
-    elif temp >=25 and temp < 30:
+    if temp >=25 and temp < 30:
         ox.append(x)
         oy.append(y)
 
@@ -878,7 +871,6 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
 
     ax2.scatter(rx, ry, c = 'tab:red')
     ax2.scatter(ox, oy, c = 'tab:orange')
-    ax2.scatter(bx, by, c = 'tab:blue')
 
     return
 
