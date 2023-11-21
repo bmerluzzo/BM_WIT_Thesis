@@ -878,8 +878,8 @@ def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
     print("Orange:\n")
     print(ox, "  |  ", oy, "\n\n")
 
-    ax2.scatter(rx, ry, c = 'tab:red')
-    ax2.scatter(ox, oy, c = 'tab:orange')
+    ax2.scatter(rx, ry, c = 'tab:red', s=100)
+    ax2.scatter(ox, oy, c = 'tab:orange', s=100)
 
     return
 
@@ -1392,4 +1392,6 @@ if __name__ == '__main__':
                 my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map)
                 ax.set_title('Drone Trajectory')
                 ax2.set_title('Temperature Map')
+                ax2.set_xlim(left=0, right = 1)
+                ax2.set_ylim(bottom=0, top=1)
                 plt.show()
