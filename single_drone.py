@@ -85,6 +85,13 @@ def temp_mapping():
     pos_map_x.append((position_estimate[1])*-1)
     pos_map_y.append(position_estimate[0])
 
+    temp_map.append(temp2[2])
+    temp_map.append(temp2[1])
+    temp_map.append(temp2[0])
+    temp_map.append(temp2[3])
+    temp_map.append(temp2[4])
+    temp_map.append(temp2[5])
+
     temp_map.append(temp3[2])
     temp_map.append(temp3[1])
     temp_map.append(temp3[0])
@@ -98,6 +105,14 @@ def temp_mapping():
     temp_map.append(temp4[3])
     temp_map.append(temp4[4])
     temp_map.append(temp4[5])
+
+    temp_map.append(temp5[2])
+    temp_map.append(temp5[1])
+    temp_map.append(temp5[0])
+    temp_map.append(temp5[3])
+    temp_map.append(temp5[4])
+    temp_map.append(temp5[5])
+
 
 def error_correction_level1(mc, xe, ye, rotc):
     if rotc == 1:
@@ -816,33 +831,53 @@ def my_plotter(ax, ax2, ax3, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map
         if i % 2 == 0:
 
             for j in range(10):
-                for k in range(2):
+                for k in range(4):
                     if k == 0:
                         it1 = 1
-                        it2 = 2
+                        it2 = 1
                         for l in range(6):
                             if l >= 0 and l < 3:
                                 x = pos_map_x[j+i*10] - x_change*it1
-                                y = pos_map_y[j+i*10] + y_change
-                                temp = temp_map[l+k*6+j*12+i*120]
+                                y = pos_map_y[j+i*10] + y_change*3
+                                temp = temp_map[l+k*6+j*24+i*240]
                                 color_coding(x,y,temp)
                                 count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
                                 x = pos_map_x[j+i*10] + x_change*it2
-                                y = pos_map_y[j+i*10] + y_change
-                                temp = temp_map[l+k*6+j*12+i*120]
+                                y = pos_map_y[j+i*10] + y_change*3
+                                temp = temp_map[l+k*6+j*24+i*240]
                                 color_coding(x,y,temp)
                                 count = count + 1
-                                it1 = it1 + 2
-                    elif k == 1:
+                                it2 = it2 + 2
+                    
+                    if k == 1:
                         it1 = 1
-                        it2 = 2
+                        it2 = 1
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] - x_change*it1
+                                y = pos_map_y[j+i*10] + y_change
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp)
+                                count = count + 1
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] + x_change*it2
+                                y = pos_map_y[j+i*10] + y_change
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp)
+                                count = count + 1
+                                it2 = it2 + 2
+
+                    if k == 2:
+                        it1 = 1
+                        it2 = 1
                         for l in range(6):
                             if l >= 0 and l < 3:
                                 x = pos_map_x[j+i*10] - x_change*it1
                                 y = pos_map_y[j+i*10] - y_change
-                                temp = temp_map[l+k*6+j*12+i*120]
+                                temp = temp_map[l+k*6+j*24+i*240]
                                 color_coding(x,y,temp)
                                 count = count + 1
                                 it1 = it1 + 2
@@ -852,47 +887,107 @@ def my_plotter(ax, ax2, ax3, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map
                                 temp = temp_map[l+k*6+j*12+i*120]
                                 color_coding(x,y,temp)
                                 count = count + 1
-                                it1 = it1 + 2
+                                it2 = it2 + 2
 
+                    if k == 3:
+                        it1 = 1
+                        it2 = 1
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] - x_change*it1
+                                y = pos_map_y[j+i*10] - y_change*3
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp)
+                                count = count + 1
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] + x_change*it2
+                                y = pos_map_y[j+i*10] - y_change*3
+                                temp = temp_map[l+k*6+j*12+i*120]
+                                color_coding(x,y,temp)
+                                count = count + 1
+                                it2 = it2 + 2
+
+        
+                                
         else:
             for j in range(10):
-                for k in range(2):
+                for k in range(4):
                     if k == 0:
                         it1 = 1
-                        it2 = 2
+                        it2 = 1
                         for l in range(6):
                             if l >= 0 and l < 3:
                                 x = pos_map_x[j+i*10] + x_change*it1
-                                y = pos_map_y[j+i*10] - y_change
-                                temp = temp_map[l+k*6+j*12]
+                                y = pos_map_y[j+i*10] - y_change*3
+                                temp = temp_map[l+k*6+j*24+i*240]
                                 color_coding(x,y,temp)
                                 count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
                                 x = pos_map_x[j+i*10] - x_change*it2
-                                y = pos_map_y[j+i*10] - y_change
-                                temp = temp_map[l+k*6+j*12]
+                                y = pos_map_y[j+i*10] - y_change*3
+                                temp = temp_map[l+k*6+j*24+i*240]
                                 color_coding(x,y,temp)
                                 count = count + 1
-                                it1 = it1 + 2
-                    elif k == 1:
+                                it2 = it2 + 2
+                    
+                    if k == 1:
                         it1 = 1
-                        it2 = 2
+                        it2 = 1
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] + x_change*it1
+                                y = pos_map_y[j+i*10] - y_change
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp)
+                                count = count + 1
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] - x_change*it2
+                                y = pos_map_y[j+i*10] - y_change
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp)
+                                count = count + 1
+                                it2 = it2 + 2
+
+                    if k == 2:
+                        it1 = 1
+                        it2 = 1
                         for l in range(6):
                             if l >= 0 and l < 3:
                                 x = pos_map_x[j+i*10] + x_change*it1
                                 y = pos_map_y[j+i*10] + y_change
-                                temp = temp_map[l+k*6+j*12]
+                                temp = temp_map[l+k*6+j*24+i*240]
                                 color_coding(x,y,temp)
                                 count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
                                 x = pos_map_x[j+i*10] - x_change*it2
                                 y = pos_map_y[j+i*10] + y_change
-                                temp = temp_map[l+k*6+j*12]
+                                temp = temp_map[l+k*6+j*12+i*120]
+                                color_coding(x,y,temp)
+                                count = count + 1
+                                it2 = it2 + 2
+
+                    if k == 3:
+                        it1 = 1
+                        it2 = 1
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] + x_change*it1
+                                y = pos_map_y[j+i*10] + y_change*3
+                                temp = temp_map[l+k*6+j*24+i*240]
                                 color_coding(x,y,temp)
                                 count = count + 1
                                 it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] - x_change*it2
+                                y = pos_map_y[j+i*10] + y_change*3
+                                temp = temp_map[l+k*6+j*12+i*120]
+                                color_coding(x,y,temp)
+                                count = count + 1
+                                it2 = it2 + 2
 
     rx.pop(0)
     ry.pop(0)
