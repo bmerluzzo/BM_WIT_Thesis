@@ -760,9 +760,38 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
                 error_flag = 0
 
 
-def my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
+def my_plotter(ax, ax2, ax3, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
+    x_pos_l1 = [0]
+    y_pos_l1 = [0]
+    z_pos_l1 = [0]
 
-    ax.plot3D(x_pos, y_pos, z_pos, 'blue')
+    x_pos_l2 = [0]
+    y_pos_l2 = [0]
+    z_pos_l2 = [0]
+
+    for i in range(len(z_pos)):
+        if z_pos[i] > 0.35:
+            x_pos_l1.append(x_pos[i])
+            y_pos_l1.append(y_pos[i])
+            z_pos_l1.append(z_pos[i])
+        elif z_pos[i] < 0.35:
+            x_pos_l2.append(x_pos[i])
+            y_pos_l2.append(y_pos[i])
+            z_pos_l2.append(z_pos[i])
+
+    x_pos_l1.pop(0)
+    y_pos_l1.pop(0)
+    z_pos_l1.pop(0)
+
+    x_pos_l2.pop(0)
+    y_pos_l2.pop(0)
+    z_pos_l2.pop(0)
+
+    ax.plot3D(x_pos_l1, y_pos_l1, z_pos_l1, 'blue')
+    ax.plot3D(x_pos_l2, y_pos_l2, z_pos_l2, 'red')
+
+    ax3.plot(x_pos_l1, y_pos_l1, 'blue')
+    ax3.plot(x_pos_l2, y_pos_l2, 'red')
 
     x = 0
     y = 0
@@ -1225,9 +1254,10 @@ if __name__ == '__main__':
 
     with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
 
-        fig = plt.figure(figsize=plt.figaspect(2.))
-        ax = fig.add_subplot(2, 1, 1, projection='3d')
-        ax2 = fig.add_subplot(2, 1, 2)
+        fig = plt.figure(figsize=plt.figaspect(3.))
+        ax = fig.add_subplot(2, 2, 1, projection='3d')
+        ax2 = fig.add_subplot(2, 2, 3)
+        ax3 = fig.add_subplot(2, 2, 2)
 
         pos_file = open('pos_data.txt', "w")
         pos_file.close()
@@ -1389,9 +1419,14 @@ if __name__ == '__main__':
                 pos_file.close()
                 temp_file.close()
                 
-                my_plotter(ax, ax2, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map)
-                ax.set_title('Drone Trajectory')
+                my_plotter(ax, ax2, ax3, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map)
+
+                ax.set_title('3D Drone Trajectory')
+
                 ax2.set_title('Temperature Map')
                 ax2.set_xlim(left=0, right = 1)
                 ax2.set_ylim(bottom=0, top=1)
+
+                ax3.set_title('2D Drone Trajectory')
+
                 plt.show()
