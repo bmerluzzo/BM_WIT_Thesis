@@ -805,8 +805,8 @@ def my_plotter(ax, ax2, ax3, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map
     ax.plot3D(x_pos_l1, y_pos_l1, z_pos_l1, 'blue')
     ax.plot3D(x_pos_l2, y_pos_l2, z_pos_l2, 'red')
 
-    ax3.plot(x_pos_l1, y_pos_l1, 'blue')
-    ax3.plot(x_pos_l2, y_pos_l2, 'red')
+    ax3.plot(y_pos_l1, x_pos_l1, 'blue')
+    ax3.plot(y_pos_l2, x_pos_l2, 'red')
 
     x = 0
     y = 0
@@ -1350,9 +1350,9 @@ if __name__ == '__main__':
     with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
 
         fig = plt.figure(figsize=plt.figaspect(3.))
-        ax = fig.add_subplot(2, 2, 1, projection='3d')
-        ax2 = fig.add_subplot(2, 2, 3)
-        ax3 = fig.add_subplot(2, 2, 2)
+        ax = fig.add_subplot(3, 1, 1, projection='3d')
+        ax2 = fig.add_subplot(3, 1, 3)
+        ax3 = fig.add_subplot(3, 1, 2)
 
         pos_file = open('pos_data.txt', "w")
         pos_file.close()
