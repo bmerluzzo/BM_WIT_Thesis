@@ -1444,7 +1444,7 @@ if __name__ == '__main__':
         with MotionCommander(scf, default_height = 0.4) as mc:    
             with Multiranger(scf) as mr:
 
-                time.sleep(2)
+                time.sleep(5)
                 logconf.start()  
                 logconf1.start()
                 logconf2.start()
