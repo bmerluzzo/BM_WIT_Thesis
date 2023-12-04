@@ -39,15 +39,13 @@ static bool mlx90640Test()
 {
   DEBUG_PRINT("MLX90640Deck test\n");
 
-  int curResolution, curRR, mode;
+  int RR, mode;
 
-  curResolution = MLX90640_GetCurResolution(MLX90640I2CAddr);
-  DEBUG_PRINT("Current Resolution:\n");
-  DEBUG_PRINT("%i\n", curResolution);
+  MLX90640_SetRefreshRate(MLX90640I2CAddr, 4)
 
-  curRR = MLX90640_GetRefreshRate(MLX90640I2CAddr);
+  RR = MLX90640_GetRefreshRate(MLX90640I2CAddr);
   DEBUG_PRINT("Current Refresh Rate:\n");
-  DEBUG_PRINT("%i\n", curRR);
+  DEBUG_PRINT("%i\n", RR);
 
   mode = MLX90640_GetCurMode(MLX90640I2CAddr);
   DEBUG_PRINT("Current Mode (1 if Chess Mode):\n");
