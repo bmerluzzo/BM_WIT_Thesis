@@ -122,7 +122,6 @@ def error_correction_level1(mc, xe, ye, rotc):
         error = abs(ye - y)
         
         if error > pos_error:
-            print("Error in Y Value\n")
             error_flag = 1
             while error_flag == 1:
                 if error > pos_error:
@@ -141,7 +140,6 @@ def error_correction_level1(mc, xe, ye, rotc):
         error = abs(xe - x)
         
         if error > pos_error:
-            print("Error in X Value\n")
             error_flag = 1
             while error_flag == 1:
                 if error > pos_error:
@@ -162,7 +160,6 @@ def error_correction_level1(mc, xe, ye, rotc):
         error = abs(ye - y)
         
         if error > pos_error:
-            print("Error in Y Value\n")
             error_flag = 1
             while error_flag == 1:
                 if error > pos_error:
@@ -181,7 +178,6 @@ def error_correction_level1(mc, xe, ye, rotc):
         error = abs(xe - x)
         
         if error > pos_error:
-            print("Error in X Value\n")
             error_flag = 1
             while error_flag == 1:
                 if error > pos_error:
@@ -202,7 +198,6 @@ def error_correction_level1(mc, xe, ye, rotc):
         error = abs(ye - y)
         
         if error > pos_error:
-            print("Error in Y Value\n")
             error_flag = 1
             while error_flag == 1:
                 if error > pos_error:
@@ -221,7 +216,6 @@ def error_correction_level1(mc, xe, ye, rotc):
         error = abs(xe - x)
         
         if error > pos_error:
-            print("Error in X Value\n")
             error_flag = 1
             while error_flag == 1:
                 if error > pos_error:
@@ -242,7 +236,6 @@ def error_correction_level1(mc, xe, ye, rotc):
         error = abs(ye - y)
         
         if error > pos_error:
-            print("Error in Y Value\n")
             error_flag = 1
             while error_flag == 1:
                 if error > pos_error:
@@ -261,7 +254,6 @@ def error_correction_level1(mc, xe, ye, rotc):
         error = abs(xe - x)
         
         if error > pos_error:
-            print("Error in X Value\n")
             error_flag = 1
             while error_flag == 1:
                 if error > pos_error:
@@ -314,8 +306,6 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
     swX.append(0)
     swY.append(0)
 
-    print(swX, "   |   ", swY, "\n")
-
     size = len(swX) - 1
 
     time.sleep(3)
@@ -342,15 +332,12 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
 
     elif temp_det == 1:
         print("Level 1\n")
-        print(swX, " | ", swY)
         while point != size:
                     
                         xp = swX[point]       
                         yp = swY[point]
                         xn = swX[point+1]
                         yn = swY[point+1]
-
-                        print(xp, ",", yp, " | ", xn, ",", yn)
 
                         rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, 1)
 
@@ -741,7 +728,6 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
     error = abs(ye - y)
         
     if error > pos_error:
-        print("Error in Y Value\n")
         error_flag = 1
         while error_flag == 1:
             if error > pos_error:
@@ -760,7 +746,6 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
     error = abs(xe - x)
         
     if error > pos_error:
-        print("Error in X Value\n")
         error_flag = 1
         while error_flag == 1:
             if error > pos_error:
@@ -819,13 +804,6 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     it2 = 1
     count = 0
     t_len = len(temp_map)
-
-    print("Pos X:\n")
-    print(pos_map_x, "\n\n")
-    print("Pos Y:\n")
-    print(pos_map_y, "\n\n")
-    print("Temp:\n")
-    print(temp_map, "\n\n")
     
     for i in range(partition2*map_length_x*map_length_y+1):
         if i % 2 == 0:
@@ -997,10 +975,6 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     oy.pop(0)
     
     print("Count: ", count, "Temp Array Length: ", t_len, "\n")
-    print("Red:\n")
-    print(rx, "  |  ", ry, "\n\n")
-    print("Orange:\n")
-    print(ox, "  |  ", oy, "\n\n")
 
     ax2.scatter(rx, ry, c = 'tab:red', s=100)
     ax2.scatter(ox, oy, c = 'tab:orange', s=100)
@@ -1255,8 +1229,8 @@ def log_pos_callback(timestamp, data, logconf):
     position_estimate[0] = data['stateEstimate.x']
     position_estimate[1] = data['stateEstimate.y']
     yaw = data['stateEstimate.yaw']
-    x_pos.append(data['stateEstimate.x'])
-    y_pos.append(data['stateEstimate.y'])
+    y_pos.append(data['stateEstimate.x'])
+    x_pos.append(abs(data['stateEstimate.y']))
     z_pos.append(data['stateEstimate.z'])
     t = timestamp
     
@@ -1518,12 +1492,18 @@ if __name__ == '__main__':
                 my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map)
 
                 ax.set_title('3D Drone Trajectory')
+                ax.view_init(elev = 45, azim = -90, roll = 0)
 
                 ax2.set_title('Temperature Map')
-                ax2.set_xlim(left=0, right = 1)
+                ax2.set_xlim(left=0, right=1)
                 ax2.set_ylim(bottom=0, top=1)
 
                 ax3.set_title('Level 1 Drone Trajectory')
+                ax3.set_xlim(left=-0.2, right=1.2)
+                ax3.set_ylim(bottom=-0.2, top=1.2)
+
                 ax4.set_title('Level 2 Drone Trajectory')
+                ax4.set_xlim(left=-0.2, right=1.2)
+                ax4.set_ylim(bottom=-0.2, top=1.2)
 
                 plt.show()
