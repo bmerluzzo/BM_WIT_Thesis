@@ -723,7 +723,8 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
         time.sleep(2)
         j = 0
 
-    y = position_estimate[0]  
+    y = position_estimate[0] 
+    print(y, "\n") 
     time.sleep(1)
     error = abs(ye - y)
         
@@ -1230,7 +1231,7 @@ def log_pos_callback(timestamp, data, logconf):
     position_estimate[1] = data['stateEstimate.y']
     yaw = data['stateEstimate.yaw']
     y_pos.append(data['stateEstimate.x'])
-    x_pos.append(abs(data['stateEstimate.y']))
+    x_pos.append(data['stateEstimate.y']*-1)
     z_pos.append(data['stateEstimate.z'])
     t = timestamp
     
@@ -1444,8 +1445,9 @@ if __name__ == '__main__':
         with MotionCommander(scf, default_height = 0.4) as mc:    
             with Multiranger(scf) as mr:
 
-                time.sleep(5)
                 logconf.start()  
+                time.sleep(10)
+                
                 logconf1.start()
                 logconf2.start()
                 logconf3.start()
