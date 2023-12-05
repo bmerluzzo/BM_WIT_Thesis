@@ -723,7 +723,9 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
         time.sleep(2)
         j = 0
 
+    x = position_estimate[1]
     y = position_estimate[0] 
+    print(x, "\n") 
     print(y, "\n") 
     time.sleep(1)
     error = abs(ye - y)
@@ -1239,7 +1241,7 @@ def log_pos_callback(timestamp, data, logconf):
 def log_temp_callback(timestamp, data, logconf):
     temp_file.write("{}\n".format(data))
     global temp
-    thres = 25
+    thres = 100
     global hold
 
     if logconf.name == 'Temp1':
