@@ -1448,7 +1448,7 @@ if __name__ == '__main__':
             with Multiranger(scf) as mr:
 
                 logconf.start()  
-                time.sleep(10)
+                time.sleep(5)
                 
                 logconf1.start()
                 logconf2.start()
