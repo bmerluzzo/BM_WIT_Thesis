@@ -103,7 +103,7 @@ if __name__ == '__main__':
         temp_file.close()
         temp_file = open('temp_data.txt', "a")
 
-        logconf = LogConfig(name='Temp1', period_in_ms=500) 
+        logconf = LogConfig(name='Temp1', period_in_ms=1000) 
         logconf.add_variable('MLX1.To1', 'float')
         logconf.add_variable('MLX1.To2', 'float')
         logconf.add_variable('MLX1.To3', 'float')
@@ -113,7 +113,7 @@ if __name__ == '__main__':
         scf.cf.log.add_config(logconf)
         logconf.data_received_cb.add_callback(log_temp_callback)
 
-        logconf2 = LogConfig(name='Temp2', period_in_ms=500) 
+        logconf2 = LogConfig(name='Temp2', period_in_ms=1000) 
         logconf2.add_variable('MLX2.To1', 'float')
         logconf2.add_variable('MLX2.To2', 'float')
         logconf2.add_variable('MLX2.To3', 'float')
@@ -123,7 +123,7 @@ if __name__ == '__main__':
         scf.cf.log.add_config(logconf2)
         logconf2.data_received_cb.add_callback(log_temp_callback)
 
-        logconf3 = LogConfig(name='Temp3', period_in_ms=500) 
+        logconf3 = LogConfig(name='Temp3', period_in_ms=1000) 
         logconf3.add_variable('MLX3.To1', 'float')
         logconf3.add_variable('MLX3.To2', 'float')
         logconf3.add_variable('MLX3.To3', 'float')
@@ -133,7 +133,7 @@ if __name__ == '__main__':
         scf.cf.log.add_config(logconf3)
         logconf3.data_received_cb.add_callback(log_temp_callback)
 
-        logconf4 = LogConfig(name='Temp4', period_in_ms=500) 
+        logconf4 = LogConfig(name='Temp4', period_in_ms=1000) 
         logconf4.add_variable('MLX4.To1', 'float')
         logconf4.add_variable('MLX4.To2', 'float')
         logconf4.add_variable('MLX4.To3', 'float')
@@ -143,7 +143,7 @@ if __name__ == '__main__':
         scf.cf.log.add_config(logconf4)
         logconf4.data_received_cb.add_callback(log_temp_callback)
 
-        logconf5 = LogConfig(name='Temp5', period_in_ms=500) 
+        logconf5 = LogConfig(name='Temp5', period_in_ms=1000) 
         logconf5.add_variable('MLX5.To1', 'float')
         logconf5.add_variable('MLX5.To2', 'float')
         logconf5.add_variable('MLX5.To3', 'float')
@@ -153,7 +153,7 @@ if __name__ == '__main__':
         scf.cf.log.add_config(logconf5)
         logconf5.data_received_cb.add_callback(log_temp_callback)
 
-        logconf6 = LogConfig(name='Temp6', period_in_ms=500) 
+        logconf6 = LogConfig(name='Temp6', period_in_ms=1000) 
         logconf6.add_variable('MLX6.To1', 'float')
         logconf6.add_variable('MLX6.To2', 'float')
         logconf6.add_variable('MLX6.To3', 'float')
@@ -164,6 +164,8 @@ if __name__ == '__main__':
         logconf6.data_received_cb.add_callback(log_temp_callback)
 
         with MotionCommander(scf, default_height = 0.4) as mc: 
+
+            time.sleep(10)
             
             logconf.start()
             logconf2.start()
@@ -173,6 +175,7 @@ if __name__ == '__main__':
             logconf6.start()
 
             time.sleep(20)
+            mc.forward(0.5)
 
             logconf.stop()
             logconf2.stop()
