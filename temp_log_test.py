@@ -19,9 +19,11 @@ temp3 = [0,0,0,0,0,0]
 temp4 = [0,0,0,0,0,0]
 temp5 = [0,0,0,0,0,0]
 temp6 = [0,0,0,0,0,0]
+count = 0
 
 def log_temp_callback(timestamp, data, logconf):
     temp_file.write("{}\n".format(data))
+    global count
 
     if logconf.name == 'Temp1':
         temp1[0] = data['MLX1.To1']
@@ -31,6 +33,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp1[4] = data['MLX1.To5']
         temp1[5] = data['MLX1.To6']
         print(temp1[0], '|',temp1[1], '|',temp1[2], '|',temp1[3], '|',temp1[4], '|',temp1[5], '\n')
+        count = count + 1
 
     elif logconf.name == 'Temp2':
         temp2[0] = data['MLX2.To1']
@@ -40,6 +43,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp2[4] = data['MLX2.To5']
         temp2[5] = data['MLX2.To6']
         print(temp2[0], '|',temp2[1], '|',temp2[2], '|',temp2[3], '|',temp2[4], '|',temp2[5], '\n')
+        count = count + 1
 
     
     elif logconf.name == 'Temp3':
@@ -50,6 +54,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp3[4] = data['MLX3.To5']
         temp3[5] = data['MLX3.To6']
         print(temp3[0], '|',temp3[1], '|',temp3[2], '|',temp3[3], '|',temp3[4], '|',temp3[5], '\n')
+        count = count + 1
 
 
     elif logconf.name == 'Temp4':
@@ -60,6 +65,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp4[4] = data['MLX4.To5']
         temp4[5] = data['MLX4.To6']
         print(temp4[0], '|',temp4[1], '|',temp4[2], '|',temp4[3], '|',temp4[4], '|',temp4[5], '\n')
+        count = count + 1
     
 
     elif logconf.name == 'Temp5':
@@ -70,6 +76,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp5[4] = data['MLX5.To5']
         temp5[5] = data['MLX5.To6']
         print(temp5[0], '|',temp5[1], '|',temp5[2], '|',temp5[3], '|',temp5[4], '|',temp5[5], '\n')
+        count = count + 1
        
 
     elif logconf.name == 'Temp6':
@@ -80,6 +87,11 @@ def log_temp_callback(timestamp, data, logconf):
         temp6[4] = data['MLX6.To5']
         temp6[5] = data['MLX6.To6']
         print(temp6[0], '|',temp6[1], '|',temp6[2], '|',temp6[3], '|',temp6[4], '|',temp6[5], '\n')
+        count = count + 1
+    
+    if count == 6:
+        print("\n")
+        count = 0
     
 
 if __name__ == '__main__':
