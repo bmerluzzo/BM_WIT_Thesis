@@ -1,6 +1,8 @@
 import sys
 import logging
 import time
+import os
+
 from threading import Event
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
@@ -23,10 +25,9 @@ def log_temp_callback(timestamp, data, logconf):
     temp[4] = data['MLX1.To5']
     temp[5] = data['MLX1.To6']
 
-    print(temp[0], ' | ',temp[1], ' | ',temp[2], ' | ',temp[3], ' | ',temp[4], ' | ',temp[5], '\n')
+    os.system('cls')
 
-    if (temp[0] or temp[1] or temp[2] or temp[3] or temp[4] or temp[5]) > 25:
-        print('Exceeded\n')
+    print(temp[0], ' | ',temp[1], ' | ',temp[2], ' | ',temp[3], ' | ',temp[4], ' | ',temp[5], '\n')
    
     
 
