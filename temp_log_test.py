@@ -163,25 +163,25 @@ if __name__ == '__main__':
         scf.cf.log.add_config(logconf6)
         logconf6.data_received_cb.add_callback(log_temp_callback)
 
-        with MotionCommander(scf, default_height = 0.4) as mc: 
+        #with MotionCommander(scf, default_height = 0.4) as mc: 
 
-            time.sleep(10)
+        time.sleep(10)
             
-            logconf.start()
-            logconf2.start()
-            logconf3.start()
-            logconf4.start()
-            logconf5.start()
-            logconf6.start()
+        logconf.start()
+        logconf2.start()
+        logconf3.start()
+        logconf4.start()
+        logconf5.start()
+        logconf6.start()
 
-            time.sleep(20)
-            mc.forward(0.5)
+        time.sleep(20)
+            #mc.forward(0.5)
 
-            logconf.stop()
-            logconf2.stop()
-            logconf3.stop()
-            logconf5.stop()
-            logconf5.stop()
-            logconf6.stop()
+        logconf.stop()
+        logconf2.stop()
+        logconf3.stop()
+        logconf5.stop()
+        logconf5.stop()
+        logconf6.stop()
 
-            temp_file.close()
+        temp_file.close()
