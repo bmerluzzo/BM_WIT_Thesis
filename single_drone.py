@@ -48,7 +48,7 @@ by = [0]
 grid_size = 1 
 partition1 = 2
 partition2 = 4
-map_length_y = 1
+map_length_y = 2
 map_length_x = 1
 grid_num = 0
 grid_order = [1]
@@ -1503,11 +1503,11 @@ if __name__ == '__main__':
                 ax2.set_ylim(bottom=0, top=1)
 
                 ax3.set_title('Level 1 Drone Trajectory')
-                ax3.set_xlim(left=-0.2, right=1.2)
-                ax3.set_ylim(bottom=-0.2, top=1.2)
+                """ax3.set_xlim(left=-0.2, right=1.2)
+                ax3.set_ylim(bottom=-0.2, top=1.2)"""
 
                 ax4.set_title('Level 2 Drone Trajectory')
-                ax4.set_xlim(left=-0.2, right=1.2)
-                ax4.set_ylim(bottom=-0.2, top=1.2)
+                """ax4.set_xlim(left=-0.2, right=1.2)
+                ax4.set_ylim(bottom=-0.2, top=1.2)"""
 
                 plt.show()
