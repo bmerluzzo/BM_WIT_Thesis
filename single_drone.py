@@ -793,8 +793,8 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     ax.plot3D(x_pos_l1, y_pos_l1, z_pos_l1, 'blue')
     ax.plot3D(x_pos_l2, y_pos_l2, z_pos_l2, 'red')
 
-    ax3.plot(y_pos_l1, x_pos_l1, 'blue')
-    ax4.plot(y_pos_l2, x_pos_l2, 'red')
+    ax3.plot(x_pos_l1, y_pos_l1, 'blue')
+    ax4.plot(x_pos_l2, y_pos_l2, 'red')
 
     x = 0
     y = 0
