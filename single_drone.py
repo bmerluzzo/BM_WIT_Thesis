@@ -1342,7 +1342,7 @@ if __name__ == '__main__':
 
         scf.cf.param.add_update_callback(group='deck', name='bcFlow2', cb=param_deck_flow)
 
-        logconf = LogConfig(name='Position', period_in_ms=500) 
+        logconf = LogConfig(name='Position', period_in_ms=250) 
         logconf.add_variable('stateEstimate.x', 'float')
         logconf.add_variable('stateEstimate.y', 'float')
         logconf.add_variable('stateEstimate.z', 'float')
