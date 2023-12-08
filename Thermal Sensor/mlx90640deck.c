@@ -41,7 +41,7 @@ static bool mlx90640Test()
 
   int RR, mode;
 
-  MLX90640_SetRefreshRate(MLX90640I2CAddr, 4)
+  //MLX90640_SetRefreshRate(MLX90640I2CAddr, 4)
 
   RR = MLX90640_GetRefreshRate(MLX90640I2CAddr);
   DEBUG_PRINT("Current Refresh Rate:\n");
@@ -49,7 +49,7 @@ static bool mlx90640Test()
 
   mode = MLX90640_GetCurMode(MLX90640I2CAddr);
   DEBUG_PRINT("Current Mode (1 if Chess Mode):\n");
-  DEBUG_PRINT("%i\n", mode);
+  DEBUG_PRINT("%i\n", mode); 
  
   if (!isInit)
     return false;
@@ -59,36 +59,64 @@ static bool mlx90640Test()
 
 void mlx90640Task(void* arg)
 {
-  float emissivity = 0.95;
+  float emissivity = 1;
   float tr;
   static uint16_t eeMLX90640[832];
   uint16_t mlx90640Frame[834];
   paramsMLX90640 mlx90640;
   static float mlx90640To[768];
   int status;
+  int count = 0;
+
+  int test = 0;
+  int test_ms;
+
+  TickType_t start;
+  TickType_t end;
+  TickType_t duration;
   
   systemWaitStart();
-  TickType_t xLastWakeTime;
+
+  vTaskDelay(M2T(1080))
 
   status = MLX90640_DumpEE(MLX90640I2CAddr, eeMLX90640);
   status = MLX90640_ExtractParameters(eeMLX90640, &mlx90640);
+  status = MLX90640_SynchFrame(MLX90640I2CAddr);
 
-  xLastWakeTime = xTaskGetTickCount();
+  if (status == 0){
+    DEBUG_PRINT("Synch Successful");
+  }
 
   while(1) {
-    vTaskDelayUntil(&xLastWakeTime, M2T(500));
+    start = xTaskGetTickCount();
 
-    status = MLX90640_GetFrameData(MLX90640I2CAddr, mlx90640Frame);
-
-    tr = MLX90640_GetTa(mlx90640Frame, &mlx90640) - TA_SHIFT;
-
+    if (count >= 50){
+      count = 0;
+      MLX90640_SynchFrame();
+    }
+    
+    MLX90640_GetFrameData(MLX90640I2CAddr, mlx90640Frame);
+    count = count + 1;
+    tr = 20;
     MLX90640_CalculateTo(mlx90640Frame, &mlx90640, emissivity, tr, mlx90640To);
+    MLX90640_BadPixelsCorrection((&mlx90640)->brokenPixels, mlx90640To, 1, &mlx90640)
 
     for(int i = 0;i < 24;i = i + 2){
       for(int j = 0;j < 32;j = j + 2){
         To[((16*i)+j)/2] = (mlx90640To[(i*32)+j] + mlx90640To[(i*32)+j+1] + mlx90640To[(i*32)+j+32] + mlx90640To[(i*32)+j+33])/con;
       }
     }
+
+    end = xTaskGetTickCount()
+    duration = end - start;
+
+    if (test == 0){
+      test_ms = T2M(duration);
+      DEBUG_PRINT("%i\n", test_ms);
+      test = 1;
+    }
+
+    vTaskDelay((M2T(1000) - duration));
   }
 
 }
