@@ -1221,6 +1221,7 @@ def is_close(range):
         return range < MIN_DISTANCE
 
 def log_pos_callback(timestamp, data, logconf):
+    print(data)
     pos_file.write("Yaw:{},Y:{},X:{},Z:{}\n".format(data['stateEstimate.yaw'], data['stateEstimate.x'], data['stateEstimate.y'], data['stateEstimate.z']))
     global x_pos
     global y_pos
@@ -1321,10 +1322,20 @@ def param_deck_flow(_, value_str):
     else:
         print('Deck is NOT attached!')
 
+def reset_estimator(scf):
+    cf = scf.cf
+    cf.param.set_value('kalman.resetEstimation', '1')
+    time.sleep(0.1)
+    cf.param.set_value('kalman.resetEstimation', '0')
+
+
+
 if __name__ == '__main__':
     cflib.crtp.init_drivers()
 
     with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+
+        reset_estimator(scf)
 
         fig = plt.figure(figsize=plt.figaspect(4.))
         ax = fig.add_subplot(4, 1, 1, projection='3d')
@@ -1444,10 +1455,13 @@ if __name__ == '__main__':
         rotc = int(rotc)     
         global gn   
 
+        logconf.start() 
+        print("Position Logging\n")
+        time.sleep(60)
+
         with MotionCommander(scf, default_height = 0.4) as mc:    
             with Multiranger(scf) as mr:
 
-                logconf.start()  
                 time.sleep(5)
                 
                 logconf1.start()
