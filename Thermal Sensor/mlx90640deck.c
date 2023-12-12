@@ -77,7 +77,7 @@ void mlx90640Task(void* arg)
   
   systemWaitStart();
 
-  vTaskDelay(M2T(1080))
+  vTaskDelay(M2T(1080));
 
   status = MLX90640_DumpEE(MLX90640I2CAddr, eeMLX90640);
   status = MLX90640_ExtractParameters(eeMLX90640, &mlx90640);
@@ -92,7 +92,7 @@ void mlx90640Task(void* arg)
 
     if (count >= 50){
       count = 0;
-      MLX90640_SynchFrame();
+      MLX90640_SynchFrame(MLX90640I2CAddr);
     }
     
     MLX90640_GetFrameData(MLX90640I2CAddr, mlx90640Frame);
@@ -107,7 +107,7 @@ void mlx90640Task(void* arg)
       }
     }
 
-    end = xTaskGetTickCount()
+    end = xTaskGetTickCount();
     duration = end - start;
 
     if (test == 0){
