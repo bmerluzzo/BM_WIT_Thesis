@@ -1329,7 +1329,6 @@ def reset_estimator(scf):
     time.sleep(0.1)
     cf.param.set_value('kalman.resetEstimation', '0')
     print("Estimator Reset\n")
-    wait_for_position_estimator(cf)
 
 def wait_for_position_estimator(scf):
         print("Waiting for Estimator to Stabilize\n")
@@ -1373,7 +1372,7 @@ if __name__ == '__main__':
 
     with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
 
-        reset_estimator(scf)
+        #reset_estimator(scf)
 
         fig = plt.figure(figsize=plt.figaspect(4.))
         ax = fig.add_subplot(4, 1, 1, projection='3d')
@@ -1494,11 +1493,12 @@ if __name__ == '__main__':
         global gn   
 
         logconf.start() 
+        time.sleep(5)
 
         with MotionCommander(scf, default_height = 0.4) as mc:    
             with Multiranger(scf) as mr:
 
-                time.sleep(5)
+                time.sleep(2)
                 
                 logconf1.start()
                 logconf2.start()
