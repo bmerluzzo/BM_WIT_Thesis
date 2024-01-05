@@ -1,5 +1,6 @@
 #Swarm Code - Brandon Merluzzo
-#***Changes needed*** - Add temp logging capability, plotting functions, change global variables to distinguish between drones in flight functions
+#***Changes needed*** - Add temp logging capability (log blocks for each drone)
+#Modify functions for inverse of x value in callback function (chnaged it to negative position_estimate)
 import sys
 import logging
 import time
@@ -14,12 +15,23 @@ from cflib.crazyflie.log import LogConfig
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils.multiranger import Multiranger
 
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib as mpl
+
 position_estimate1 = [0, 0, 0]
 position_estimate2 = [0, 0, 0]
 t1 = 0
 t2 = 0
 deck_attached_event = Event()
 pos_error = 0.075
+
+x_pos1 = [0]
+y_pos1 = [0]
+z_pos1 = [0]
+x_pos2 = [0]
+y_pos2 = [0]
+z_pos2 = [0]
 
 temp11 = [0,0,0,0,0,0]
 temp12 = [0,0,0,0,0,0]
@@ -36,6 +48,28 @@ temp24 = [0,0,0,0,0,0]
 temp25 = [0,0,0,0,0,0]
 temp26 = [0,0,0,0,0,0]
 temp_det2 = 0
+
+temp_map1 = [0]
+pos_map1_x = [0]
+pos_map1_y = [0]
+
+temp_map2 = [0]
+pos_map2_x = [0]
+pos_map2_y = [0]
+
+rx1 = [0]
+ry1 = [0]
+ox1 = [0]
+oy1 = [0]
+bx1 = [0]
+by1 = [0]
+
+rx2 = [0]
+ry2 = [0]
+ox2 = [0]
+oy2 = [0]
+bx2 = [0]
+by2 = [0]
 
 grid_size = 1 
 partition1 = 2
@@ -56,11 +90,6 @@ uri_list = {
 
 uris = list(uri_list) 
 
-seq_args = {
-    uris[0]: [drone1],
-    uris[1]: [drone2],
-}
-
 def get_position_x(drone):
     if drone == 1:
         x = position_estimate1[1]
@@ -77,7 +106,333 @@ def get_position_y(drone):
 
     return y
 
-    return 
+def temp_mapping(drone):
+    
+    if drone == 1:
+    
+        pos_map1_x.append((position_estimate1[1])*-1)
+        pos_map1_y.append(position_estimate1[0])
+
+        temp_map1.append(temp12[2])
+        temp_map1.append(temp12[1])
+        temp_map1.append(temp12[0])
+        temp_map1.append(temp12[3])
+        temp_map1.append(temp12[4])
+        temp_map1.append(temp12[5])
+
+        temp_map1.append(temp13[2])
+        temp_map1.append(temp13[1])
+        temp_map1.append(temp13[0])
+        temp_map1.append(temp13[3])
+        temp_map1.append(temp13[4])
+        temp_map1.append(temp13[5])
+
+        temp_map1.append(temp14[2])
+        temp_map1.append(temp14[1])
+        temp_map1.append(temp14[0])
+        temp_map1.append(temp14[3])
+        temp_map1.append(temp14[4])
+        temp_map1.append(temp14[5])
+
+        temp_map1.append(temp15[2])
+        temp_map1.append(temp15[1])
+        temp_map1.append(temp15[0])
+        temp_map1.append(temp15[3])
+        temp_map1.append(temp15[4])
+        temp_map1.append(temp15[5])
+
+    if drone == 2:
+    
+        pos_map2_x.append((position_estimate2[1]))
+        pos_map2_y.append(position_estimate2[0])
+
+        temp_map2.append(temp22[2])
+        temp_map2.append(temp22[1])
+        temp_map2.append(temp22[0])
+        temp_map2.append(temp22[3])
+        temp_map2.append(temp22[4])
+        temp_map2.append(temp22[5])
+
+        temp_map2.append(temp23[2])
+        temp_map2.append(temp23[1])
+        temp_map2.append(temp23[0])
+        temp_map2.append(temp23[3])
+        temp_map2.append(temp23[4])
+        temp_map2.append(temp23[5])
+
+        temp_map2.append(temp24[2])
+        temp_map2.append(temp24[1])
+        temp_map2.append(temp24[0])
+        temp_map2.append(temp24[3])
+        temp_map2.append(temp24[4])
+        temp_map2.append(temp24[5])
+
+        temp_map2.append(temp25[2])
+        temp_map2.append(temp25[1])
+        temp_map2.append(temp25[0])
+        temp_map2.append(temp25[3])
+        temp_map2.append(temp25[4])
+        temp_map2.append(temp25[5])
+
+    return
+
+def color_coding(x, y, temp, drone):
+    global rx1
+    global ry1
+    global rx2
+    global ry2
+
+    global ox1
+    global oy1
+    global ox2
+    global oy2
+
+    if temp >=25 and temp < 30:
+        if drone == 1:
+            ox1.append(x)
+            oy1.append(y)
+        elif drone == 2:
+            ox1.append(x)
+            oy1.append(y)
+    elif temp >= 30:
+        if drone == 1:
+            rx1.append(x)
+            ry1.append(y)
+        elif drone == 2:
+            rx1.append(x)
+            ry1.append(y)
+
+    return
+
+def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map, drone):
+    x_pos_l1 = [0]
+    y_pos_l1 = [0]
+    z_pos_l1 = [0]
+
+    x_pos_l2 = [0]
+    y_pos_l2 = [0]
+    z_pos_l2 = [0]
+
+    for i in range(len(z_pos)):
+        if z_pos[i] > 0.35:
+            x_pos_l1.append(x_pos[i])
+            y_pos_l1.append(y_pos[i])
+            z_pos_l1.append(z_pos[i])
+        elif z_pos[i] < 0.35:
+            x_pos_l2.append(x_pos[i])
+            y_pos_l2.append(y_pos[i])
+            z_pos_l2.append(z_pos[i])
+
+    x_pos_l1.pop(0)
+    y_pos_l1.pop(0)
+    z_pos_l1.pop(0)
+
+    x_pos_l2.pop(0)
+    y_pos_l2.pop(0)
+    z_pos_l2.pop(0)
+
+    ax.plot3D(x_pos_l1, y_pos_l1, z_pos_l1, 'blue')
+    ax.plot3D(x_pos_l2, y_pos_l2, z_pos_l2, 'red')
+
+    ax3.plot(x_pos_l1, y_pos_l1, 'blue')
+    ax4.plot(x_pos_l2, y_pos_l2, 'red')
+
+    x = 0
+    y = 0
+    temp = 0
+    x_change = 0.035/2
+    y_change = 0.0536/2
+    pos_map_x.pop(0)
+    pos_map_y.pop(0)
+    it1 = 1
+    it2 = 1
+    count = 0
+    t_len = len(temp_map)
+    
+    for i in range(partition2*map_length_x*map_length_y+1):
+        if i % 2 == 0:
+
+            for j in range(10):
+                for k in range(4):
+                    if k == 0:
+                        it1 = 1
+                        it2 = 1
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] - x_change*it1
+                                y = pos_map_y[j+i*10] + y_change*3
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] + x_change*it2
+                                y = pos_map_y[j+i*10] + y_change*3
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it2 = it2 + 2
+                    
+                    if k == 1:
+                        it1 = 1
+                        it2 = 1
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] - x_change*it1
+                                y = pos_map_y[j+i*10] + y_change
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] + x_change*it2
+                                y = pos_map_y[j+i*10] + y_change
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it2 = it2 + 2
+
+                    if k == 2:
+                        it1 = 1
+                        it2 = 1
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] - x_change*it1
+                                y = pos_map_y[j+i*10] - y_change
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] + x_change*it2
+                                y = pos_map_y[j+i*10] - y_change
+                                temp = temp_map[l+k*6+j*12+i*120]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it2 = it2 + 2
+
+                    if k == 3:
+                        it1 = 1
+                        it2 = 1
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] - x_change*it1
+                                y = pos_map_y[j+i*10] - y_change*3
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] + x_change*it2
+                                y = pos_map_y[j+i*10] - y_change*3
+                                temp = temp_map[l+k*6+j*12+i*120]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it2 = it2 + 2
+
+        
+                                
+        else:
+            for j in range(10):
+                for k in range(4):
+                    if k == 0:
+                        it1 = 1
+                        it2 = 1
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] + x_change*it1
+                                y = pos_map_y[j+i*10] - y_change*3
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] - x_change*it2
+                                y = pos_map_y[j+i*10] - y_change*3
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it2 = it2 + 2
+                    
+                    if k == 1:
+                        it1 = 1
+                        it2 = 1
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] + x_change*it1
+                                y = pos_map_y[j+i*10] - y_change
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] - x_change*it2
+                                y = pos_map_y[j+i*10] - y_change
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it2 = it2 + 2
+
+                    if k == 2:
+                        it1 = 1
+                        it2 = 1
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] + x_change*it1
+                                y = pos_map_y[j+i*10] + y_change
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] - x_change*it2
+                                y = pos_map_y[j+i*10] + y_change
+                                temp = temp_map[l+k*6+j*12+i*120]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it2 = it2 + 2
+
+                    if k == 3:
+                        it1 = 1
+                        it2 = 1
+                        for l in range(6):
+                            if l >= 0 and l < 3:
+                                x = pos_map_x[j+i*10] + x_change*it1
+                                y = pos_map_y[j+i*10] + y_change*3
+                                temp = temp_map[l+k*6+j*24+i*240]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it1 = it1 + 2
+                            elif l >= 3:
+                                x = pos_map_x[j+i*10] - x_change*it2
+                                y = pos_map_y[j+i*10] + y_change*3
+                                temp = temp_map[l+k*6+j*12+i*120]
+                                color_coding(x,y,temp,drone)
+                                count = count + 1
+                                it2 = it2 + 2
+
+    if drone == 1:
+        rx1.pop(0)
+        ry1.pop(0)
+        ox1.pop(0)
+        oy1.pop(0)
+
+        ax2.scatter(rx1, ry1, c = 'tab:red', s=100)
+        ax2.scatter(ox1, oy1, c = 'tab:orange', s=100)
+
+    if drone == 2:
+        rx2.pop(0)
+        ry2.pop(0)
+        ox2.pop(0)
+        oy2.pop(0)
+
+        ax2.scatter(rx2, ry2, c = 'tab:red', s=100)
+        ax2.scatter(ox2, oy2, c = 'tab:orange', s=100)
+    
+    #print("Count: ", count, "Temp Array Length: ", t_len, "\n")
+
+    return
+
 def temp_flag1():
     print("Hotspot Detected in Grid ", gn1)
     global temp_det1
@@ -88,7 +443,7 @@ def temp_flag2():
     global temp_det2
     temp_det2 = 1
 
-def sweep(mc, mr, fl, rotc, grid_size, partition, drone):
+def sweep(mc, mr, fl, rotc, grid_size, partition, drone, gn, temp_det):
     swX = [0]
     swY = [0]
     swY.append(1)
@@ -99,7 +454,11 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, drone):
     p_size = grid_size/partition
     pn_size = p_size
 
-    print("Surveilling Grid ", gn, "\n")
+    if temp_det == 0:
+        print("Drone ",drone," Monitoring Grid",gn, "\n")
+
+    elif temp_det == 1:
+        print("Drone ",drone," Mapping Grid",gn, "\n")
     
     for i in range(partition):
         
@@ -132,11 +491,11 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, drone):
                         xn = swX[point+1]
                         yn = swY[point+1]
 
-                        pathing_level2(mc, fl, xn, xp, yn, yp, 1, drone)
+                        pathing_level2(mc, fl, xn, xp, yn, yp, 1, drone, gn)
 
                         if temp_det == 1:
                             time.sleep(2)
-                            pathing_level2(mc, fl, 0, xn, 0, yn, 0, drone)
+                            pathing_level2(mc, fl, 0, xn, 0, yn, 0, drone, gn)
                             time.sleep(2)
                             mc.down(0.1)
                             return
@@ -151,13 +510,13 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, drone):
                         xn = swX[point+1]
                         yn = swY[point+1]
 
-                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, 1, drone)
+                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, 1, drone, gn)
 
                         point = point + 1
 
     return
 
-def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode,drone):
+def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode, drone, gn):
                 
     j = 0
     y = 0
@@ -188,7 +547,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode,drone):
 
         for j in range(ym):
             y = move_forward(mc, mr, fl)
-            temp_mapping()
+            temp_mapping(drone)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -208,7 +567,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode,drone):
 
         for j in range(ym):
             y = move_forward(mc, mr, fl)
-            temp_mapping()
+            temp_mapping(drone)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -391,7 +750,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode,drone):
 
     return rotc
 
-def pathing_level2(mc, fl, xn, xp, yn, yp, mode, drone):
+def pathing_level2(mc, fl, xn, xp, yn, yp, mode, drone, gn):
 
     j = 0
     y = 0
@@ -947,11 +1306,6 @@ def run_sequence(scf, path):
         for i in range(grid_num):
                     grid_order.append(i + 1)
 
-        global pos_file1
-        pos_file1 = open(file, "w")
-        pos_file1.close()
-        pos_file1 = open(file, "a")
-
         scf.cf.param.add_update_callback(name= path[3], cb=param_deck_flow)
 
         logconf1 = LogConfig(name='Position', period_in_ms=500) 
@@ -983,22 +1337,24 @@ def run_sequence(scf, path):
                     yn = spY[point+1] 
                     gn1 = grid_order[point + 1]
 
-                    sweep(mc, mr, fl, rotc, grid_size, partition1, drone)
+                    sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn1, temp_det1)
 
                     if temp_det1 == 1:
-                        sweep(mc, mr, fl, rotc, grid_size, partition2, drone)
+                        sweep(mc, mr, fl, rotc, grid_size, partition2, drone, gn1, temp_det1)
                         time.sleep(2)
                         mc.up(0.1)
                         time.sleep(2)
                         mc.turn_right(90, 30)
 
-                    pathing_level2(mc, fl, xn, xp, yn, yp, 0, drone)
+                    pathing_level2(mc, fl, xn, xp, yn, yp, 0, drone, gn1, temp_det1)
                     
                     if temp_det1 == 1:
                         temp_det1 = 0
                         hold1 = 0
 
                     point = point + 1
+        
+        my_plotter(ax, ax2, ax3, ax4, x_pos1, y_pos1, z_pos1, pos_map1_x, pos_map1_y, temp_map1, drone)
 
     elif scf.cf.link_uri == 'radio://0/80/2M/E7E7E7E7E7':
 
@@ -1011,11 +1367,6 @@ def run_sequence(scf, path):
         i = 0
         for i in range(grid_num):
                     grid_order.append(i + grid_size + 1)
-
-        global pos_file2
-        pos_file2 = open(file, "w")
-        pos_file2.close()
-        pos_file2 = open(file, "a")
 
         scf.cf.param.add_update_callback(name= path[3], cb=param_deck_flow)
 
@@ -1048,44 +1399,59 @@ def run_sequence(scf, path):
                     yn = spY[point+1] 
                     gn2 = grid_order[point + 1]
 
-                    sweep(mc, mr, fl, rotc, grid_size, partition1, drone)
+                    sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn2, temp_det2)
 
                     if temp_det2 == 1:
-                        sweep(mc, mr, fl, rotc, grid_size, partition2, drone)
+                        sweep(mc, mr, fl, rotc, grid_size, partition2, drone, gn2, temp_det2)
                         time.sleep(2)
                         mc.up(0.1)
                         time.sleep(2)
                         mc.turn_right(90, 30)
 
-                    pathing_level2(mc, fl, xn, xp, yn, yp, 0, drone)
+                    pathing_level2(mc, fl, xn, xp, yn, yp, 0, drone, gn2, temp_det2)
                     
                     if temp_det2 == 1:
                         temp_det2 = 0
                         hold2 = 0
 
                     point = point + 1
+
+        my_plotter(ax, ax2, ax3, ax4, x_pos2, y_pos2, z_pos2, pos_map2_x, pos_map2_y, temp_map2, drone)
         
 
 def log_pos_callback1(timestamp, data, logconf):
-    pos_file1.write("Y:{},X:{},Z:{}\n".format(data['stateEstimate.x'], data['stateEstimate.y'], data['stateEstimate.z']))
     global position_estimate
     global t
+    global x_pos1
+    global y_pos1
+    global z_pos1
+
     position_estimate1[0] = data['stateEstimate.x']
     position_estimate1[1] = data['stateEstimate.y']
     position_estimate1[2] = data['stateEstimate.z']
     t1 = timestamp
 
+    y_pos1.append(data['stateEstimate.x'])
+    x_pos1.append(data['stateEstimate.y']*-1)
+    z_pos1.append(data['stateEstimate.z'])
+
 def log_pos_callback2(timestamp, data, logconf):
-    pos_file2.write("Y:{},X:{},Z:{}\n".format(data['stateEstimate.x'], data['stateEstimate.y'], data['stateEstimate.z']))
     global position_estimate
     global t
+    global x_pos2
+    global y_pos2
+    global z_pos2
+
     position_estimate2[0] = data['stateEstimate.x']
-    position_estimate2[1] = data['stateEstimate.y']
+    position_estimate2[1] = -abs(data['stateEstimate.y']) + 2
     position_estimate2[2] = data['stateEstimate.z']
     t2 = timestamp
 
+    y_pos2.append(data['stateEstimate.x'])
+    x_pos2.append(data['stateEstimate.y']*-1) + 2
+    z_pos2.append(data['stateEstimate.z'])
+
 def log_temp1_callback(timestamp, data, logconf):
-    temp_file.write("{}\n".format(data))
     thres = 100
     global hold1
 
@@ -1157,7 +1523,6 @@ def log_temp1_callback(timestamp, data, logconf):
             temp_flag1()
 
 def log_temp2_callback(timestamp, data, logconf):
-    temp_file.write("{}\n".format(data))
     thres = 100
     global hold2
 
@@ -1246,7 +1611,36 @@ if __name__ == '__main__':
         swarm.parallel_safe(light_check)
         swarm.reset_estimators()
 
+        global fig
+        global ax
+        global ax2
+        global ax3
+        global ax4
+
+        fig = plt.figure(figsize=plt.figaspect(4.))
+        ax = fig.add_subplot(4, 1, 1, projection='3d')
+        ax2 = fig.add_subplot(4, 1, 4)
+        ax3 = fig.add_subplot(4, 1, 2)
+        ax4 = fig.add_subplot(4, 1, 3)
+
         time.sleep(2)
 
         #swarm.sequential(run_sequence, args_dict=seq_args)
         swarm.parallel(run_sequence)
+
+        ax.set_title('3D Drone Trajectory')
+        ax.view_init(elev = 45, azim = -90, roll = 0)
+
+        ax2.set_title('Temperature Map')
+        ax2.set_xlim(left=0, right=1)
+        ax2.set_ylim(bottom=0, top=1)
+
+        ax3.set_title('Level 1 Drone Trajectory')
+        """ax3.set_xlim(left=-0.2, right=1.2)
+        ax3.set_ylim(bottom=-0.2, top=1.2)"""
+
+        ax4.set_title('Level 2 Drone Trajectory')
+        """ax4.set_xlim(left=-0.2, right=1.2)
+        ax4.set_ylim(bottom=-0.2, top=1.2)"""
+
+        plt.show()
