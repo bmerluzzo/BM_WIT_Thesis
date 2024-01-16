@@ -33,6 +33,7 @@ temp5 = [0,0,0,0,0,0]
 temp6 = [0,0,0,0,0,0]
 t = 0
 temp_det = 0
+count_temp = 0
 hold = 0
 temp_map = [0]
 pos_map_x = [0]
@@ -50,7 +51,7 @@ grid_size = 1
 partition1 = 2
 partition2 = 4
 map_length_y = 2
-map_length_x = 1
+map_length_x = 2
 grid_num = 0
 grid_order = [1]
 
@@ -1241,10 +1242,17 @@ def log_pos_callback(timestamp, data, logconf):
     
 
 def log_temp_callback(timestamp, data, logconf):
-    temp_file.write("{}\n".format(data))
+    global count_temp
     global temp
     thres = 100
     global hold
+    
+    if count_temp == 6:
+        temp_file.write("\n")
+        count_temp = 0
+
+    temp_file.write("{}".format(data), "{}\n".format(position_estimate))
+    count_temp = count_temp + 1
 
     if logconf.name == 'Temp1':
         temp1[0] = data['MLX1.To1']
