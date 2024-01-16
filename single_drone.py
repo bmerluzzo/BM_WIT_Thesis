@@ -1251,7 +1251,7 @@ def log_temp_callback(timestamp, data, logconf):
         temp_file.write("\n")
         count_temp = 0
 
-    temp_file.write("{}".format(data), "{}\n".format(position_estimate))
+    temp_file.write("{},{}\n".format(data, position_estimate))
     count_temp = count_temp + 1
 
     if logconf.name == 'Temp1':
@@ -1470,7 +1470,7 @@ if __name__ == '__main__':
         j = 0
                 
         pointX = 0
-        pointY = grid_size
+        pointY = 0
         grid_num_y = map_length_y/grid_size
         grid_num_x = map_length_x/grid_size
         grid_num_y = int(grid_num_y)
@@ -1488,6 +1488,9 @@ if __name__ == '__main__':
             pointX = pointX + grid_size
             pointY = 0
 
+        spX.pop(0)
+        spY..pop(0)
+        
         grid_num = map_length_x * map_length_y
 
         i = 1
@@ -1501,7 +1504,6 @@ if __name__ == '__main__':
         global gn   
 
         logconf.start() 
-        time.sleep(5)
 
         with MotionCommander(scf, default_height = 0.4) as mc:    
             with Multiranger(scf) as mr:
@@ -1528,7 +1530,7 @@ if __name__ == '__main__':
 
                     if temp_det == 1:
                         sweep(mc, mr, fl, rotc, grid_size, partition2)
-                        time.sleep(2)
+                        time.sleep(1)
                         mc.up(0.1)
                         time.sleep(2)
                         mc.turn_right(90, 30)
