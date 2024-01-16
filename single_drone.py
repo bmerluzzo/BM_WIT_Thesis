@@ -1489,8 +1489,8 @@ if __name__ == '__main__':
             pointY = 0
 
         spX.pop(0)
-        spY..pop(0)
-        
+        spY.pop(0)
+
         grid_num = map_length_x * map_length_y
 
         i = 1
