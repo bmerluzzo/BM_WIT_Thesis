@@ -1282,9 +1282,11 @@ def log_temp_callback(timestamp, data, logconf):
     
     if count_temp == 6:
         temp_file.write("\n")
+        print("\n")
         count_temp = 0
 
     temp_file.write("{},{}\n".format(data, position_estimate))
+    print(data)
     count_temp = count_temp + 1
 
     if logconf.name == 'Temp1':
@@ -1532,9 +1534,6 @@ if __name__ == '__main__':
                 pointY = pointY + grid_size
             pointX = pointX + grid_size
             pointY = 0
-
-        spX.pop(0)
-        spY.pop(0)
         
         grid_num = map_length_x * map_length_y
 
@@ -1542,11 +1541,11 @@ if __name__ == '__main__':
         for i in range(grid_num):
                     grid_order.append(i + 1)
 
-        size = len(spX) - 1
         point = 0
         rotc = 1
         rotc = int(rotc)     
-        global gn   
+        global gn  
+        gn = grid_order[0] 
 
         logconf.start() 
 
@@ -1563,13 +1562,7 @@ if __name__ == '__main__':
                 logconf6.start()    
                         
 
-                while point != size:
-                    
-                    xp = spX[point]       
-                    yp = spY[point]
-                    xn = spX[point+1]
-                    yn = spY[point+1] 
-                    gn = grid_order[point + 1]
+                while point != grid_num:
 
                     sweep(mc, mr, fl, rotc, grid_size, partition1)
 
@@ -1580,7 +1573,16 @@ if __name__ == '__main__':
                         time.sleep(2)
                         mc.turn_right(90, 30)
 
-                    pathing_level2(mc, fl, xn, xp, yn, yp, 0)
+                    if point < (grid_num - 1):
+
+                        xp = spX[point]       
+                        yp = spY[point]
+                        xn = spX[point+1]
+                        yn = spY[point+1] 
+                        
+                        pathing_level2(mc, fl, xn, xp, yn, yp, 0)
+
+                        gn = grid_order[point + 1]
                     
                     if temp_det == 1:
                         temp_det = 0
