@@ -1223,7 +1223,6 @@ def is_close(range):
         return range < MIN_DISTANCE
 
 def log_pos_callback(timestamp, data, logconf):
-    print(data)
     pos_file.write("Yaw:{},Y:{},X:{},Z:{}\n".format(data['stateEstimate.yaw'], data['stateEstimate.x'], data['stateEstimate.y'], data['stateEstimate.z']))
     global x_pos
     global y_pos
@@ -1490,7 +1489,7 @@ if __name__ == '__main__':
 
         spX.pop(0)
         spY.pop(0)
-
+        
         grid_num = map_length_x * map_length_y
 
         i = 1
