@@ -68,7 +68,7 @@ def calibrate(mc):
     while(1):
         if hold == 1:
             time.sleep(1)
-        elif hold == 2:
+        elif hold == 0:
             return
 
 def color_coding(x, y, temp):
@@ -1562,7 +1562,7 @@ if __name__ == '__main__':
                 logconf6.start()    
                         
 
-                while point != grid_num:
+                while point != 2:
 
                     sweep(mc, mr, fl, rotc, grid_size, partition1)
 
@@ -1573,7 +1573,7 @@ if __name__ == '__main__':
                         time.sleep(2)
                         mc.turn_right(90, 30)
 
-                    if point < (grid_num - 1):
+                    if point < 1:
 
                         xp = spX[point]       
                         yp = spY[point]
