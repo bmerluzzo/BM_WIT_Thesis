@@ -51,7 +51,7 @@ grid_size = 1
 partition1 = 2
 partition2 = 4
 map_length_y = 2
-map_length_x = 1
+map_length_x = 2
 grid_num = 0
 grid_order = [1]
 
@@ -63,12 +63,13 @@ deck_attached_event = Event()
 
 def calibrate(mc):
     global hold
-
+    print("Recalibrating\n")
     mc.stop()
     while(1):
         if hold == 1:
             time.sleep(1)
         elif hold == 0:
+            print("Calibrated")
             return
 
 def color_coding(x, y, temp):
@@ -298,6 +299,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
     point = 0
     p_size = grid_size/partition
     pn_size = p_size
+    global gn
 
     print("Surveilling Grid ", gn, "\n")
     
@@ -320,7 +322,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
 
     size = len(swX) - 1
 
-    time.sleep(3)
+    time.sleep(2)
 
 
     if temp_det == 0:
@@ -335,9 +337,9 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
                         pathing_level2(mc, fl, xn, xp, yn, yp, 1)
 
                         if temp_det == 1:
-                            time.sleep(2)
+                            time.sleep(1)
                             pathing_level2(mc, fl, 0, xn, 0, yn, 0)
-                            time.sleep(2)
+                            time.sleep(1)
                             mc.down(0.1)
                             return
                         point = point + 1
@@ -760,9 +762,7 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
         j = 0
 
     x = position_estimate[1]
-    y = position_estimate[0] 
-    print(x, "\n") 
-    print(y, "\n") 
+    y = position_estimate[0]  
     time.sleep(1)
     error = abs(ye - y)
         
@@ -1282,11 +1282,9 @@ def log_temp_callback(timestamp, data, logconf):
     
     if count_temp == 6:
         temp_file.write("\n")
-        print("\n")
         count_temp = 0
 
     temp_file.write("{},{}\n".format(data, position_estimate))
-    print(data)
     count_temp = count_temp + 1
 
     if logconf.name == 'Temp1':
@@ -1537,6 +1535,9 @@ if __name__ == '__main__':
         
         grid_num = map_length_x * map_length_y
 
+        spX.pop(0)
+        spY.pop(0)
+
         i = 1
         for i in range(grid_num):
                     grid_order.append(i + 1)
@@ -1546,6 +1547,7 @@ if __name__ == '__main__':
         rotc = int(rotc)     
         global gn  
         gn = grid_order[0] 
+        print(spX, spY, "\n")
 
         logconf.start() 
 
@@ -1562,7 +1564,7 @@ if __name__ == '__main__':
                 logconf6.start()    
                         
 
-                while point != 2:
+                while point != grid_num:
 
                     sweep(mc, mr, fl, rotc, grid_size, partition1)
 
@@ -1573,7 +1575,7 @@ if __name__ == '__main__':
                         time.sleep(2)
                         mc.turn_right(90, 30)
 
-                    if point < 1:
+                    if point < grid_num - 1:
 
                         xp = spX[point]       
                         yp = spY[point]
