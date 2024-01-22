@@ -289,11 +289,11 @@ def temp_flag():
     temp_det = 1
     
 
-def sweep(mc, mr, fl, rotc, grid_size, partition):
-    swX = [0]
-    swY = [0]
-    swY.append(1)
-    swX.append(0)
+def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
+    swX = [0+xc]
+    swY = [0+yc]
+    swY.append(1+yc)
+    swX.append(0+xc)
     i = 0
     i = i + 1
     point = 0
@@ -306,19 +306,19 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
     for i in range(partition):
         
         if i % 2 == 0:
-            swY.append(grid_size)
-            swY.append(0)
+            swY.append(grid_size+yc)
+            swY.append(0+yc)
         else:
-            swY.append(0)
-            swY.append(grid_size)
+            swY.append(0+yc)
+            swY.append(grid_size+yc)
 
-        swX.append(pn_size)
-        swX.append(pn_size)
+        swX.append(pn_size+xc)
+        swX.append(pn_size+xc)
 
         pn_size = pn_size + p_size
 
-    swX.append(0)
-    swY.append(0)
+    swX.append(0+xc)
+    swY.append(0+yc)
 
     size = len(swX) - 1
 
@@ -334,11 +334,11 @@ def sweep(mc, mr, fl, rotc, grid_size, partition):
                         xn = swX[point+1]
                         yn = swY[point+1]
 
-                        pathing_level2(mc, fl, xn, xp, yn, yp, 1)
+                        pathing_level2(mc, fl, xn, xp, yn, yp)
 
                         if temp_det == 1:
                             time.sleep(1)
-                            pathing_level2(mc, fl, 0, xn, 0, yn, 0)
+                            pathing_level2(mc, fl, 0, xn, 0, yn)
                             time.sleep(1)
                             mc.down(0.1)
                             return
@@ -594,7 +594,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode):
     return rotc
           
 
-def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
+def pathing_level2(mc, fl, xn, xp, yn, yp):
 
     global hold
     j = 0
@@ -604,15 +604,8 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
     yd, xd = 0, 0
     ym, xm = 0, 0
    
-    if mode == 1:
-        yl = gn - 1
-        ye = yn + yl
-        xe = -abs(xn)
-        if xn == 0:
-            xe = 0
-    elif mode == 0:
-        ye = yn
-        xe = xn
+    ye = yn
+    xe = xn
 
     if xp == xn and yp < yn:       
                         
@@ -799,7 +792,7 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode):
                 error_flag = 0
 
 
-def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map):
+def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map): 
     x_pos_l1 = [0]
     y_pos_l1 = [0]
     z_pos_l1 = [0]
@@ -1566,7 +1559,12 @@ if __name__ == '__main__':
 
                 while point != grid_num:
 
-                    sweep(mc, mr, fl, rotc, grid_size, partition1)
+                    xp = spX[point]       
+                    yp = spY[point]
+                    xn = spX[point+1]
+                    yn = spY[point+1] 
+
+                    sweep(mc, mr, fl, rotc, grid_size, partition1, xp, yp)
 
                     if temp_det == 1:
                         sweep(mc, mr, fl, rotc, grid_size, partition2)
@@ -1576,11 +1574,6 @@ if __name__ == '__main__':
                         mc.turn_right(90, 30)
 
                     if point < grid_num - 1:
-
-                        xp = spX[point]       
-                        yp = spY[point]
-                        xn = spX[point+1]
-                        yn = spY[point+1] 
                         
                         pathing_level2(mc, fl, xn, xp, yn, yp, 0)
 
