@@ -18,7 +18,8 @@
 static bool isInit;
 void mlx90640Task(void* arg);
 float con = 4;
-float To[192];
+float To1[192];
+float To[48];
 
 static void mlx90640Init()
 {
@@ -103,8 +104,13 @@ void mlx90640Task(void* arg)
 
     for(int i = 0;i < 24;i = i + 2){
       for(int j = 0;j < 32;j = j + 2){
-        To[((16*i)+j)/2] = (mlx90640To[(i*32)+j] + mlx90640To[(i*32)+j+1] + mlx90640To[(i*32)+j+32] + mlx90640To[(i*32)+j+33])/con;
+        To1[((16*i)+j)/2] = (mlx90640To[(i*32)+j] + mlx90640To[(i*32)+j+1] + mlx90640To[(i*32)+j+32] + mlx90640To[(i*32)+j+33])/con;
       }
+    }
+
+    for(int i = 0;i < 12;i = i + 2){
+      for(int j = 0;j < 16;j = j + 2)
+        To[((i*8)+j)/2] = (To1[(i*16)+j] + To1[(i*16)+j+1] + To1[(i*16)+j+16] + To1[(i*16)+j+17])/con;
     }
 
     end = xTaskGetTickCount();
@@ -130,55 +136,55 @@ static const DeckDriver mlx90640Driver = {
 DECK_DRIVER(mlx90640Driver);
 
 LOG_GROUP_START(MLX1)
-LOG_ADD(LOG_FLOAT, To1, &To[58])
-LOG_ADD(LOG_FLOAT, To2, &To[74])
-LOG_ADD(LOG_FLOAT, To3, &To[90])
-LOG_ADD(LOG_FLOAT, To4, &To[106])
-LOG_ADD(LOG_FLOAT, To5, &To[122])
-LOG_ADD(LOG_FLOAT, To6, &To[138])
+LOG_ADD(LOG_FLOAT, To1, &To[6])
+LOG_ADD(LOG_FLOAT, To2, &To[14])
+LOG_ADD(LOG_FLOAT, To3, &To[22])
+LOG_ADD(LOG_FLOAT, To4, &To[30])
+LOG_ADD(LOG_FLOAT, To5, &To[38])
+LOG_ADD(LOG_FLOAT, To6, &To[46])
 LOG_GROUP_STOP(MLX1)
 
 LOG_GROUP_START(MLX2)
-LOG_ADD(LOG_FLOAT, To1, &To[57])
-LOG_ADD(LOG_FLOAT, To2, &To[73])
-LOG_ADD(LOG_FLOAT, To3, &To[89])
-LOG_ADD(LOG_FLOAT, To4, &To[105])
-LOG_ADD(LOG_FLOAT, To5, &To[121])
-LOG_ADD(LOG_FLOAT, To6, &To[137])
+LOG_ADD(LOG_FLOAT, To1, &To[5])
+LOG_ADD(LOG_FLOAT, To2, &To[13])
+LOG_ADD(LOG_FLOAT, To3, &To[21])
+LOG_ADD(LOG_FLOAT, To4, &To[29])
+LOG_ADD(LOG_FLOAT, To5, &To[37])
+LOG_ADD(LOG_FLOAT, To6, &To[45])
 LOG_GROUP_STOP(MLX2)
 
 LOG_GROUP_START(MLX3)
-LOG_ADD(LOG_FLOAT, To1, &To[56])
-LOG_ADD(LOG_FLOAT, To2, &To[72])
-LOG_ADD(LOG_FLOAT, To3, &To[88])
-LOG_ADD(LOG_FLOAT, To4, &To[104])
-LOG_ADD(LOG_FLOAT, To5, &To[120])
-LOG_ADD(LOG_FLOAT, To6, &To[136])
+LOG_ADD(LOG_FLOAT, To1, &To[4])
+LOG_ADD(LOG_FLOAT, To2, &To[12])
+LOG_ADD(LOG_FLOAT, To3, &To[20])
+LOG_ADD(LOG_FLOAT, To4, &To[28])
+LOG_ADD(LOG_FLOAT, To5, &To[36])
+LOG_ADD(LOG_FLOAT, To6, &To[44])
 LOG_GROUP_STOP(MLX3)
 
 LOG_GROUP_START(MLX4)
-LOG_ADD(LOG_FLOAT, To1, &To[55])
-LOG_ADD(LOG_FLOAT, To2, &To[71])
-LOG_ADD(LOG_FLOAT, To3, &To[87])
-LOG_ADD(LOG_FLOAT, To4, &To[103])
-LOG_ADD(LOG_FLOAT, To5, &To[119])
-LOG_ADD(LOG_FLOAT, To6, &To[135])
+LOG_ADD(LOG_FLOAT, To1, &To[3])
+LOG_ADD(LOG_FLOAT, To2, &To[11])
+LOG_ADD(LOG_FLOAT, To3, &To[19])
+LOG_ADD(LOG_FLOAT, To4, &To[27])
+LOG_ADD(LOG_FLOAT, To5, &To[35])
+LOG_ADD(LOG_FLOAT, To6, &To[43])
 LOG_GROUP_STOP(MLX4)
 
 LOG_GROUP_START(MLX5)
-LOG_ADD(LOG_FLOAT, To1, &To[54])
-LOG_ADD(LOG_FLOAT, To2, &To[70])
-LOG_ADD(LOG_FLOAT, To3, &To[86])
-LOG_ADD(LOG_FLOAT, To4, &To[102])
-LOG_ADD(LOG_FLOAT, To5, &To[118])
-LOG_ADD(LOG_FLOAT, To6, &To[134])
+LOG_ADD(LOG_FLOAT, To1, &To[2])
+LOG_ADD(LOG_FLOAT, To2, &To[10])
+LOG_ADD(LOG_FLOAT, To3, &To[18])
+LOG_ADD(LOG_FLOAT, To4, &To[26])
+LOG_ADD(LOG_FLOAT, To5, &To[34])
+LOG_ADD(LOG_FLOAT, To6, &To[42])
 LOG_GROUP_STOP(MLX5)
 
 LOG_GROUP_START(MLX6)
-LOG_ADD(LOG_FLOAT, To1, &To[53])
-LOG_ADD(LOG_FLOAT, To2, &To[69])
-LOG_ADD(LOG_FLOAT, To3, &To[85])
-LOG_ADD(LOG_FLOAT, To4, &To[101])
-LOG_ADD(LOG_FLOAT, To5, &To[117])
-LOG_ADD(LOG_FLOAT, To6, &To[133])
+LOG_ADD(LOG_FLOAT, To1, &To[1])
+LOG_ADD(LOG_FLOAT, To2, &To[9])
+LOG_ADD(LOG_FLOAT, To3, &To[17])
+LOG_ADD(LOG_FLOAT, To4, &To[25])
+LOG_ADD(LOG_FLOAT, To5, &To[33])
+LOG_ADD(LOG_FLOAT, To6, &To[41])
 LOG_GROUP_STOP(MLX6)
