@@ -301,6 +301,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
     pn_size = p_size
     global gn
 
+    
     print("Surveilling Grid ", gn, "\n")
     
     for i in range(partition):
@@ -319,6 +320,8 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
 
     swX.append(0+xc)
     swY.append(0+yc)
+
+    print(swX, swY, "\n")
 
     size = len(swX) - 1
 
@@ -754,7 +757,8 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         time.sleep(2)
         j = 0
 
-    x = position_estimate[1]
+    x = abs(position_estimate[1])
+    print(x, "\n")
     y = position_estimate[0]  
     time.sleep(1)
     error = abs(ye - y)
@@ -773,7 +777,7 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
             else:
                 error_flag = 0
 
-    x = position_estimate[1]
+    x = abs(position_estimate[1])
     time.sleep(1)
     error = abs(xe - x)
         
@@ -781,12 +785,12 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         error_flag = 1
         while error_flag == 1:
             if error > pos_error:
-                if x > xe:
+                if x < xe:
                     mc.right(pos_error/4)
-                    x = position_estimate[1]
-                elif x < xe:
+                    x = abs(position_estimate[1])
+                elif x > xe:
                     mc.left(pos_error/4)
-                    x = position_estimate[1]
+                    x = abs(position_estimate[1])
                 error = abs(xe - x)
             else:
                 error_flag = 0
@@ -1561,10 +1565,15 @@ if __name__ == '__main__':
 
                 while point != grid_num:
 
-                    xp = spX[point]       
-                    yp = spY[point]
-                    xn = spX[point+1]
-                    yn = spY[point+1] 
+                    if point < grid_num - 1:
+                        xp = spX[point]       
+                        yp = spY[point]
+                        xn = spX[point+1]
+                        yn = spY[point+1] 
+
+                    if point == grid_num - 1:
+                        xp = xn
+                        yp = yn
 
                     sweep(mc, mr, fl, rotc, grid_size, partition1, xp, yp)
 
@@ -1577,7 +1586,7 @@ if __name__ == '__main__':
 
                     if point < grid_num - 1:
                         
-                        pathing_level2(mc, fl, xn, xp, yn, yp, 0)
+                        pathing_level2(mc, fl, xn, xp, yn, yp)
 
                         gn = grid_order[point + 1]
                     
