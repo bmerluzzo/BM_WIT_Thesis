@@ -321,8 +321,6 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
     swX.append(0+xc)
     swY.append(0+yc)
 
-    print(swX, swY, "\n")
-
     size = len(swX) - 1
 
     time.sleep(2)
@@ -758,7 +756,6 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         j = 0
 
     x = abs(position_estimate[1])
-    print(x, "\n")
     y = position_estimate[0]  
     time.sleep(1)
     error = abs(ye - y)
@@ -1279,9 +1276,11 @@ def log_temp_callback(timestamp, data, logconf):
     
     if count_temp == 6:
         temp_file.write("\n")
+        print("/n")
         count_temp = 0
 
     temp_file.write("{},{}\n".format(data, position_estimate))
+    print(data)
     count_temp = count_temp + 1
 
     if logconf.name == 'Temp1':
@@ -1546,7 +1545,6 @@ if __name__ == '__main__':
         rotc = int(rotc)     
         global gn  
         gn = grid_order[0] 
-        print(spX, spY, "\n")
 
         logconf.start() 
 
