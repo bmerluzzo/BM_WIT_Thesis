@@ -51,7 +51,7 @@ grid_size = 1
 partition1 = 2
 partition2 = 4
 map_length_y = 2
-map_length_x = 2
+map_length_x = 1
 grid_num = 0
 grid_order = [1]
 
@@ -1534,6 +1534,8 @@ if __name__ == '__main__':
         i = 1
         for i in range(grid_num):
                     grid_order.append(i + 1)
+
+        grid_order.pop(0)
 
         point = 0
         rotc = 1
