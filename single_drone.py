@@ -35,6 +35,7 @@ t = 0
 temp_det = 0
 count_temp = 0
 hold = 0
+cal = 0
 temp_map = [0]
 pos_map_x = [0]
 pos_map_y = [0]
@@ -66,9 +67,9 @@ def calibrate(mc):
     print("Recalibrating\n")
     mc.stop()
     while(1):
-        if hold == 1:
+        if cal == 1:
             time.sleep(1)
-        elif hold == 0:
+        elif cal == 0:
             print("Calibrated")
             return
 
@@ -301,8 +302,10 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
     pn_size = p_size
     global gn
 
-    
-    print("Surveilling Grid ", gn, "\n")
+    if temp_det == 0:
+        print("Surveilling Grid ", gn, "\n")
+    elif temp_det == 1:
+        print("Mapping Grid ", gn, "\n")
     
     for i in range(partition):
         
@@ -383,6 +386,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         error_correction_level1(mc, xe, yp, rotc)
 
         for j in range(ym):
+            calibrate(mc)
             y = move_forward(mc, mr, fl)
             temp_mapping()
             if y > 0:
@@ -403,6 +407,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         error_correction_level1(mc, xe, yp, rotc)
 
         for j in range(ym):
+            calibrate(mc)
             y = move_forward(mc, mr, fl)
             temp_mapping()
             if y > 0:
@@ -423,6 +428,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         error_correction_level1(mc, -abs(xp), ye, rotc)
                         
         for j in range(xm):
+            calibrate(mc)
             y = move_forward(mc, mr, fl)
             if y > 0:
                 j = j + y
@@ -442,6 +448,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         error_correction_level1(mc, -abs(xp), ye, rotc)
 
         for j in range(xm):
+            calibrate(mc)
             y = move_forward(mc, mr, fl)
             if y > 0:
                 j = j + y
@@ -460,6 +467,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(ym):
+            calibrate(mc)
             y = move_forward(mc, mr, fl)
             if y > 0:
                 j = j + y
@@ -475,6 +483,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(xm):
+            calibrate(mc)
             y = move_forward(mc, mr, fl)
             if y > 0:
                 j = j + y
@@ -493,6 +502,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(ym):
+            calibrate(mc)
             y = move_forward(mc, mr, fl)
             if y > 0:
                 j = j + y
@@ -509,6 +519,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(xm):
+            calibrate(mc)
             y = move_forward(mc, mr, fl)
             if y > 0:
                 j = j + y
@@ -527,6 +538,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(ym):
+            calibrate(mc)
             y = move_forward(mc, mr, fl)
             if y > 0:
                 j = j + y
@@ -543,6 +555,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(xm):
+            calibrate(mc)
             y = move_forward(mc, mr, fl)
             if y > 0:
                 j = j + y
@@ -561,6 +574,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(ym):
+            calibrate(mc)
             y = move_forward(mc, mr, fl)
             if y > 0:
                 j = j + y
@@ -576,6 +590,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(xm):
+            calibrate(mc)
             y = move_forward(mc, mr, fl)
             if y > 0:
                 j = j + y
@@ -822,8 +837,8 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     x = 0
     y = 0
     temp = 0
-    x_change = 0.035/2
-    y_change = 0.0536/2
+    x_change = 0.0315/2
+    y_change = 0.039/2
     pos_map_x.pop(0)
     pos_map_y.pop(0)
     it1 = 1
@@ -1264,8 +1279,12 @@ def log_pos_callback(timestamp, data, logconf):
 def log_temp_callback(timestamp, data, logconf):
     global count_temp
     global temp
-    thres = 10
+    global cal
     global hold
+
+    thres1 = 10
+    thres2 = 25
+    
     
     if count_temp == 6:
         temp_file.write("\n")
@@ -1283,11 +1302,15 @@ def log_temp_callback(timestamp, data, logconf):
         temp1[3] = data['MLX1.To4']
         temp1[4] = data['MLX1.To5']
         temp1[5] = data['MLX1.To6']
-        if (temp1[0] or temp1[1] or temp1[2] or temp1[3] or temp1[4] or temp1[5]) < thres:
+        if (temp1[0] or temp1[1] or temp1[2] or temp1[3] or temp1[4] or temp1[5]) < thres1:
+            cal = 1
+            
+        elif (temp1[0] or temp1[1] or temp1[2] or temp1[3] or temp1[4] or temp1[5]) > thres1:
+            cal = 0
+
+        elif (temp1[0] or temp1[1] or temp1[2] or temp1[3] or temp1[4] or temp1[5]) > thres2 and hold == 0:
+            temp_flag()
             hold = 1
-            #temp_flag()
-        elif (temp1[0] or temp1[1] or temp1[2] or temp1[3] or temp1[4] or temp1[5]) > thres:
-            hold = 0
 
     elif logconf.name == 'Temp2':
         temp2[0] = data['MLX2.To1']
@@ -1296,11 +1319,15 @@ def log_temp_callback(timestamp, data, logconf):
         temp2[3] = data['MLX2.To4']
         temp2[4] = data['MLX2.To5']
         temp2[5] = data['MLX2.To6']
-        if (temp2[0] or temp2[1] or temp2[2] or temp2[3] or temp2[4] or temp2[5]) < thres:
+        if (temp2[0] or temp2[1] or temp2[2] or temp2[3] or temp2[4] or temp2[5]) < thres1:
+            cal = 1
+
+        if (temp2[0] or temp2[1] or temp2[2] or temp2[3] or temp2[4] or temp2[5]) > thres1:
+            cal = 0
+               
+        elif (temp2[0] or temp2[1] or temp2[2] or temp2[3] or temp2[4] or temp2[5]) > thres2 and hold == 0:
+            temp_flag()
             hold = 1
-            #temp_flag()
-        elif (temp2[0] or temp2[1] or temp2[2] or temp2[3] or temp2[4] or temp2[5]) > thres:
-            hold = 0
 
     
     elif logconf.name == 'Temp3':
@@ -1310,11 +1337,15 @@ def log_temp_callback(timestamp, data, logconf):
         temp3[3] = data['MLX3.To4']
         temp3[4] = data['MLX3.To5']
         temp3[5] = data['MLX3.To6']
-        if (temp3[0] or temp3[1] or temp3[2] or temp3[3] or temp3[4] or temp3[5]) < thres:
+        if (temp3[0] or temp3[1] or temp3[2] or temp3[3] or temp3[4] or temp3[5]) < thres1:
+            cal = 1
+
+        elif (temp3[0] or temp3[1] or temp3[2] or temp3[3] or temp3[4] or temp3[5]) > thres1:
+            cal = 0
+
+        elif (temp3[0] or temp3[1] or temp3[2] or temp3[3] or temp3[4] or temp3[5]) > thres2 and hold == 0:
+            temp_flag()
             hold = 1
-            #temp_flag()
-        elif (temp3[0] or temp3[1] or temp3[2] or temp3[3] or temp3[4] or temp3[5]) > thres:
-            hold = 0
 
     elif logconf.name == 'Temp4':
         temp4[0] = data['MLX4.To1']
@@ -1323,11 +1354,15 @@ def log_temp_callback(timestamp, data, logconf):
         temp4[3] = data['MLX4.To4']
         temp4[4] = data['MLX4.To5']
         temp4[5] = data['MLX4.To6']
-        if (temp4[0] or temp4[1] or temp4[2] or temp4[3] or temp4[4] or temp4[5]) < thres:
+        if (temp4[0] or temp4[1] or temp4[2] or temp4[3] or temp4[4] or temp4[5]) < thres1:
+            cal = 1
+
+        elif (temp4[0] or temp4[1] or temp4[2] or temp4[3] or temp4[4] or temp4[5]) > thres1:
+            cal = 0
+            
+        elif (temp4[0] or temp4[1] or temp4[2] or temp4[3] or temp4[4] or temp4[5]) > thres2 and hold == 0:
+            temp_flag()
             hold = 1
-            #temp_flag()
-        elif (temp4[0] or temp4[1] or temp4[2] or temp4[3] or temp4[4] or temp4[5]) > thres:
-            hold = 0
 
     elif logconf.name == 'Temp5':
         temp5[0] = data['MLX5.To1']
@@ -1336,11 +1371,15 @@ def log_temp_callback(timestamp, data, logconf):
         temp5[3] = data['MLX5.To4']
         temp5[4] = data['MLX5.To5']
         temp5[5] = data['MLX5.To6']
-        if (temp5[0] or temp5[1] or temp5[2] or temp5[3] or temp5[4] or temp5[5]) < thres:
+        if (temp5[0] or temp5[1] or temp5[2] or temp5[3] or temp5[4] or temp5[5]) < thres1:
+            cal = 1
+        
+        elif (temp5[0] or temp5[1] or temp5[2] or temp5[3] or temp5[4] or temp5[5]) > thres1:
+            cal = 0
+
+        elif (temp5[0] or temp5[1] or temp5[2] or temp5[3] or temp5[4] or temp5[5]) > thres2 and hold == 0:
+            temp_flag()
             hold = 1
-            #temp_flag()
-        elif (temp5[0] or temp5[1] or temp5[2] or temp5[3] or temp5[4] or temp5[5]) > thres:
-            hold = 0
 
     elif logconf.name == 'Temp6':
         temp6[0] = data['MLX6.To1']
@@ -1349,11 +1388,15 @@ def log_temp_callback(timestamp, data, logconf):
         temp6[3] = data['MLX6.To4']
         temp6[4] = data['MLX6.To5']
         temp6[5] = data['MLX6.To6']
-        if (temp6[0] or temp6[1] or temp6[2] or temp6[3] or temp6[4] or temp6[5]) < thres:
+        if (temp6[0] or temp6[1] or temp6[2] or temp6[3] or temp6[4] or temp6[5]) < thres1:
+            cal = 1
+
+        if (temp6[0] or temp6[1] or temp6[2] or temp6[3] or temp6[4] or temp6[5]) > thres1:
+            cal = 0
+
+        elif (temp6[0] or temp6[1] or temp6[2] or temp6[3] or temp6[4] or temp6[5]) > thres2 and hold == 0:
+            temp_flag()
             hold = 1
-            #temp_flag ()
-        elif (temp6[0] or temp6[1] or temp6[2] or temp6[3] or temp6[4] or temp6[5]) > thres:
-            hold = 0
 
 
 def param_deck_flow(_, value_str):
