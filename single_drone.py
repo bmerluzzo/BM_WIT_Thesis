@@ -354,13 +354,13 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
                         xn = swX[point+1]
                         yn = swY[point+1]
 
-                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, 1)
+                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc)
 
                         point = point + 1
 
     return
 
-def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode):
+def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
                 
     j = 0
     y = 0
@@ -368,15 +368,8 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode):
     yd, xd = 0, 0
     ym, xm = 0, 0
 
-    if mode == 1:
-        yl = gn - 1
-        ye = yn + yl
-        xe = -abs(xn)
-        if xn == 0:
-            xe = 0
-    elif mode == 0:
-        ye = yn
-        xe = xn
+    ye = yn
+    xe = xn
 
     if xp == xn and yp < yn:       
                         
@@ -590,7 +583,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode):
         y = 0
         j = 0
 
-    error_correction_level1(mc, xe, ye, rotc)
+    error_correction_level1(mc, -abs(xe), ye, rotc)
 
     return rotc
           
@@ -1563,20 +1556,17 @@ if __name__ == '__main__':
 
                 while point != grid_num:
 
+                    xp = spX[point]       
+                    yp = spY[point]
+                    
                     if point < grid_num - 1:
-                        xp = spX[point]       
-                        yp = spY[point]
                         xn = spX[point+1]
                         yn = spY[point+1] 
-
-                    if point == grid_num - 1:
-                        xp = xn
-                        yp = yn
 
                     sweep(mc, mr, fl, rotc, grid_size, partition1, xp, yp)
 
                     if temp_det == 1:
-                        sweep(mc, mr, fl, rotc, grid_size, partition2)
+                        sweep(mc, mr, fl, rotc, grid_size, partition2, xp, yp)
                         time.sleep(1)
                         mc.up(0.1)
                         time.sleep(2)
