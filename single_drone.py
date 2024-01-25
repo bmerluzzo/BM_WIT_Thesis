@@ -372,7 +372,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
     ym, xm = 0, 0
 
     ye = yn
-    xe = xn
+    xe = xn*-1
 
     if xp == xn and yp < yn:       
                         
@@ -596,7 +596,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         y = 0
         j = 0
 
-    error_correction_level1(mc, -abs(xe), ye, rotc)
+    error_correction_level1(mc, xe, ye, rotc)
 
     return rotc
           
