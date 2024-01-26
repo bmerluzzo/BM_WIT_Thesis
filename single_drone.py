@@ -80,15 +80,35 @@ def color_coding(x, y, temp):
     global ox
     global oy
 
-    if temp >=25 and temp < 30:
-        ox.append(x)
-        oy.append(y)
+    lbx = 0
+    ubx = 0.1
+    lby = 0
+    uby = 0.1
+    it = 0.1
 
-    elif temp >= 30:
-        rx.append(x)
-        ry.append(y)
+    for i in range(10):
+        for j in range(10):
+            if lbx < x < ubx  and lby < y < uby:
+                if temp >=25 and temp < 30:
+                    ox.append(lbx + (it/2))
+                    oy.append(lby + (it/2))
+                    return
 
-    return
+                elif temp >= 30:
+                    rx.append(lbx + (it/2))
+                    ry.append(lby + (it/2))
+                    return
+                
+            else:
+                lbx = lbx + it
+                ubx = ubx + it
+        lbx = 0
+        ubx = 1        
+        lby = lby + it
+        uby = uby + it        
+
+
+    
 
 def temp_mapping():
     
