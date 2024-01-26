@@ -54,7 +54,6 @@ partition2 = 4
 map_length_y = 1
 map_length_x = 1
 grid_num = 0
-grid_order = [1]
 
 #Flight varibles - velocity and distance increment 
 fl = 0.1
@@ -80,35 +79,36 @@ def color_coding(x, y, temp):
     global ox
     global oy
 
-    lbx = 0
-    ubx = 0.1
-    lby = 0
-    uby = 0.1
-    it = 0.1
+    it = 0.05
+    for i in range(len(grid_order)):
+        if gn == grid_order[i]:
+            templbx = spX[i]
+            tempubx = spX[i] + it
+            lby = spY[i]
+            uby = spY[i] + it
 
-    for i in range(10):
-        for j in range(10):
+    for i in range(20):
+        lbx = templbx
+        ubx = tempubx
+        for j in range(20):
             if lbx < x < ubx  and lby < y < uby:
-                if temp >=25 and temp < 30:
+                if temp >=24 and temp < 30:
                     ox.append(lbx + (it/2))
                     oy.append(lby + (it/2))
+                    print(x, y, "\n")
                     return
 
                 elif temp >= 30:
                     rx.append(lbx + (it/2))
                     ry.append(lby + (it/2))
+                    print(x, y, "\n")
                     return
                 
             else:
                 lbx = lbx + it
-                ubx = ubx + it
-        lbx = 0
-        ubx = 1        
+                ubx = ubx + it       
         lby = lby + it
         uby = uby + it        
-
-
-    
 
 def temp_mapping():
     
@@ -410,7 +410,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
             temp_mapping()
             if y > 0:
                 j = j + y
-        time.sleep(2)
+        time.sleep(1)
         y = 0
         j = 0
 
@@ -430,7 +430,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
             temp_mapping()
             if y > 0:
                 j = j + y
-        time.sleep(2)
+        time.sleep(1)
         y = 0
         j = 0
 
@@ -450,7 +450,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
             y = move_forward(mc, mr, fl)
             if y > 0:
                 j = j + y
-        time.sleep(2)
+        time.sleep(1)
         y = 0
         j = 0
 
@@ -470,7 +470,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
             y = move_forward(mc, mr, fl)
             if y > 0:
                 j = j + y
-        time.sleep(2)
+        time.sleep(1)
         y = 0
         j = 0
 
@@ -829,11 +829,11 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
 
     for i in range(len(z_pos)):
         if z_pos[i] > 0.35:
-            x_pos_l1.append(x_pos[i])
+            x_pos_l1.append(-1*x_pos[i])
             y_pos_l1.append(y_pos[i])
             z_pos_l1.append(z_pos[i])
-        elif z_pos[i] < 0.35:
-            x_pos_l2.append(x_pos[i])
+        elif 0.275 < z_pos[i] < 0.35:
+            x_pos_l2.append(-1*x_pos[i])
             y_pos_l2.append(y_pos[i])
             z_pos_l2.append(z_pos[i])
 
@@ -1034,8 +1034,8 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     
     print("Count: ", count, "Temp Array Length: ", t_len, "\n")
 
-    ax2.scatter(rx, ry, c = 'tab:red', s=100)
-    ax2.scatter(ox, oy, c = 'tab:orange', s=100)
+    ax2.scatter(rx, ry, c = 'tab:red', s=50)
+    ax2.scatter(ox, oy, c = 'tab:orange', s=50)
 
     return
 
@@ -1283,6 +1283,7 @@ def log_pos_callback(timestamp, data, logconf):
     global yaw
     global position_estimate
     global t
+    print(data)
 
     position_estimate[0] = data['stateEstimate.x']
     position_estimate[1] = data['stateEstimate.y']
@@ -1301,11 +1302,9 @@ def log_temp_callback(timestamp, data, logconf):
 
     if count_temp == 6:
         temp_file.write("\n")
-        print("/n")
         count_temp = 0
 
     temp_file.write("{},{}\n".format(data, position_estimate))
-    print(data)
     count_temp = count_temp + 1
 
     if logconf.name == 'Temp1':
@@ -1535,6 +1534,8 @@ if __name__ == '__main__':
         grid_num_x = map_length_x/grid_size
         grid_num_y = int(grid_num_y)
         grid_num_x = int(grid_num_x)
+        global spY
+        global spX
         spY = [0] 
         spX = [0] 
 
@@ -1552,6 +1553,8 @@ if __name__ == '__main__':
 
         spX.pop(0)
         spY.pop(0)
+        global grid_order
+        grid_order = [0]
 
         i = 1
         for i in range(grid_num):
