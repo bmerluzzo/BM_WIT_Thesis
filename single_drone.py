@@ -57,7 +57,7 @@ grid_num = 0
 
 #Flight varibles - velocity and distance increment 
 fl = 0.1
-velocity1 = 0.2
+velocity1 = 0.25
 velocity2 = 0.1
 
 deck_attached_event = Event()
