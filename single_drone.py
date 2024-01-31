@@ -829,11 +829,11 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
 
     for i in range(len(z_pos)):
         if z_pos[i] > 0.35:
-            x_pos_l1.append(-1*x_pos[i])
+            x_pos_l1.append(x_pos[i])
             y_pos_l1.append(y_pos[i])
             z_pos_l1.append(z_pos[i])
         elif 0.275 < z_pos[i] < 0.35:
-            x_pos_l2.append(-1*x_pos[i])
+            x_pos_l2.append(x_pos[i])
             y_pos_l2.append(y_pos[i])
             z_pos_l2.append(z_pos[i])
 
