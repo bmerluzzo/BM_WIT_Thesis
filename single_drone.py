@@ -364,7 +364,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
 
                         if temp_det == 1:
                             time.sleep(1)
-                            pathing_level2(mc, fl, 0, xn, 0, yn, vel)
+                            pathing_level2(mc, fl, 0, xn, 0, yn)
                             time.sleep(1)
                             mc.down(0.1)
                             return
@@ -380,7 +380,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
                         xn = swX[point+1]
                         yn = swY[point+1]
 
-                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc)
+                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel)
 
                         point = point + 1
 
@@ -650,7 +650,7 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         for j in range(ym):
             if cal == 1:
                 calibrate(mc)
-            mc.forward(fl)     
+            mc.forward(fl, velocity=0.2)     
         j = 0
 
     elif xp == xn and yp > yn:
@@ -662,7 +662,7 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         for j in range(ym):
             if cal == 1:
                 calibrate(mc)
-            mc.back(fl)
+            mc.back(fl, velocity=0.2)
             
         j = 0
 
@@ -675,7 +675,7 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         for j in range(xm):
             if cal == 1:
                 calibrate(mc)
-            mc.right(fl)
+            mc.right(fl, velocity=0.2)
             
         j = 0
 
@@ -688,7 +688,7 @@ def pathing_level2(mc, fl, xn, xp, yn, yp):
         for j in range(xm):
             if cal == 1:
                 calibrate(mc)
-            mc.left(fl)
+            mc.left(fl, velocity=0.2)
         
         j = 0
 
@@ -1581,7 +1581,7 @@ if __name__ == '__main__':
         with MotionCommander(scf, default_height = 0.4) as mc:    
             with Multiranger(scf) as mr:
 
-                time.sleep(2)
+                time.sleep(1)
                 
                 logconf1.start()
                 logconf2.start()
@@ -1589,7 +1589,8 @@ if __name__ == '__main__':
                 logconf4.start()
                 logconf5.start()
                 logconf6.start()    
-                        
+
+                time.sleep(2)   
 
                 while point != grid_num:
 
