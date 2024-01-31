@@ -57,7 +57,8 @@ grid_num = 0
 
 #Flight varibles - velocity and distance increment 
 fl = 0.1
-velocity = 0.15
+velocity1 = 0.2
+velocity2 = 0.1
 
 deck_attached_event = Event()
 
@@ -321,6 +322,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
     p_size = grid_size/partition
     pn_size = p_size
     global gn
+    vel = 2
 
     if temp_det == 0:
         print("Surveilling Grid ", gn, "\n")
@@ -362,11 +364,12 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
 
                         if temp_det == 1:
                             time.sleep(1)
-                            pathing_level2(mc, fl, 0, xn, 0, yn)
+                            pathing_level2(mc, fl, 0, xn, 0, yn, vel)
                             time.sleep(1)
                             mc.down(0.1)
                             return
                         point = point + 1
+                        vel = vel + 1
 
     elif temp_det == 1:
         print("Level 1\n")
@@ -383,7 +386,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
 
     return
 
-def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
+def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
                 
     j = 0
     y = 0
@@ -393,6 +396,11 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
     ye = yn
     xe = xn*-1
+
+    if(vel%2 == 0):
+        velocity = velocity2
+    else:
+        velocity = velocity1
 
     if xp == xn and yp < yn:       
                         
@@ -406,7 +414,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         error_correction_level1(mc, xe, yp, rotc)
 
         for j in range(ym):
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity)
             temp_mapping()
             if y > 0:
                 j = j + y
@@ -426,7 +434,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         error_correction_level1(mc, xe, yp, rotc)
 
         for j in range(ym):
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity)
             temp_mapping()
             if y > 0:
                 j = j + y
@@ -447,7 +455,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
                         
         for j in range(xm):
 
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity)
             if y > 0:
                 j = j + y
         time.sleep(1)
@@ -467,7 +475,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         for j in range(xm):
             
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity)
             if y > 0:
                 j = j + y
         time.sleep(1)
@@ -486,7 +494,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         for j in range(ym):
         
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -502,7 +510,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         for j in range(xm):
         
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -521,7 +529,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         for j in range(ym):
         
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -538,7 +546,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         for j in range(xm):
             
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -557,7 +565,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         for j in range(ym):
             
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -574,7 +582,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         for j in range(xm):
             
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -593,7 +601,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         for j in range(ym):
         
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -609,7 +617,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         for j in range(xm):
             
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -1189,7 +1197,7 @@ def obs_avoid(mc, mr, fl):
     return y
 
 
-def move_forward(mc, mr, fl):
+def move_forward(mc, mr, fl, velocity):
     mc.forward(fl, velocity)
 
     if is_close(mr.front):
@@ -1200,7 +1208,7 @@ def move_forward(mc, mr, fl):
         return 0
 
 def move_front_ob(mc, mr, fl):
-    mc.forward(fl, velocity)
+    mc.forward(fl, velocity1)
     if is_close(mr.front):
         mc.stop()
         return 1
@@ -1208,7 +1216,7 @@ def move_front_ob(mc, mr, fl):
         return
     
 def move_right_ob(mc, mr, fl):
-    mc.right(fl, velocity)
+    mc.right(fl, velocity1)
     if is_close(mr.right):
         mc.stop()
         return 1
@@ -1217,7 +1225,7 @@ def move_right_ob(mc, mr, fl):
     
     
 def move_left_ob(mc, mr, fl):
-    mc.left(fl, velocity)
+    mc.left(fl, velocity1)
     if is_close(mr.left):
         mc.stop()
         return 1
@@ -1225,7 +1233,7 @@ def move_left_ob(mc, mr, fl):
         return
     
 def move_back_ob(mc, mr, fl):
-    mc.back(fl, velocity)
+    mc.back(fl, velocity1)
     return
 
 def rotate(mc, rotc, rotn):
@@ -1626,15 +1634,15 @@ if __name__ == '__main__':
                 my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map)
 
                 ax.set_title('3D Drone Trajectory')
-                ax.view_init(elev = 45, azim = -90, roll = 0)
+                ax.view_init(elev = 20, azim = -90, roll = 0)
 
                 ax2.set_title('Temperature Map')
                 ax2.set_xlim(left=0, right=1)
                 ax2.set_ylim(bottom=0, top=1)
 
                 ax3.set_title('Level 1 Drone Trajectory')
-                """ax3.set_xlim(left=-0.2, right=1.2)
-                ax3.set_ylim(bottom=-0.2, top=1.2)"""
+                ax3.set_xlim(left=-0.2, right=1.2)
+                ax3.set_ylim(bottom=-0.2, top=1.2)
 
                 ax4.set_title('Level 2 Drone Trajectory')
                 """ax4.set_xlim(left=-0.2, right=1.2)
