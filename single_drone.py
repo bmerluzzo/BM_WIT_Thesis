@@ -1034,8 +1034,8 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     
     print("Count: ", count, "Temp Array Length: ", t_len, "\n")
 
-    ax2.scatter(rx, ry, c = 'tab:red', s=50)
     ax2.scatter(ox, oy, c = 'tab:orange', s=50)
+    ax2.scatter(rx, ry, c = 'tab:red', s=50)
 
     return
 

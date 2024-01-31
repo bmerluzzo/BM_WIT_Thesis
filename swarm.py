@@ -77,7 +77,8 @@ partition2 = 4
 map_length_y = 2
 map_length_x = 1
 grid_num = 0
-grid_order = [0]
+grid_order1 = [0]
+grid_order2 = [0]
 
 fl = 0.1
 velocity = 0.15
@@ -443,11 +444,11 @@ def temp_flag2():
     global temp_det2
     temp_det2 = 1
 
-def sweep(mc, mr, fl, rotc, grid_size, partition, drone, gn, temp_det):
-    swX = [0]
-    swY = [0]
-    swY.append(1)
-    swX.append(0)
+def sweep(mc, mr, fl, rotc, grid_size, partition, drone, gn, temp_det, xc, yc):
+    swX = [0+xc]
+    swY = [0+yc]
+    swY.append(1+yc)
+    swX.append(0+xc)
     i = 0
     i = i + 1
     point = 0
@@ -455,31 +456,30 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, drone, gn, temp_det):
     pn_size = p_size
 
     if temp_det == 0:
-        print("Drone ",drone," Monitoring Grid",gn, "\n")
-
+        print("Surveilling Grid ", gn, "\n")
     elif temp_det == 1:
-        print("Drone ",drone," Mapping Grid",gn, "\n")
+        print("Mapping Grid ", gn, "\n")
     
     for i in range(partition):
         
         if i % 2 == 0:
-            swY.append(grid_size)
-            swY.append(0)
+            swY.append(grid_size+yc)
+            swY.append(0+yc)
         else:
-            swY.append(0)
-            swY.append(grid_size)
+            swY.append(0+yc)
+            swY.append(grid_size+yc)
 
-        swX.append(pn_size)
-        swX.append(pn_size)
+        swX.append(pn_size+xc)
+        swX.append(pn_size+xc)
 
         pn_size = pn_size + p_size
 
-    swX.append(0)
-    swY.append(0)
+    swX.append(0+xc)
+    swY.append(0+yc)
 
     size = len(swX) - 1
 
-    time.sleep(3)
+    time.sleep(2)
 
 
     if temp_det == 0:
@@ -491,11 +491,11 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, drone, gn, temp_det):
                         xn = swX[point+1]
                         yn = swY[point+1]
 
-                        pathing_level2(mc, fl, xn, xp, yn, yp, 1, drone, gn)
+                        pathing_level2(mc, fl, xn, xp, yn, yp, drone)
 
                         if temp_det == 1:
                             time.sleep(2)
-                            pathing_level2(mc, fl, 0, xn, 0, yn, 0, drone, gn)
+                            pathing_level2(mc, fl, 0, xn, 0, yn, drone)
                             time.sleep(2)
                             mc.down(0.1)
                             return
@@ -510,13 +510,13 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, drone, gn, temp_det):
                         xn = swX[point+1]
                         yn = swY[point+1]
 
-                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, 1, drone, gn)
+                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc,drone)
 
                         point = point + 1
 
     return
 
-def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode, drone, gn):
+def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
                 
     j = 0
     y = 0
@@ -524,15 +524,8 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode, drone, gn):
     yd, xd = 0, 0
     ym, xm = 0, 0
 
-    if mode == 1:
-        yl = gn - 1
-        ye = yn + yl
-        xe = -abs(xn)
-        if xn == 0:
-            xe = 0
-    elif mode == 0:
-        ye = yn
-        xe = xn
+    ye = yn
+    xe = xn*-1
 
     if xp == xn and yp < yn:       
                         
@@ -750,7 +743,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, mode, drone, gn):
 
     return rotc
 
-def pathing_level2(mc, fl, xn, xp, yn, yp, mode, drone, gn):
+def pathing_level2(mc, fl, xn, xp, yn, yp, drone):
 
     j = 0
     y = 0
@@ -759,15 +752,8 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode, drone, gn):
     yd, xd = 0, 0
     ym, xm = 0, 0
    
-    if mode == 1:
-        yl = gn - 1
-        ye = yn + yl
-        xe = -abs(xn)
-        if xn == 0:
-            xe = 0
-    elif mode == 0:
-        ye = yn
-        xe = xn
+    ye = yn
+    xe = xn
 
     if xp == xn and yp < yn:       
                         
@@ -893,7 +879,7 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode, drone, gn):
         time.sleep(2)
         j = 0
 
-    x = get_position_x(drone)
+    x = abs(get_position_x(drone))
     y = get_position_y(drone) 
     print(x, "\n") 
     print(y, "\n") 
@@ -914,7 +900,7 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode, drone, gn):
             else:
                 error_flag = 0
 
-    x = position_estimate[1]
+    x = abs(get_position_x(drone))
     time.sleep(1)
     error = abs(xe - x)
         
@@ -922,10 +908,10 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, mode, drone, gn):
         error_flag = 1
         while error_flag == 1:
             if error > pos_error:
-                if x > xe:
+                if x < xe:
                     mc.right(pos_error/4)
                     x = get_position_x(drone)
-                elif x < xe:
+                elif x > xe:
                     mc.left(pos_error/4)
                     x = get_position_x(drone)
                 error = abs(xe - x)
@@ -1270,11 +1256,9 @@ def deactivate_led_bit_mask(scf):
     scf.cf.param.set_value('led.bitmask', 0)
 
 def map_generation(grid_size, map_length_y, map_length_x):
-    i = 0
-    j = 0
-                
+   
     pointX = 0
-    pointY = grid_size
+    pointY = 0
     grid_num_y = map_length_y/grid_size
     grid_num_x = map_length_x/grid_size
     grid_num_y = int(grid_num_y)
@@ -1290,7 +1274,10 @@ def map_generation(grid_size, map_length_y, map_length_x):
             spX.append(pointX)
             pointY = pointY + grid_size
         pointX = pointX + grid_size
-        pointY = 0    
+        pointY = 0
+
+    spY = [0] 
+    spX = [0] 
 
     return spX, spY 
 
@@ -1298,13 +1285,15 @@ def run_sequence(scf, path):
 
     if scf.cf.link_uri == 'radio://0/80/2M/E7E7E7E7E8':
 
-        spX, spY = map_generation(grid_size, map_length_y, map_length_x)
+        global grid_order1
+        global spX1, spY1
+        spX1, spY1 = map_generation(grid_size, map_length_y, map_length_x)
 
         grid_num = map_length_x * map_length_y
 
         i = 0
         for i in range(grid_num):
-                    grid_order.append(i + 1)
+                    grid_order1.append(i + 1)
 
         scf.cf.param.add_update_callback(name= path[3], cb=param_deck_flow)
 
@@ -1314,9 +1303,76 @@ def run_sequence(scf, path):
         logconf1.add_variable('stateEstimate.z', 'float')
         scf.cf.log.add_config(logconf1)
         logconf1.data_received_cb.add_callback(log_pos_callback1)
-        logconf1.start()
 
-        size = len(spX) - 1
+        logconf11 = LogConfig(name='Temp1', period_in_ms=1000) 
+        logconf11.add_variable('MLX1.To1', 'float')
+        logconf11.add_variable('MLX1.To2', 'float')
+        logconf11.add_variable('MLX1.To3', 'float')
+        logconf11.add_variable('MLX1.To4', 'float')
+        logconf11.add_variable('MLX1.To5', 'float')
+        logconf11.add_variable('MLX1.To6', 'float')
+        scf.cf.log.add_config(logconf11)
+        logconf11.data_received_cb.add_callback(log_temp1_callback)
+
+        logconf12 = LogConfig(name='Temp2', period_in_ms=1000) 
+        logconf12.add_variable('MLX2.To1', 'float')
+        logconf12.add_variable('MLX2.To2', 'float')
+        logconf12.add_variable('MLX2.To3', 'float')
+        logconf12.add_variable('MLX2.To4', 'float')
+        logconf12.add_variable('MLX2.To5', 'float')
+        logconf12.add_variable('MLX2.To6', 'float')
+        scf.cf.log.add_config(logconf12)
+        logconf12.data_received_cb.add_callback(log_temp1_callback)
+
+        logconf13 = LogConfig(name='Temp3', period_in_ms=1000) 
+        logconf13.add_variable('MLX3.To1', 'float')
+        logconf13.add_variable('MLX3.To2', 'float')
+        logconf13.add_variable('MLX3.To3', 'float')
+        logconf13.add_variable('MLX3.To4', 'float')
+        logconf13.add_variable('MLX3.To5', 'float')
+        logconf13.add_variable('MLX3.To6', 'float')
+        scf.cf.log.add_config(logconf13)
+        logconf13.data_received_cb.add_callback(log_temp1_callback)
+
+        logconf14 = LogConfig(name='Temp4', period_in_ms=1000) 
+        logconf14.add_variable('MLX4.To1', 'float')
+        logconf14.add_variable('MLX4.To2', 'float')
+        logconf14.add_variable('MLX4.To3', 'float')
+        logconf14.add_variable('MLX4.To4', 'float')
+        logconf14.add_variable('MLX4.To5', 'float')
+        logconf14.add_variable('MLX4.To6', 'float')
+        scf.cf.log.add_config(logconf14)
+        logconf14.data_received_cb.add_callback(log_temp1_callback)
+
+        logconf15 = LogConfig(name='Temp5', period_in_ms=1000) 
+        logconf15.add_variable('MLX5.To1', 'float')
+        logconf15.add_variable('MLX5.To2', 'float')
+        logconf15.add_variable('MLX5.To3', 'float')
+        logconf15.add_variable('MLX5.To4', 'float')
+        logconf15.add_variable('MLX5.To5', 'float')
+        logconf15.add_variable('MLX5.To6', 'float')
+        scf.cf.log.add_config(logconf15)
+        logconf15.data_received_cb.add_callback(log_temp1_callback)
+
+        logconf16 = LogConfig(name='Temp6', period_in_ms=1000) 
+        logconf16.add_variable('MLX6.To1', 'float')
+        logconf16.add_variable('MLX6.To2', 'float')
+        logconf16.add_variable('MLX6.To3', 'float')
+        logconf16.add_variable('MLX6.To4', 'float')
+        logconf16.add_variable('MLX6.To5', 'float')
+        logconf16.add_variable('MLX6.To6', 'float')
+        scf.cf.log.add_config(logconf16)
+        logconf16.data_received_cb.add_callback(log_temp1_callback)
+
+        logconf1.start()
+        logconf11.start()
+        logconf12.start()
+        logconf13.start()
+        logconf14.start()
+        logconf15.start()
+        logconf16.start()    
+                        
+
         point = 0
         rotc = 1
         rotc = int(rotc)     
@@ -1329,44 +1385,58 @@ def run_sequence(scf, path):
 
                 time.sleep(2)  
                     
-                while point != size:
+                while point != grid_num:
+                    xp = spX1[point]
+                    yp = spY1[point]
                     
-                    xp = spX[point]       
-                    yp = spY[point]
-                    xn = spX[point+1]
-                    yn = spY[point+1] 
-                    gn1 = grid_order[point + 1]
+                    if point < grid_num - 1:
+                        xn = spX1[point+1]
+                        yn = spY1[point+1] 
 
-                    sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn1, temp_det1)
+
+                    sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn1, temp_det1, xp, yp)
 
                     if temp_det1 == 1:
-                        sweep(mc, mr, fl, rotc, grid_size, partition2, drone, gn1, temp_det1)
+                        sweep(mc, mr, fl, rotc, grid_size, partition2, drone, gn1, temp_det1, xp, yp)
                         time.sleep(2)
                         mc.up(0.1)
                         time.sleep(2)
                         mc.turn_right(90, 30)
 
-                    pathing_level2(mc, fl, xn, xp, yn, yp, 0, drone, gn1, temp_det1)
-                    
+                    if point < grid_num -1:
+                        pathing_level2(mc, fl, xn, xp, yn, yp, drone)
+                        gn1 = grid_order1[point+1]
+
                     if temp_det1 == 1:
                         temp_det1 = 0
                         hold1 = 0
 
                     point = point + 1
         
+        logconf1.stop()
+        logconf11.stop()
+        logconf12.stop()
+        logconf13.stop()
+        logconf15.stop()
+        logconf15.stop()
+        logconf16.stop()
+        
         my_plotter(ax, ax2, ax3, ax4, x_pos1, y_pos1, z_pos1, pos_map1_x, pos_map1_y, temp_map1, drone)
 
     elif scf.cf.link_uri == 'radio://0/80/2M/E7E7E7E7E7':
 
-        spX, spY = map_generation(grid_size, map_length_y, map_length_x)
-        for i in range(len(spX)):
-            spX[i] = spX[i] + 2
+        global grid_order2
+        global spX2, spY2   
+        spX2, spY2 = map_generation(grid_size, map_length_y, map_length_x)
+        for i in range(len(spX2)):
+
+            spX2[i] = spX2[i] + 2
 
         grid_num = map_length_x * map_length_y
 
         i = 0
         for i in range(grid_num):
-                    grid_order.append(i + grid_size + 1)
+                    grid_order2.append(i + grid_size + 1)
 
         scf.cf.param.add_update_callback(name= path[3], cb=param_deck_flow)
 
@@ -1376,46 +1446,123 @@ def run_sequence(scf, path):
         logconf2.add_variable('stateEstimate.z', 'float')
         scf.cf.log.add_config(logconf2)
         logconf2.data_received_cb.add_callback(log_pos_callback2)
-        logconf2.start()
 
-        size = len(spX) - 1
+        logconf21 = LogConfig(name='Temp1', period_in_ms=1000) 
+        logconf21.add_variable('MLX1.To1', 'float')
+        logconf21.add_variable('MLX1.To2', 'float')
+        logconf21.add_variable('MLX1.To3', 'float')
+        logconf21.add_variable('MLX1.To4', 'float')
+        logconf21.add_variable('MLX1.To5', 'float')
+        logconf21.add_variable('MLX1.To6', 'float')
+        scf.cf.log.add_config(logconf21)
+        logconf21.data_received_cb.add_callback(log_temp2_callback)
+
+        logconf22 = LogConfig(name='Temp2', period_in_ms=1000) 
+        logconf22.add_variable('MLX2.To1', 'float')
+        logconf22.add_variable('MLX2.To2', 'float')
+        logconf22.add_variable('MLX2.To3', 'float')
+        logconf22.add_variable('MLX2.To4', 'float')
+        logconf22.add_variable('MLX2.To5', 'float')
+        logconf22.add_variable('MLX2.To6', 'float')
+        scf.cf.log.add_config(logconf22)
+        logconf22.data_received_cb.add_callback(log_temp2_callback)
+
+        logconf23 = LogConfig(name='Temp3', period_in_ms=1000) 
+        logconf23.add_variable('MLX3.To1', 'float')
+        logconf23.add_variable('MLX3.To2', 'float')
+        logconf23.add_variable('MLX3.To3', 'float')
+        logconf23.add_variable('MLX3.To4', 'float')
+        logconf23.add_variable('MLX3.To5', 'float')
+        logconf23.add_variable('MLX3.To6', 'float')
+        scf.cf.log.add_config(logconf23)
+        logconf23.data_received_cb.add_callback(log_temp2_callback)
+
+        logconf24 = LogConfig(name='Temp4', period_in_ms=1000) 
+        logconf24.add_variable('MLX4.To1', 'float')
+        logconf24.add_variable('MLX4.To2', 'float')
+        logconf24.add_variable('MLX4.To3', 'float')
+        logconf24.add_variable('MLX4.To4', 'float')
+        logconf24.add_variable('MLX4.To5', 'float')
+        logconf24.add_variable('MLX4.To6', 'float')
+        scf.cf.log.add_config(logconf24)
+        logconf24.data_received_cb.add_callback(log_temp2_callback)
+
+        logconf25 = LogConfig(name='Temp5', period_in_ms=1000) 
+        logconf25.add_variable('MLX5.To1', 'float')
+        logconf25.add_variable('MLX5.To2', 'float')
+        logconf25.add_variable('MLX5.To3', 'float')
+        logconf25.add_variable('MLX5.To4', 'float')
+        logconf25.add_variable('MLX5.To5', 'float')
+        logconf25.add_variable('MLX5.To6', 'float')
+        scf.cf.log.add_config(logconf25)
+        logconf25.data_received_cb.add_callback(log_temp2_callback)
+
+        logconf26 = LogConfig(name='Temp6', period_in_ms=1000) 
+        logconf26.add_variable('MLX6.To1', 'float')
+        logconf26.add_variable('MLX6.To2', 'float')
+        logconf26.add_variable('MLX6.To3', 'float')
+        logconf26.add_variable('MLX6.To4', 'float')
+        logconf26.add_variable('MLX6.To5', 'float')
+        logconf26.add_variable('MLX6.To6', 'float')
+        scf.cf.log.add_config(logconf26)
+        logconf26.data_received_cb.add_callback(log_temp2_callback)
+
+        logconf2.start()
+        logconf21.start()
+        logconf22.start()
+        logconf23.start()
+        logconf24.start()
+        logconf25.start()
+        logconf26.start()    
+                        
         point = 0
         rotc = 1
         rotc = int(rotc)     
         global gn2  
         global hold2
-        drone = 2
+        drone = 1
 
         with MotionCommander(scf, default_height = 0.4) as mc:    
             with Multiranger(scf) as mr:
 
                 time.sleep(2)  
                     
-                while point != size:
+                while point != grid_num:
+                    xp = spX2[point]
+                    yp = spY2[point]
                     
-                    xp = spX[point]       
-                    yp = spY[point]
-                    xn = spX[point+1]
-                    yn = spY[point+1] 
-                    gn2 = grid_order[point + 1]
+                    if point < grid_num - 1:
+                        xn = spX2[point+1]
+                        yn = spY2[point+1] 
 
-                    sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn2, temp_det2)
+
+                    sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn2, temp_det2, xp, yp)
 
                     if temp_det2 == 1:
-                        sweep(mc, mr, fl, rotc, grid_size, partition2, drone, gn2, temp_det2)
+                        sweep(mc, mr, fl, rotc, grid_size, partition2, drone, gn2, temp_det2, xp, yp)
                         time.sleep(2)
                         mc.up(0.1)
                         time.sleep(2)
                         mc.turn_right(90, 30)
 
-                    pathing_level2(mc, fl, xn, xp, yn, yp, 0, drone, gn2, temp_det2)
-                    
+                    if point < grid_num -1:
+                        pathing_level2(mc, fl, xn, xp, yn, yp, drone)
+                        gn2 = grid_order1[point+1]
+
                     if temp_det2 == 1:
                         temp_det2 = 0
                         hold2 = 0
 
                     point = point + 1
 
+        logconf2.stop()
+        logconf21.stop()
+        logconf22.stop()
+        logconf23.stop()
+        logconf25.stop()
+        logconf25.stop()
+        logconf26.stop()
+        
         my_plotter(ax, ax2, ax3, ax4, x_pos2, y_pos2, z_pos2, pos_map2_x, pos_map2_y, temp_map2, drone)
         
 
@@ -1443,7 +1590,7 @@ def log_pos_callback2(timestamp, data, logconf):
     global z_pos2
 
     position_estimate2[0] = data['stateEstimate.x']
-    position_estimate2[1] = -abs(data['stateEstimate.y']) + 2
+    position_estimate2[1] = (abs(data['stateEstimate.y']) + 2)*-1
     position_estimate2[2] = data['stateEstimate.z']
     t2 = timestamp
 
