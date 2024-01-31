@@ -57,8 +57,8 @@ grid_num = 0
 
 #Flight varibles - velocity and distance increment 
 fl = 0.1
-velocity1 = 0.25
-velocity2 = 0.1
+velocityx = 0.25
+velocityy = 0.15
 
 deck_attached_event = Event()
 
@@ -322,7 +322,6 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
     p_size = grid_size/partition
     pn_size = p_size
     global gn
-    vel = 2
 
     if temp_det == 0:
         print("Surveilling Grid ", gn, "\n")
@@ -369,7 +368,6 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
                             mc.down(0.1)
                             return
                         point = point + 1
-                        vel = vel + 1
 
     elif temp_det == 1:
         print("Level 1\n")
@@ -380,13 +378,13 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
                         xn = swX[point+1]
                         yn = swY[point+1]
 
-                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel)
+                        rotc = pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc)
 
                         point = point + 1
 
     return
 
-def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
+def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
                 
     j = 0
     y = 0
@@ -396,11 +394,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
 
     ye = yn
     xe = xn*-1
-
-    if(vel%2 == 0):
-        velocity = velocity2
-    else:
-        velocity = velocity1
 
     if xp == xn and yp < yn:       
                         
@@ -414,7 +407,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
         error_correction_level1(mc, xe, yp, rotc)
 
         for j in range(ym):
-            y = move_forward(mc, mr, fl, velocity)
+            y = move_forward(mc, mr, fl, velocityy)
             temp_mapping()
             if y > 0:
                 j = j + y
@@ -434,7 +427,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
         error_correction_level1(mc, xe, yp, rotc)
 
         for j in range(ym):
-            y = move_forward(mc, mr, fl, velocity)
+            y = move_forward(mc, mr, fl, velocityy)
             temp_mapping()
             if y > 0:
                 j = j + y
@@ -455,7 +448,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
                         
         for j in range(xm):
 
-            y = move_forward(mc, mr, fl, velocity)
+            y = move_forward(mc, mr, fl, velocityx)
             if y > 0:
                 j = j + y
         time.sleep(1)
@@ -475,7 +468,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
 
         for j in range(xm):
             
-            y = move_forward(mc, mr, fl, velocity)
+            y = move_forward(mc, mr, fl, velocityx)
             if y > 0:
                 j = j + y
         time.sleep(1)
@@ -494,7 +487,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
 
         for j in range(ym):
         
-            y = move_forward(mc, mr, fl, velocity)
+            y = move_forward(mc, mr, fl, velocityx)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -510,7 +503,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
 
         for j in range(xm):
         
-            y = move_forward(mc, mr, fl, velocity)
+            y = move_forward(mc, mr, fl, velocityx)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -529,7 +522,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
 
         for j in range(ym):
         
-            y = move_forward(mc, mr, fl, velocity)
+            y = move_forward(mc, mr, fl, velocityx)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -546,7 +539,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
 
         for j in range(xm):
             
-            y = move_forward(mc, mr, fl, velocity)
+            y = move_forward(mc, mr, fl, velocityx)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -565,7 +558,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
 
         for j in range(ym):
             
-            y = move_forward(mc, mr, fl, velocity)
+            y = move_forward(mc, mr, fl, velocityx)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -582,7 +575,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
 
         for j in range(xm):
             
-            y = move_forward(mc, mr, fl, velocity)
+            y = move_forward(mc, mr, fl, velocityx)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -601,7 +594,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
 
         for j in range(ym):
         
-            y = move_forward(mc, mr, fl, velocity)
+            y = move_forward(mc, mr, fl, velocityx)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -617,7 +610,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, vel):
 
         for j in range(xm):
             
-            y = move_forward(mc, mr, fl, velocity)
+            y = move_forward(mc, mr, fl, velocityx)
             if y > 0:
                 j = j + y
         time.sleep(2)
@@ -1198,6 +1191,7 @@ def obs_avoid(mc, mr, fl):
 
 
 def move_forward(mc, mr, fl, velocity):
+    print(velocity)
     mc.forward(fl, velocity)
 
     if is_close(mr.front):
@@ -1208,7 +1202,7 @@ def move_forward(mc, mr, fl, velocity):
         return 0
 
 def move_front_ob(mc, mr, fl):
-    mc.forward(fl, velocity1)
+    mc.forward(fl, velocityy)
     if is_close(mr.front):
         mc.stop()
         return 1
@@ -1216,7 +1210,7 @@ def move_front_ob(mc, mr, fl):
         return
     
 def move_right_ob(mc, mr, fl):
-    mc.right(fl, velocity1)
+    mc.right(fl, velocityy)
     if is_close(mr.right):
         mc.stop()
         return 1
@@ -1225,7 +1219,7 @@ def move_right_ob(mc, mr, fl):
     
     
 def move_left_ob(mc, mr, fl):
-    mc.left(fl, velocity1)
+    mc.left(fl, velocityy)
     if is_close(mr.left):
         mc.stop()
         return 1
@@ -1233,7 +1227,7 @@ def move_left_ob(mc, mr, fl):
         return
     
 def move_back_ob(mc, mr, fl):
-    mc.back(fl, velocity1)
+    mc.back(fl, velocityy)
     return
 
 def rotate(mc, rotc, rotn):
@@ -1291,7 +1285,6 @@ def log_pos_callback(timestamp, data, logconf):
     global yaw
     global position_estimate
     global t
-    print(data)
 
     position_estimate[0] = data['stateEstimate.x']
     position_estimate[1] = data['stateEstimate.y']
@@ -1316,24 +1309,24 @@ def log_temp_callback(timestamp, data, logconf):
     count_temp = count_temp + 1
 
     if logconf.name == 'Temp1':
-        temp1[0] = data['MLX1.To1']
-        temp1[1] = data['MLX1.To2']
-        temp1[2] = data['MLX1.To3']
-        temp1[3] = data['MLX1.To4']
-        temp1[4] = data['MLX1.To5']
-        temp1[5] = data['MLX1.To6']
+        temp1[0] = data['MLX1.To6']
+        temp1[1] = data['MLX1.To5']
+        temp1[2] = data['MLX1.To4']
+        temp1[3] = data['MLX1.To3']
+        temp1[4] = data['MLX1.To2']
+        temp1[5] = data['MLX1.To1']
 
         if (temp1[0] or temp1[1] or temp1[2] or temp1[3] or temp1[4] or temp1[5]) > thres2 and hold == 0:
             temp_flag()
             hold = 1
 
     elif logconf.name == 'Temp2':
-        temp2[0] = data['MLX2.To1']
-        temp2[1] = data['MLX2.To2']
-        temp2[2] = data['MLX2.To3']
-        temp2[3] = data['MLX2.To4']
-        temp2[4] = data['MLX2.To5']
-        temp2[5] = data['MLX2.To6']
+        temp2[0] = data['MLX2.To6']
+        temp2[1] = data['MLX2.To5']
+        temp2[2] = data['MLX2.To4']
+        temp2[3] = data['MLX2.To3']
+        temp2[4] = data['MLX2.To2']
+        temp2[5] = data['MLX2.To1']
                
         if (temp2[0] or temp2[1] or temp2[2] or temp2[3] or temp2[4] or temp2[5]) > thres2 and hold == 0:
             temp_flag()
@@ -1341,48 +1334,48 @@ def log_temp_callback(timestamp, data, logconf):
 
     
     elif logconf.name == 'Temp3':
-        temp3[0] = data['MLX3.To1']
-        temp3[1] = data['MLX3.To2']
-        temp3[2] = data['MLX3.To3']
-        temp3[3] = data['MLX3.To4']
-        temp3[4] = data['MLX3.To5']
-        temp3[5] = data['MLX3.To6']
+        temp3[0] = data['MLX3.To6']
+        temp3[1] = data['MLX3.To5']
+        temp3[2] = data['MLX3.To4']
+        temp3[3] = data['MLX3.To3']
+        temp3[4] = data['MLX3.To2']
+        temp3[5] = data['MLX3.To1']
 
         if (temp3[0] or temp3[1] or temp3[2] or temp3[3] or temp3[4] or temp3[5]) > thres2 and hold == 0:
             temp_flag()
             hold = 1
 
     elif logconf.name == 'Temp4':
-        temp4[0] = data['MLX4.To1']
-        temp4[1] = data['MLX4.To2']
-        temp4[2] = data['MLX4.To3']
-        temp4[3] = data['MLX4.To4']
-        temp4[4] = data['MLX4.To5']
-        temp4[5] = data['MLX4.To6']
+        temp4[0] = data['MLX4.To6']
+        temp4[1] = data['MLX4.To5']
+        temp4[2] = data['MLX4.To4']
+        temp4[3] = data['MLX4.To3']
+        temp4[4] = data['MLX4.To2']
+        temp4[5] = data['MLX4.To1']
             
         if (temp4[0] or temp4[1] or temp4[2] or temp4[3] or temp4[4] or temp4[5]) > thres2 and hold == 0:
             temp_flag()
             hold = 1
 
     elif logconf.name == 'Temp5':
-        temp5[0] = data['MLX5.To1']
-        temp5[1] = data['MLX5.To2']
-        temp5[2] = data['MLX5.To3']
-        temp5[3] = data['MLX5.To4']
-        temp5[4] = data['MLX5.To5']
-        temp5[5] = data['MLX5.To6']
+        temp5[0] = data['MLX5.To6']
+        temp5[1] = data['MLX5.To5']
+        temp5[2] = data['MLX5.To4']
+        temp5[3] = data['MLX5.To3']
+        temp5[4] = data['MLX5.To2']
+        temp5[5] = data['MLX5.To1']
 
         if (temp5[0] or temp5[1] or temp5[2] or temp5[3] or temp5[4] or temp5[5]) > thres2 and hold == 0:
             temp_flag()
             hold = 1
 
     elif logconf.name == 'Temp6':
-        temp6[0] = data['MLX6.To1']
-        temp6[1] = data['MLX6.To2']
-        temp6[2] = data['MLX6.To3']
-        temp6[3] = data['MLX6.To4']
-        temp6[4] = data['MLX6.To5']
-        temp6[5] = data['MLX6.To6']
+        temp6[0] = data['MLX6.To6']
+        temp6[1] = data['MLX6.To5']
+        temp6[2] = data['MLX6.To4']
+        temp6[3] = data['MLX6.To3']
+        temp6[4] = data['MLX6.To2']
+        temp6[5] = data['MLX6.To1']
 
         if (temp6[0] or temp6[1] or temp6[2] or temp6[3] or temp6[4] or temp6[5]) > thres2 and hold == 0:
             temp_flag()
@@ -1635,7 +1628,7 @@ if __name__ == '__main__':
                 my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map)
 
                 ax.set_title('3D Drone Trajectory')
-                ax.view_init(elev = 20, azim = -90, roll = 0)
+                ax.view_init(elev = 20, azim = -120, roll = 0)
 
                 ax2.set_title('Temperature Map')
                 ax2.set_xlim(left=0, right=1)
