@@ -93,7 +93,7 @@ def color_coding(x, y, temp):
         ubx = tempubx
         for j in range(20):
             if lbx < x < ubx  and lby < y < uby:
-                if temp >=24 and temp < 30:
+                if temp >=26 and temp < 30:
                     ox.append(lbx + (it/2))
                     oy.append(lby + (it/2))
                     print(x, y, "\n")
