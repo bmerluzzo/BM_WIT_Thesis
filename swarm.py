@@ -81,7 +81,11 @@ grid_order1 = [0]
 grid_order2 = [0]
 
 fl = 0.1
-velocity = 0.15
+velocity1 = 0.15
+velocity2= 0.25
+
+FOV1 = 55
+FOV2 = 110
 
 uri_list = {
     'radio://0/80/2M/E7E7E7E7E8',
@@ -90,6 +94,12 @@ uri_list = {
 }
 
 uris = list(uri_list) 
+
+seq_args = {
+    uris[0]: [FOV1],
+    uris[1]: [FOV2]
+
+}
 
 def get_position_x(drone):
     if drone == 1:
@@ -205,7 +215,7 @@ def color_coding(x, y, temp, drone):
 
     return
 
-def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map, drone):
+def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, temp_map, drone, FOV):
     x_pos_l1 = [0]
     y_pos_l1 = [0]
     z_pos_l1 = [0]
@@ -241,14 +251,21 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     x = 0
     y = 0
     temp = 0
-    x_change = 0.035/2
-    y_change = 0.0536/2
     pos_map_x.pop(0)
     pos_map_y.pop(0)
     it1 = 1
     it2 = 1
     count = 0
     t_len = len(temp_map)
+
+    if FOV == 55:
+        x_change = 0.035/2
+        y_change = 0.0536/2
+
+    elif FOV == 110:  #numbers need changing to reflect camera FOV for 110
+        x_change = 0.035/2
+        y_change = 0.0536/2
+
     
     for i in range(partition2*map_length_x*map_length_y+1):
         if i % 2 == 0:
@@ -495,7 +512,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, drone, gn, temp_det, xc, yc):
 
                         if temp_det == 1:
                             time.sleep(2)
-                            pathing_level2(mc, fl, 0, xn, 0, yn, drone)
+                            pathing_level2(mc, fl, xc, xn, yc, yn, drone)
                             time.sleep(2)
                             mc.down(0.1)
                             return
@@ -539,7 +556,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         error_correction_level1(mc, xe, yp, rotc, drone)
 
         for j in range(ym):
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity1)
             temp_mapping(drone)
             if y > 0:
                 j = j + y
@@ -559,7 +576,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         error_correction_level1(mc, xe, yp, rotc, drone)
 
         for j in range(ym):
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity1)
             temp_mapping(drone)
             if y > 0:
                 j = j + y
@@ -576,7 +593,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         xm = int(xm)
 
         rotc = rotate(mc, rotc, rotn)
-        error_correction_level1(mc, -abs(xp), ye, rotc, drone)
+        error_correction_level1(mc, -abs(xp), ye, rotc, drone, velocity2)
                         
         for j in range(xm):
             y = move_forward(mc, mr, fl)
@@ -595,7 +612,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         xm = int(xm)
 
         rotc = rotate(mc, rotc, rotn)
-        error_correction_level1(mc, -abs(xp), ye, rotc, drone)
+        error_correction_level1(mc, -abs(xp), ye, rotc, drone, velocity2)
 
         for j in range(xm):
             y = move_forward(mc, mr, fl)
@@ -1155,8 +1172,8 @@ def obs_avoid(mc, mr, fl):
 
     return y
 
-def move_forward(mc, mr, fl):
-    mc.forward(fl)
+def move_forward(mc, mr, fl, velocity):
+    mc.forward(fl, velocity)
     if is_close(mr.front):
         mc.stop()
         y = obs_avoid(mc, mr, fl)
@@ -1281,7 +1298,7 @@ def map_generation(grid_size, map_length_y, map_length_x):
 
     return spX, spY 
 
-def run_sequence(scf, path):
+def run_sequence(scf, dict):
 
     if scf.cf.link_uri == 'radio://0/80/2M/E7E7E7E7E8':
 
@@ -1295,7 +1312,7 @@ def run_sequence(scf, path):
         for i in range(grid_num):
                     grid_order1.append(i + 1)
 
-        scf.cf.param.add_update_callback(name= path[3], cb=param_deck_flow)
+        scf.cf.param.add_update_callback(name= "First", cb=param_deck_flow)
 
         logconf1 = LogConfig(name='Position', period_in_ms=500) 
         logconf1.add_variable('stateEstimate.x', 'float')
@@ -1421,7 +1438,7 @@ def run_sequence(scf, path):
         logconf15.stop()
         logconf16.stop()
         
-        my_plotter(ax, ax2, ax3, ax4, x_pos1, y_pos1, z_pos1, pos_map1_x, pos_map1_y, temp_map1, drone)
+        my_plotter(ax, ax2, ax3, ax4, x_pos1, y_pos1, z_pos1, pos_map1_x, pos_map1_y, temp_map1, drone, FOV1)
 
     elif scf.cf.link_uri == 'radio://0/80/2M/E7E7E7E7E7':
 
@@ -1438,7 +1455,7 @@ def run_sequence(scf, path):
         for i in range(grid_num):
                     grid_order2.append(i + grid_size + 1)
 
-        scf.cf.param.add_update_callback(name= path[3], cb=param_deck_flow)
+        scf.cf.param.add_update_callback(name= "Second", cb=param_deck_flow)
 
         logconf2 = LogConfig(name='Position', period_in_ms=500) 
         logconf2.add_variable('stateEstimate.x', 'float')
@@ -1520,7 +1537,7 @@ def run_sequence(scf, path):
         rotc = int(rotc)     
         global gn2  
         global hold2
-        drone = 1
+        drone = 2
 
         with MotionCommander(scf, default_height = 0.4) as mc:    
             with Multiranger(scf) as mr:
@@ -1563,7 +1580,7 @@ def run_sequence(scf, path):
         logconf25.stop()
         logconf26.stop()
         
-        my_plotter(ax, ax2, ax3, ax4, x_pos2, y_pos2, z_pos2, pos_map2_x, pos_map2_y, temp_map2, drone)
+        my_plotter(ax, ax2, ax3, ax4, x_pos2, y_pos2, z_pos2, pos_map2_x, pos_map2_y, temp_map2, drone, FOV2)
         
 
 def log_pos_callback1(timestamp, data, logconf):
@@ -1773,7 +1790,7 @@ if __name__ == '__main__':
         time.sleep(2)
 
         #swarm.sequential(run_sequence, args_dict=seq_args)
-        swarm.parallel(run_sequence)
+        swarm.parallel(run_sequence, args_dict=seq_args)
 
         ax.set_title('3D Drone Trajectory')
         ax.view_init(elev = 45, azim = -90, roll = 0)
