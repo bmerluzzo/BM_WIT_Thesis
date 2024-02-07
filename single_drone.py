@@ -96,13 +96,11 @@ def color_coding(x, y, temp):
                 if temp >=26 and temp < 30:
                     ox.append(lbx + (it/2))
                     oy.append(lby + (it/2))
-                    print(x, y, "\n")
                     return
 
                 elif temp >= 30:
                     rx.append(lbx + (it/2))
                     ry.append(lby + (it/2))
-                    print(x, y, "\n")
                     return
                 
             else:
@@ -406,10 +404,8 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         for j in range(ym):
             y = move_forward(mc, mr, fl, velocityy)
-            time.sleep(2)
+            time.sleep(1.25)
             temp_mapping()
-            if y > 0:
-                j = j + y
         y = 0
         j = 0
 
@@ -426,10 +422,9 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         for j in range(ym):
             y = move_forward(mc, mr, fl, velocityy)
-            time.sleep(2)
+            time.sleep(1.25)
             temp_mapping()
-            if y > 0:
-                j = j + y
+            
         y = 0
         j = 0
 
@@ -447,8 +442,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         for j in range(xm):
 
             y = move_forward(mc, mr, fl, velocityx)
-            if y > 0:
-                j = j + y
         y = 0
         j = 0
 
@@ -466,8 +459,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         for j in range(xm):
             
             y = move_forward(mc, mr, fl, velocityx)
-            if y > 0:
-                j = j + y
         y = 0
         j = 0
 
@@ -484,8 +475,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         for j in range(ym):
         
             y = move_forward(mc, mr, fl, velocityx)
-            if y > 0:
-                j = j + y
         time.sleep(2)
         j = 0
         y = 0
@@ -500,8 +489,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         for j in range(xm):
         
             y = move_forward(mc, mr, fl, velocityx)
-            if y > 0:
-                j = j + y
+            
         time.sleep(2)
         y = 0
         j = 0
@@ -519,8 +507,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         for j in range(ym):
         
             y = move_forward(mc, mr, fl, velocityx)
-            if y > 0:
-                j = j + y
+            
         time.sleep(2)
         y = 0
         j = 0
@@ -536,8 +523,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         for j in range(xm):
             
             y = move_forward(mc, mr, fl, velocityx)
-            if y > 0:
-                j = j + y
+            
         time.sleep(2)
         y = 0
         j = 0
@@ -555,8 +541,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         for j in range(ym):
             
             y = move_forward(mc, mr, fl, velocityx)
-            if y > 0:
-                j = j + y
+            
         time.sleep(2)
         y = 0
         j = 0
@@ -572,8 +557,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         for j in range(xm):
             
             y = move_forward(mc, mr, fl, velocityx)
-            if y > 0:
-                j = j + y
+            
         time.sleep(2)
         y = 0
         j = 0
@@ -591,8 +575,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         for j in range(ym):
         
             y = move_forward(mc, mr, fl, velocityx)
-            if y > 0:
-                j = j + y
+            
         time.sleep(2)
         j = 0
 
@@ -607,8 +590,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         for j in range(xm):
             
             y = move_forward(mc, mr, fl, velocityx)
-            if y > 0:
-                j = j + y
+            
         time.sleep(2)
         y = 0
         j = 0
@@ -859,6 +841,8 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     it2 = 1
     count = 0
     t_len = len(temp_map)
+    print(t_len, "\n")
+    print(len(pos_map_x), "\n")
     
     for i in range(partition2*map_length_x*map_length_y+1):
         if i % 2 == 0:
@@ -1028,8 +1012,6 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     by.pop(0)
     ox.pop(0)
     oy.pop(0)
-    
-    print("Count: ", count, "Temp Array Length: ", t_len, "\n")
 
     ax2.scatter(ox, oy, c = 'tab:orange', s=50)
     ax2.scatter(rx, ry, c = 'tab:red', s=50)
@@ -1189,12 +1171,12 @@ def obs_avoid(mc, mr, fl):
 def move_forward(mc, mr, fl, velocity):
     mc.forward(fl, velocity)
 
-    if is_close(mr.front):
+    """if is_close(mr.front):
         mc.stop()
         y = obs_avoid(mc, mr, fl)
         return y
     else:
-        return 0
+        return 0"""
 
 def move_front_ob(mc, mr, fl):
     mc.forward(fl, velocityy)
@@ -1567,8 +1549,8 @@ if __name__ == '__main__':
         logconf.start() 
 
         with MotionCommander(scf, default_height = 0.4) as mc:    
-            with Multiranger(scf) as mr:
-
+            #with Multiranger(scf) as mr:
+                mr = 0
                 time.sleep(1)
                 
                 logconf1.start()
