@@ -57,8 +57,8 @@ grid_num = 0
 
 #Flight varibles - velocity and distance increment 
 fl = 0.2
-velocityx = 0.25
-velocityy = 0.15
+velocityx = 0.2
+velocityy = 0.125
 
 deck_attached_event = Event()
 
@@ -93,7 +93,7 @@ def color_coding(x, y, temp):
         ubx = tempubx
         for j in range(20):
             if lbx < x < ubx  and lby < y < uby:
-                if temp >=26 and temp < 30:
+                if temp >=25 and temp < 30:
                     ox.append(lbx + (it/2))
                     oy.append(lby + (it/2))
                     return
@@ -398,13 +398,13 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         yd = yn - yp
         ym = yd/fl
         ym = int(ym)
+        print(ym, "\n")
 
         rotc = rotate(mc, rotc, rotn)
         error_correction_level1(mc, xe, yp, rotc)
 
         for j in range(ym):
             y = move_forward(mc, mr, fl, velocityy)
-            time.sleep(1.25)
             temp_mapping()
         y = 0
         j = 0
@@ -422,7 +422,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         for j in range(ym):
             y = move_forward(mc, mr, fl, velocityy)
-            time.sleep(1.25)
             temp_mapping()
             
         y = 0
@@ -837,6 +836,7 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     y_change = 0.039/2
     pos_map_x.pop(0)
     pos_map_y.pop(0)
+    temp_map.pop(0)
     it1 = 1
     it2 = 1
     count = 0
@@ -928,7 +928,7 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
         
                                 
         else:
-            for j in range(10):
+            for j in range(5):
                 for k in range(4):
                     if k == 0:
                         it1 = 1
@@ -994,7 +994,7 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
                             if l >= 0 and l < 3:
                                 x = pos_map_x[j+i*5] + x_change*it1
                                 y = pos_map_y[j+i*5] + y_change*3
-                                temp = temp_map[l+k*6+j*24+i*240]
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp)
                                 count = count + 1
                                 it1 = it1 + 2
@@ -1612,12 +1612,12 @@ if __name__ == '__main__':
                 ax2.set_ylim(bottom=0, top=map_length_y+0.2)
 
                 ax3.set_title('Level 1 Drone Trajectory')
-                #ax3.set_xlim(left=-0.2, right=map_length_x+0.2)
-                #ax3.set_ylim(bottom=-0.2, top=map_length_y+0.2)
+                ax3.set_xlim(left=-0.2, right=map_length_x+0.2)
+                ax3.set_ylim(bottom=-0.2, top=map_length_y+0.2)
     
 
                 ax4.set_title('Level 2 Drone Trajectory')
-                """ax4.set_xlim(left=-0.2, right=1.2)
-                ax4.set_ylim(bottom=-0.2, top=1.2)"""
+                ax4.set_xlim(left=-0.2, right=1.2)
+                ax4.set_ylim(bottom=-0.2, top=1.2)
 
                 plt.show()
