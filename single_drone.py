@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib as mpl
 
-URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
+URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
 
 #Logging variables
 x_pos = [0]
@@ -51,7 +51,7 @@ by = [0]
 grid_size = 1 
 partition1 = 2
 partition2 = 4
-map_length_y = 1
+map_length_y = 2
 map_length_x = 1
 grid_num = 0
 
@@ -1001,7 +1001,7 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
                             elif l >= 3:
                                 x = pos_map_x[j+i*5] - x_change*it2
                                 y = pos_map_y[j+i*5] + y_change*3
-                                temp = temp_map[l+k*6+j*12+i*120]
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp)
                                 count = count + 1
                                 it2 = it2 + 2
@@ -1276,7 +1276,7 @@ def log_temp_callback(timestamp, data, logconf):
     global count_temp
     global cal
     global hold
-    thres2 = 24
+    thres2 = 25
 
     if count_temp == 6:
         temp_file.write("\n")
