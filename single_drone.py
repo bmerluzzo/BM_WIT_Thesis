@@ -431,16 +431,13 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         rotn = 2
 
-        xd = xn - xp
-        xm = xd/fl
-        xm = int(xm)
+        xd = abs(xn - xp)
 
         rotc = rotate(mc, rotc, rotn)
         error_correction_level1(mc, -abs(xp), ye, rotc)
                         
-        for j in range(xm):
 
-            y = move_forward(mc, mr, fl, velocityx)
+        y = move_forward(mc, mr, xd, velocityx)
         y = 0
         j = 0
 
@@ -448,16 +445,12 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
 
         rotn = 4
 
-        xd = xp - xn
-        xm = xd/fl
-        xm = int(xm)
+        xd = abs(xp - xn)
 
         rotc = rotate(mc, rotc, rotn)
         error_correction_level1(mc, -abs(xp), ye, rotc)
-
-        for j in range(xm):
             
-            y = move_forward(mc, mr, fl, velocityx)
+        y = move_forward(mc, mr, xd, velocityx)
         y = 0
         j = 0
 
@@ -834,6 +827,8 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     temp = 0
     x_change = 0.0315/2
     y_change = 0.039/2
+    #xchange = 0.07/2
+    #ychange = 0.1071/2
     pos_map_x.pop(0)
     pos_map_y.pop(0)
     temp_map.pop(0)
