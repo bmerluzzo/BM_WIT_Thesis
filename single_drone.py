@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib as mpl
 
-URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
+URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 
 #Logging variables
 x_pos = [0]
@@ -39,6 +39,7 @@ cal = 0
 temp_map = [0]
 pos_map_x = [0]
 pos_map_y = [0]
+flag = 0
 
 rx = [0]
 ry = [0]
@@ -306,7 +307,10 @@ def error_correction_level1(mc, xe, ye, rotc):
 def temp_flag():
     print("Hotspot Detected in Grid ", gn)
     global temp_det
+    global flag
+    flag = flag + 1
     temp_det = 1
+    
     
 
 def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
@@ -839,7 +843,7 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     print(t_len, "\n")
     print(len(pos_map_x), "\n")
     
-    for i in range(partition2*map_length_x*map_length_y+1):
+    for i in range(partition2*flag+1):
         if i % 2 == 0:
 
             for j in range(5):
@@ -1603,8 +1607,8 @@ if __name__ == '__main__':
                 ax.view_init(elev = 20, azim = -120, roll = 0)
 
                 ax2.set_title('Temperature Map')
-                ax2.set_xlim(left=0, right=map_length_x+0.2)
-                ax2.set_ylim(bottom=0, top=map_length_y+0.2)
+                ax2.set_xlim(left=-0.2, right=map_length_x+0.2)
+                ax2.set_ylim(bottom=-0.2, top=map_length_y+0.2)
 
                 ax3.set_title('Level 1 Drone Trajectory')
                 ax3.set_xlim(left=-0.2, right=map_length_x+0.2)
@@ -1612,7 +1616,7 @@ if __name__ == '__main__':
     
 
                 ax4.set_title('Level 2 Drone Trajectory')
-                ax4.set_xlim(left=-0.2, right=1.2)
-                ax4.set_ylim(bottom=-0.2, top=1.2)
+                ax4.set_xlim(left=-0.2, right=map_length_x+0.2)
+                ax4.set_ylim(bottom=-0.2, top=map_length_y+0.2)
 
                 plt.show()
