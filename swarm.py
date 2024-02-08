@@ -80,7 +80,7 @@ grid_num = 0
 grid_order1 = [0]
 grid_order2 = [0]
 
-fl = 0.1
+fl = 0.2
 velocity1 = 0.15
 velocity2= 0.25
 
@@ -253,6 +253,7 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     temp = 0
     pos_map_x.pop(0)
     pos_map_y.pop(0)
+    temp_map.pop(0)
     it1 = 1
     it2 = 1
     count = 0
@@ -270,23 +271,23 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     for i in range(partition2*map_length_x*map_length_y+1):
         if i % 2 == 0:
 
-            for j in range(10):
+            for j in range(5):
                 for k in range(4):
                     if k == 0:
                         it1 = 1
                         it2 = 1
                         for l in range(6):
                             if l >= 0 and l < 3:
-                                x = pos_map_x[j+i*10] - x_change*it1
-                                y = pos_map_y[j+i*10] + y_change*3
-                                temp = temp_map[l+k*6+j*24+i*240]
+                                x = pos_map_x[j+i*5] - x_change*it1
+                                y = pos_map_y[j+i*5] + y_change*3
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
-                                x = pos_map_x[j+i*10] + x_change*it2
-                                y = pos_map_y[j+i*10] + y_change*3
-                                temp = temp_map[l+k*6+j*24+i*240]
+                                x = pos_map_x[j+i*5] + x_change*it2
+                                y = pos_map_y[j+i*5] + y_change*3
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it2 = it2 + 2
@@ -296,16 +297,16 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
                         it2 = 1
                         for l in range(6):
                             if l >= 0 and l < 3:
-                                x = pos_map_x[j+i*10] - x_change*it1
-                                y = pos_map_y[j+i*10] + y_change
-                                temp = temp_map[l+k*6+j*24+i*240]
+                                x = pos_map_x[j+i*5] - x_change*it1
+                                y = pos_map_y[j+i*5] + y_change
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
-                                x = pos_map_x[j+i*10] + x_change*it2
-                                y = pos_map_y[j+i*10] + y_change
-                                temp = temp_map[l+k*6+j*24+i*240]
+                                x = pos_map_x[j+i*5] + x_change*it2
+                                y = pos_map_y[j+i*5] + y_change
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it2 = it2 + 2
@@ -315,16 +316,16 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
                         it2 = 1
                         for l in range(6):
                             if l >= 0 and l < 3:
-                                x = pos_map_x[j+i*10] - x_change*it1
-                                y = pos_map_y[j+i*10] - y_change
-                                temp = temp_map[l+k*6+j*24+i*240]
+                                x = pos_map_x[j+i*5] - x_change*it1
+                                y = pos_map_y[j+i*5] - y_change
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
-                                x = pos_map_x[j+i*10] + x_change*it2
-                                y = pos_map_y[j+i*10] - y_change
-                                temp = temp_map[l+k*6+j*12+i*120]
+                                x = pos_map_x[j+i*5] + x_change*it2
+                                y = pos_map_y[j+i*5] - y_change
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it2 = it2 + 2
@@ -334,16 +335,16 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
                         it2 = 1
                         for l in range(6):
                             if l >= 0 and l < 3:
-                                x = pos_map_x[j+i*10] - x_change*it1
-                                y = pos_map_y[j+i*10] - y_change*3
-                                temp = temp_map[l+k*6+j*24+i*240]
+                                x = pos_map_x[j+i*5] - x_change*it1
+                                y = pos_map_y[j+i*5] - y_change*3
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
-                                x = pos_map_x[j+i*10] + x_change*it2
-                                y = pos_map_y[j+i*10] - y_change*3
-                                temp = temp_map[l+k*6+j*12+i*120]
+                                x = pos_map_x[j+i*5] + x_change*it2
+                                y = pos_map_y[j+i*5] - y_change*3
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it2 = it2 + 2
@@ -351,23 +352,23 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
         
                                 
         else:
-            for j in range(10):
+            for j in range(5):
                 for k in range(4):
                     if k == 0:
                         it1 = 1
                         it2 = 1
                         for l in range(6):
                             if l >= 0 and l < 3:
-                                x = pos_map_x[j+i*10] + x_change*it1
-                                y = pos_map_y[j+i*10] - y_change*3
-                                temp = temp_map[l+k*6+j*24+i*240]
+                                x = pos_map_x[j+i*5] + x_change*it1
+                                y = pos_map_y[j+i*5] - y_change*3
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
-                                x = pos_map_x[j+i*10] - x_change*it2
-                                y = pos_map_y[j+i*10] - y_change*3
-                                temp = temp_map[l+k*6+j*24+i*240]
+                                x = pos_map_x[j+i*5] - x_change*it2
+                                y = pos_map_y[j+i*5] - y_change*3
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it2 = it2 + 2
@@ -377,16 +378,16 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
                         it2 = 1
                         for l in range(6):
                             if l >= 0 and l < 3:
-                                x = pos_map_x[j+i*10] + x_change*it1
-                                y = pos_map_y[j+i*10] - y_change
-                                temp = temp_map[l+k*6+j*24+i*240]
+                                x = pos_map_x[j+i*5] + x_change*it1
+                                y = pos_map_y[j+i*5] - y_change
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
-                                x = pos_map_x[j+i*10] - x_change*it2
-                                y = pos_map_y[j+i*10] - y_change
-                                temp = temp_map[l+k*6+j*24+i*240]
+                                x = pos_map_x[j+i*5] - x_change*it2
+                                y = pos_map_y[j+i*5] - y_change
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it2 = it2 + 2
@@ -396,16 +397,16 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
                         it2 = 1
                         for l in range(6):
                             if l >= 0 and l < 3:
-                                x = pos_map_x[j+i*10] + x_change*it1
-                                y = pos_map_y[j+i*10] + y_change
-                                temp = temp_map[l+k*6+j*24+i*240]
+                                x = pos_map_x[j+i*5] + x_change*it1
+                                y = pos_map_y[j+i*5] + y_change
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
-                                x = pos_map_x[j+i*10] - x_change*it2
-                                y = pos_map_y[j+i*10] + y_change
-                                temp = temp_map[l+k*6+j*12+i*120]
+                                x = pos_map_x[j+i*5] - x_change*it2
+                                y = pos_map_y[j+i*5] + y_change
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it2 = it2 + 2
@@ -415,16 +416,16 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
                         it2 = 1
                         for l in range(6):
                             if l >= 0 and l < 3:
-                                x = pos_map_x[j+i*10] + x_change*it1
-                                y = pos_map_y[j+i*10] + y_change*3
-                                temp = temp_map[l+k*6+j*24+i*240]
+                                x = pos_map_x[j+i*5] + x_change*it1
+                                y = pos_map_y[j+i*5] + y_change*3
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it1 = it1 + 2
                             elif l >= 3:
-                                x = pos_map_x[j+i*10] - x_change*it2
-                                y = pos_map_y[j+i*10] + y_change*3
-                                temp = temp_map[l+k*6+j*12+i*120]
+                                x = pos_map_x[j+i*5] - x_change*it2
+                                y = pos_map_y[j+i*5] + y_change*3
+                                temp = temp_map[l+k*6+j*24+i*120]
                                 color_coding(x,y,temp,drone)
                                 count = count + 1
                                 it2 = it2 + 2
@@ -558,9 +559,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         for j in range(ym):
             y = move_forward(mc, mr, fl, velocity1)
             temp_mapping(drone)
-            if y > 0:
-                j = j + y
-        time.sleep(2)
         y = 0
         j = 0
 
@@ -578,9 +576,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         for j in range(ym):
             y = move_forward(mc, mr, fl, velocity1)
             temp_mapping(drone)
-            if y > 0:
-                j = j + y
-        time.sleep(2)
         y = 0
         j = 0
 
@@ -597,9 +592,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
                         
         for j in range(xm):
             y = move_forward(mc, mr, fl)
-            if y > 0:
-                j = j + y
-        time.sleep(2)
         y = 0
         j = 0
 
@@ -616,9 +608,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
 
         for j in range(xm):
             y = move_forward(mc, mr, fl)
-            if y > 0:
-                j = j + y
-        time.sleep(2)
         y = 0
         j = 0
 
@@ -634,8 +623,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
 
         for j in range(ym):
             y = move_forward(mc, mr, fl)
-            if y > 0:
-                j = j + y
         time.sleep(2)
         j = 0
         y = 0
@@ -649,8 +636,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
 
         for j in range(xm):
             y = move_forward(mc, mr, fl)
-            if y > 0:
-                j = j + y
         time.sleep(2)
         y = 0
         j = 0
@@ -667,8 +652,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
 
         for j in range(ym):
             y = move_forward(mc, mr, fl)
-            if y > 0:
-                j = j + y
         time.sleep(2)
         y = 0
         j = 0
@@ -683,8 +666,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
 
         for j in range(xm):
             y = move_forward(mc, mr, fl)
-            if y > 0:
-                j = j + y
         time.sleep(2)
         y = 0
         j = 0
@@ -701,8 +682,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
 
         for j in range(ym):
             y = move_forward(mc, mr, fl)
-            if y > 0:
-                j = j + y
         time.sleep(2)
         y = 0
         j = 0
@@ -717,8 +696,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
 
         for j in range(xm):
             y = move_forward(mc, mr, fl)
-            if y > 0:
-                j = j + y
         time.sleep(2)
         y = 0
         j = 0
@@ -735,8 +712,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
 
         for j in range(ym):
             y = move_forward(mc, mr, fl)
-            if y > 0:
-                j = j + y
         time.sleep(2)
         j = 0
 
@@ -750,8 +725,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
 
         for j in range(xm):
             y = move_forward(mc, mr, fl)
-            if y > 0:
-                j = j + y
         time.sleep(2)
         y = 0
         j = 0
