@@ -52,7 +52,7 @@ by = [0]
 grid_size = 1 
 partition1 = 2
 partition2 = 4
-map_length_y = 2
+map_length_y = 1
 map_length_x = 1
 grid_num = 0
 
@@ -1275,7 +1275,7 @@ def log_temp_callback(timestamp, data, logconf):
     global count_temp
     global cal
     global hold
-    thres2 = 25
+    thres2 = 24
 
     if count_temp == 6:
         temp_file.write("\n")
