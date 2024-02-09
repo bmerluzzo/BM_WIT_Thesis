@@ -88,22 +88,55 @@ def color_coding(x, y, temp):
             tempubx = spX[i] + it
             lby = spY[i]
             uby = spY[i] + it
+            ubm = spX[i] + 1
 
     for i in range(20):
         lbx = templbx
         ubx = tempubx
         for j in range(20):
             if lbx < x < ubx  and lby < y < uby:
-                if temp >=25 and temp < 30:
+                if temp >=25 and temp < 27:
                     ox.append(lbx + (it/2))
                     oy.append(lby + (it/2))
                     return
 
-                elif temp >= 30:
+                elif temp >= 27.5:
                     rx.append(lbx + (it/2))
                     ry.append(lby + (it/2))
                     return
                 
+            elif x > ubm and lby < y < uby:
+                if ubm < x < (ubm+it):
+                    if temp >=25 and temp < 27:
+                        ox.append(ubm + (it/2))
+                        oy.append(lby + (it/2))
+                        return
+
+                    elif temp >= 27.5:
+                        rx.append(ubm + (it/2))
+                        ry.append(lby + (it/2))
+                        return
+                elif (ubm+it) < x < (ubm + (it*2)):
+                    if temp >=25 and temp < 27:
+                        ox.append((ubm+it) + (it/2))
+                        oy.append(lby + (it/2))
+                        return
+
+                    elif temp >= 27.5:
+                        rx.append((ubm+it) + (it/2))
+                        ry.append(lby + (it/2))
+                        return                    
+                elif (ubm+(it*2)) < x < (ubm + (it*3)):
+                    if temp >=25 and temp < 27:
+                        ox.append((ubm + (it*2)) + (it/2))
+                        oy.append(lby + (it/2))
+                        return
+
+                    elif temp >= 27.5:
+                        rx.append((ubm + (it*2)) + (it/2))
+                        ry.append(lby + (it/2))
+                        return                    
+
             else:
                 lbx = lbx + it
                 ubx = ubx + it       
@@ -364,7 +397,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, xc, yc):
 
                         if temp_det == 1:
                             time.sleep(1)
-                            pathing_level2(mc, fl, 0, xn, 0, yn)
+                            pathing_level2(mc, fl, xc, xn, yc, yn)
                             time.sleep(1)
                             mc.down(0.1)
                             return
@@ -1012,7 +1045,7 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     ox.pop(0)
     oy.pop(0)
 
-    ax2.scatter(ox, oy, c = 'tab:orange', s=50)
+    #ax2.scatter(ox, oy, c = 'tab:orange', s=50)
     ax2.scatter(rx, ry, c = 'tab:red', s=50)
 
     return
