@@ -910,6 +910,7 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, drone):
                 if x < xe:
                     mc.right(pos_error/4)
                     x = get_position_x(drone)
+                    print(x, "\n")
                 elif x > xe:
                     mc.left(pos_error/4)
                     x = get_position_x(drone)
