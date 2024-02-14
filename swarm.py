@@ -880,8 +880,7 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, drone):
 
     x = abs(get_position_x(drone))
     y = get_position_y(drone) 
-    print(x, "\n") 
-    print(y, "\n") 
+     
     time.sleep(1)
     error = abs(ye - y)
         
@@ -892,9 +891,11 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, drone):
                 if y < ye:
                     mc.forward(pos_error/4)
                     y = get_position_y(drone)
+                    
                 elif y > ye:
                     mc.back(pos_error/4)
                     y = get_position_y(drone)
+                    
                 error = abs(ye - y)
             else:
                 error_flag = 0
@@ -910,7 +911,6 @@ def pathing_level2(mc, fl, xn, xp, yn, yp, drone):
                 if x < xe:
                     mc.right(pos_error/4)
                     x = get_position_x(drone)
-                    print(x, "\n")
                 elif x > xe:
                     mc.left(pos_error/4)
                     x = get_position_x(drone)
@@ -1282,6 +1282,7 @@ def map_generation(grid_size, map_length_y, map_length_x):
     return spX, spY 
 
 def run_sequence(scf, dict):
+    mr = 0
 
     if scf.cf.link_uri == 'radio://0/80/2M/E7E7E7E7E8':
 
@@ -1302,7 +1303,7 @@ def run_sequence(scf, dict):
 
         scf.cf.param.add_update_callback(name= "First", cb=param_deck_flow)
 
-        logconf1 = LogConfig(name='Position', period_in_ms=500) 
+        logconf1 = LogConfig(name='Position', period_in_ms=250) 
         logconf1.add_variable('stateEstimate.x', 'float')
         logconf1.add_variable('stateEstimate.y', 'float')
         logconf1.add_variable('stateEstimate.z', 'float')
@@ -1388,7 +1389,7 @@ def run_sequence(scf, dict):
         temp_det1 = 0
 
         with MotionCommander(scf, default_height = 0.4) as mc:    
-            with Multiranger(scf) as mr:
+            #with Multiranger(scf) as mr:
 
                 time.sleep(2)  
                     
@@ -1451,7 +1452,7 @@ def run_sequence(scf, dict):
         print(grid_order2, "\n")
         scf.cf.param.add_update_callback(name= "Second", cb=param_deck_flow)
 
-        logconf2 = LogConfig(name='Position', period_in_ms=500) 
+        logconf2 = LogConfig(name='Position', period_in_ms=250) 
         logconf2.add_variable('stateEstimate.x', 'float')
         logconf2.add_variable('stateEstimate.y', 'float')
         logconf2.add_variable('stateEstimate.z', 'float')
@@ -1536,7 +1537,7 @@ def run_sequence(scf, dict):
         temp_det2 = 0
 
         with MotionCommander(scf, default_height = 0.4) as mc:    
-            with Multiranger(scf) as mr:
+            #with Multiranger(scf) as mr:
 
                 time.sleep(2)  
                     
@@ -1560,7 +1561,7 @@ def run_sequence(scf, dict):
 
                     if point < grid_num -1:
                         pathing_level2(mc, fl, xn, xp, yn, yp, drone)
-                        gn2 = grid_order1[point+1]
+                        gn2 = grid_order2[point+1]
 
                     if temp_det2 == 1:
                         temp_det2 = 0
@@ -1585,9 +1586,10 @@ def log_pos_callback1(timestamp, data, logconf):
     global x_pos1
     global y_pos1
     global z_pos1
+    print(data)
 
     position_estimate1[0] = data['stateEstimate.x']
-    position_estimate1[1] = data['stateEstimate.y']
+    position_estimate1[1] = data['stateEstimate.y']*-1
     position_estimate1[2] = data['stateEstimate.z']
     t1 = timestamp
 
@@ -1601,14 +1603,15 @@ def log_pos_callback2(timestamp, data, logconf):
     global x_pos2
     global y_pos2
     global z_pos2
+    print(data)
 
     position_estimate2[0] = data['stateEstimate.x']
-    position_estimate2[1] = (abs(data['stateEstimate.y']) + 2)*-1
+    position_estimate2[1] = ((data['stateEstimate.y']*-1) + 2)
     position_estimate2[2] = data['stateEstimate.z']
     t2 = timestamp
 
     y_pos2.append(data['stateEstimate.x'])
-    x_pos2.append(data['stateEstimate.y']*-1) + 2
+    x_pos2.append(position_estimate2[1])
     z_pos2.append(data['stateEstimate.z'])
 
 def log_temp1_callback(timestamp, data, logconf):
@@ -1768,8 +1771,8 @@ if __name__ == '__main__':
     cflib.crtp.init_drivers()
     factory = CachedCfFactory(rw_cache='./cache')
     with Swarm(uris, factory=factory) as swarm:
-        swarm.parallel_safe(light_check)
-        swarm.reset_estimators()
+        #swarm.parallel_safe(light_check)
+        #swarm.reset_estimators()
 
         global fig
         global ax
