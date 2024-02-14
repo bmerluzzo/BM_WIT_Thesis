@@ -95,44 +95,44 @@ def color_coding(x, y, temp):
         ubx = tempubx
         for j in range(20):
             if lbx < x < ubx  and lby < y < uby:
-                if temp >=25 and temp < 27:
+                if temp >=25 and temp < 30:
                     ox.append(lbx + (it/2))
                     oy.append(lby + (it/2))
                     return
 
-                elif temp >= 27.5:
+                elif temp >= 30:
                     rx.append(lbx + (it/2))
                     ry.append(lby + (it/2))
                     return
                 
             elif x > ubm and lby < y < uby:
                 if ubm < x < (ubm+it):
-                    if temp >=25 and temp < 27:
+                    if temp >=25 and temp < 30:
                         ox.append(ubm + (it/2))
                         oy.append(lby + (it/2))
                         return
 
-                    elif temp >= 27.5:
+                    elif temp >= 30:
                         rx.append(ubm + (it/2))
                         ry.append(lby + (it/2))
                         return
                 elif (ubm+it) < x < (ubm + (it*2)):
-                    if temp >=25 and temp < 27:
+                    if temp >=25 and temp < 30:
                         ox.append((ubm+it) + (it/2))
                         oy.append(lby + (it/2))
                         return
 
-                    elif temp >= 27.5:
+                    elif temp >= 30:
                         rx.append((ubm+it) + (it/2))
                         ry.append(lby + (it/2))
                         return                    
                 elif (ubm+(it*2)) < x < (ubm + (it*3)):
-                    if temp >=25 and temp < 27:
+                    if temp >=25 and temp < 30:
                         ox.append((ubm + (it*2)) + (it/2))
                         oy.append(lby + (it/2))
                         return
 
-                    elif temp >= 27.5:
+                    elif temp >= 30:
                         rx.append((ubm + (it*2)) + (it/2))
                         ry.append(lby + (it/2))
                         return                    
@@ -435,7 +435,6 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc):
         yd = yn - yp
         ym = yd/fl
         ym = int(ym)
-        print(ym, "\n")
 
         rotc = rotate(mc, rotc, rotn)
         error_correction_level1(mc, xe, yp, rotc)
@@ -862,10 +861,10 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     x = 0
     y = 0
     temp = 0
-    x_change = 0.0315/2
-    y_change = 0.039/2
-    #xchange = 0.07/2
-    #ychange = 0.1071/2
+    #x_change = 0.0315/2
+    #y_change = 0.039/2
+    x_change = 0.07/2
+    y_change = 0.1071/2
     pos_map_x.pop(0)
     pos_map_y.pop(0)
     temp_map.pop(0)
@@ -1045,7 +1044,7 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     ox.pop(0)
     oy.pop(0)
 
-    #ax2.scatter(ox, oy, c = 'tab:orange', s=50)
+    ax2.scatter(ox, oy, c = 'tab:orange', s=50)
     ax2.scatter(rx, ry, c = 'tab:red', s=50)
 
     return
