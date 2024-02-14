@@ -88,8 +88,8 @@ FOV1 = 55
 FOV2 = 110
 
 uri_list = {
-    'radio://0/80/2M/E7E7E7E7E8',
     'radio://0/80/2M/E7E7E7E7E7',
+    'radio://0/80/2M/E7E7E7E7E8',
     # Add more URIs if you want more copters in the swarm
 }
 
@@ -242,11 +242,19 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
     y_pos_l2.pop(0)
     z_pos_l2.pop(0)
 
-    ax.plot3D(x_pos_l1, y_pos_l1, z_pos_l1, 'blue')
-    ax.plot3D(x_pos_l2, y_pos_l2, z_pos_l2, 'red')
+    if drone == 1:
+        ax.plot3D(x_pos_l1, y_pos_l1, z_pos_l1, 'blue')
+        ax.plot3D(x_pos_l2, y_pos_l2, z_pos_l2, 'red')
 
-    ax3.plot(x_pos_l1, y_pos_l1, 'blue')
-    ax4.plot(x_pos_l2, y_pos_l2, 'red')
+        ax3.plot(x_pos_l1, y_pos_l1, 'blue')
+        ax4.plot(x_pos_l2, y_pos_l2, 'red')
+
+    if drone == 2:
+        ax.plot3D(x_pos_l1, y_pos_l1, z_pos_l1, 'green')
+        ax.plot3D(x_pos_l2, y_pos_l2, z_pos_l2, 'orange')
+
+        ax3.plot(x_pos_l1, y_pos_l1, 'green')
+        ax4.plot(x_pos_l2, y_pos_l2, 'orange')
 
     x = 0
     y = 0
@@ -477,7 +485,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, drone, gn, temp_det, xc, yc):
         print("Surveilling Grid ", gn, "\n")
     elif temp_det == 1:
         print("Mapping Grid ", gn, "\n")
-    
+
     for i in range(partition):
         
         if i % 2 == 0:
@@ -497,6 +505,7 @@ def sweep(mc, mr, fl, rotc, grid_size, partition, drone, gn, temp_det, xc, yc):
 
     size = len(swX) - 1
 
+    print(swX, swY, "\n")
     time.sleep(2)
 
 
@@ -1264,10 +1273,10 @@ def map_generation(grid_size, map_length_y, map_length_x):
             spX.append(pointX)
             pointY = pointY + grid_size
         pointX = pointX + grid_size
-        pointY = 0
+        pointY = 0 
 
-    spY = [0] 
-    spX = [0] 
+    spX.pop(0)
+    spY.pop(0)
 
     return spX, spY 
 
@@ -1285,6 +1294,11 @@ def run_sequence(scf, dict):
         for i in range(grid_num):
                     grid_order1.append(i + 1)
 
+        grid_order1.pop(0)
+
+        print(spX1, spY1, "\n")
+        print(grid_order1, "\n")
+
         scf.cf.param.add_update_callback(name= "First", cb=param_deck_flow)
 
         logconf1 = LogConfig(name='Position', period_in_ms=500) 
@@ -1294,7 +1308,7 @@ def run_sequence(scf, dict):
         scf.cf.log.add_config(logconf1)
         logconf1.data_received_cb.add_callback(log_pos_callback1)
 
-        logconf11 = LogConfig(name='Temp1', period_in_ms=1000) 
+        '''logconf11 = LogConfig(name='Temp1', period_in_ms=1000) 
         logconf11.add_variable('MLX1.To1', 'float')
         logconf11.add_variable('MLX1.To2', 'float')
         logconf11.add_variable('MLX1.To3', 'float')
@@ -1352,23 +1366,25 @@ def run_sequence(scf, dict):
         logconf16.add_variable('MLX6.To5', 'float')
         logconf16.add_variable('MLX6.To6', 'float')
         scf.cf.log.add_config(logconf16)
-        logconf16.data_received_cb.add_callback(log_temp1_callback)
+        logconf16.data_received_cb.add_callback(log_temp1_callback)'''
 
         logconf1.start()
-        logconf11.start()
+        '''logconf11.start()
         logconf12.start()
         logconf13.start()
         logconf14.start()
         logconf15.start()
-        logconf16.start()    
+        logconf16.start() '''   
                         
 
         point = 0
         rotc = 1
         rotc = int(rotc)     
-        global gn1  
+        global gn1 
+        gn1 = grid_order1[0] 
         global hold1
         drone = 1
+        temp_det1 = 0
 
         with MotionCommander(scf, default_height = 0.4) as mc:    
             with Multiranger(scf) as mr:
@@ -1404,12 +1420,12 @@ def run_sequence(scf, dict):
                     point = point + 1
         
         logconf1.stop()
-        logconf11.stop()
+        '''logconf11.stop()
         logconf12.stop()
         logconf13.stop()
         logconf15.stop()
         logconf15.stop()
-        logconf16.stop()
+        logconf16.stop()'''
         
         my_plotter(ax, ax2, ax3, ax4, x_pos1, y_pos1, z_pos1, pos_map1_x, pos_map1_y, temp_map1, drone, FOV1)
 
@@ -1426,8 +1442,12 @@ def run_sequence(scf, dict):
 
         i = 0
         for i in range(grid_num):
-                    grid_order2.append(i + grid_size + 1)
+                    grid_order2.append(i + grid_size + 2)
 
+        grid_order2.pop(0)
+
+        print(spX2, spY2, "\n")
+        print(grid_order2, "\n")
         scf.cf.param.add_update_callback(name= "Second", cb=param_deck_flow)
 
         logconf2 = LogConfig(name='Position', period_in_ms=500) 
@@ -1437,7 +1457,7 @@ def run_sequence(scf, dict):
         scf.cf.log.add_config(logconf2)
         logconf2.data_received_cb.add_callback(log_pos_callback2)
 
-        logconf21 = LogConfig(name='Temp1', period_in_ms=1000) 
+        '''logconf21 = LogConfig(name='Temp1', period_in_ms=1000) 
         logconf21.add_variable('MLX1.To1', 'float')
         logconf21.add_variable('MLX1.To2', 'float')
         logconf21.add_variable('MLX1.To3', 'float')
@@ -1495,22 +1515,24 @@ def run_sequence(scf, dict):
         logconf26.add_variable('MLX6.To5', 'float')
         logconf26.add_variable('MLX6.To6', 'float')
         scf.cf.log.add_config(logconf26)
-        logconf26.data_received_cb.add_callback(log_temp2_callback)
+        logconf26.data_received_cb.add_callback(log_temp2_callback)'''
 
         logconf2.start()
-        logconf21.start()
+        '''logconf21.start()
         logconf22.start()
         logconf23.start()
         logconf24.start()
         logconf25.start()
-        logconf26.start()    
+        logconf26.start()'''    
                         
         point = 0
         rotc = 1
         rotc = int(rotc)     
         global gn2  
+        gn2 = grid_order2[0]
         global hold2
         drone = 2
+        temp_det2 = 0
 
         with MotionCommander(scf, default_height = 0.4) as mc:    
             with Multiranger(scf) as mr:
@@ -1546,12 +1568,12 @@ def run_sequence(scf, dict):
                     point = point + 1
 
         logconf2.stop()
-        logconf21.stop()
+        '''logconf21.stop()
         logconf22.stop()
         logconf23.stop()
         logconf25.stop()
         logconf25.stop()
-        logconf26.stop()
+        logconf26.stop()'''
         
         my_plotter(ax, ax2, ax3, ax4, x_pos2, y_pos2, z_pos2, pos_map2_x, pos_map2_y, temp_map2, drone, FOV2)
         
@@ -1760,13 +1782,11 @@ if __name__ == '__main__':
         ax3 = fig.add_subplot(4, 1, 2)
         ax4 = fig.add_subplot(4, 1, 3)
 
-        time.sleep(2)
-
-        #swarm.sequential(run_sequence, args_dict=seq_args)
-        swarm.parallel(run_sequence, args_dict=seq_args)
+        swarm.sequential(run_sequence, args_dict=seq_args)
+        #swarm.parallel(run_sequence, args_dict=seq_args)
 
         ax.set_title('3D Drone Trajectory')
-        ax.view_init(elev = 45, azim = -90, roll = 0)
+        ax.view_init(elev = 20, azim = -120, roll = 0)
 
         ax2.set_title('Temperature Map')
         ax2.set_xlim(left=0, right=1)
