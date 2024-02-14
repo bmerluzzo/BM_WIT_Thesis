@@ -1282,7 +1282,7 @@ def map_generation(grid_size, map_length_y, map_length_x):
     return spX, spY 
 
 def run_sequence(scf, dict):
-    mr = 0
+    
 
     if scf.cf.link_uri == 'radio://0/80/2M/E7E7E7E7E8':
 
@@ -1389,7 +1389,7 @@ def run_sequence(scf, dict):
         temp_det1 = 0
 
         with MotionCommander(scf, default_height = 0.4) as mc:    
-            #with Multiranger(scf) as mr:
+            with Multiranger(scf) as mr:
 
                 time.sleep(2)  
                     
@@ -1537,7 +1537,7 @@ def run_sequence(scf, dict):
         temp_det2 = 0
 
         with MotionCommander(scf, default_height = 0.4) as mc:    
-            #with Multiranger(scf) as mr:
+            with Multiranger(scf) as mr:
 
                 time.sleep(2)  
                     
@@ -1772,7 +1772,7 @@ if __name__ == '__main__':
     factory = CachedCfFactory(rw_cache='./cache')
     with Swarm(uris, factory=factory) as swarm:
         #swarm.parallel_safe(light_check)
-        #swarm.reset_estimators()
+        swarm.reset_estimators()
 
         global fig
         global ax
