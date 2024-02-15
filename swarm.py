@@ -256,7 +256,7 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
         ax3.plot(x_pos_l1, y_pos_l1, 'green')
         ax4.plot(x_pos_l2, y_pos_l2, 'orange')
 
-    x = 0
+    '''x = 0
     y = 0
     temp = 0
     pos_map_x.pop(0)
@@ -456,7 +456,7 @@ def my_plotter(ax, ax2, ax3, ax4, x_pos, y_pos, z_pos, pos_map_x, pos_map_y, tem
         ax2.scatter(rx2, ry2, c = 'tab:red', s=100)
         ax2.scatter(ox2, oy2, c = 'tab:orange', s=100)
     
-    #print("Count: ", count, "Temp Array Length: ", t_len, "\n")
+    #print("Count: ", count, "Temp Array Length: ", t_len, "\n")'''
 
     return
 
@@ -552,7 +552,10 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
     ym, xm = 0, 0
 
     ye = yn
-    xe = xn*-1
+    if xn == 0:
+        xe = 0
+    else:
+        xe = xn*-1
 
     if xp == xn and yp < yn:       
                         
@@ -567,7 +570,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
 
         for j in range(ym):
             y = move_forward(mc, mr, fl, velocity1)
-            temp_mapping(drone)
+            #temp_mapping(drone)
         y = 0
         j = 0
 
@@ -584,7 +587,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
 
         for j in range(ym):
             y = move_forward(mc, mr, fl, velocity1)
-            temp_mapping(drone)
+            #temp_mapping(drone)
         y = 0
         j = 0
 
@@ -592,15 +595,13 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
 
         rotn = 2
 
-        xd = xn - xp
-        xm = xd/fl
-        xm = int(xm)
+        xd = abs(xn - xp)
 
         rotc = rotate(mc, rotc, rotn)
-        error_correction_level1(mc, -abs(xp), ye, rotc, drone, velocity2)
+        error_correction_level1(mc, -abs(xp), ye, rotc, drone)
                         
-        for j in range(xm):
-            y = move_forward(mc, mr, fl)
+        
+        y = move_forward(mc, mr, xd, velocity2)
         y = 0
         j = 0
 
@@ -608,15 +609,12 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
 
         rotn = 4
 
-        xd = xp - xn
-        xm = xd/fl
-        xm = int(xm)
+        xd = abs(xp - xn)
 
         rotc = rotate(mc, rotc, rotn)
-        error_correction_level1(mc, -abs(xp), ye, rotc, drone, velocity2)
+        error_correction_level1(mc, -abs(xp), ye, rotc, drone)
 
-        for j in range(xm):
-            y = move_forward(mc, mr, fl)
+        y = move_forward(mc, mr, xd, velocity2)
         y = 0
         j = 0
 
@@ -631,7 +629,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(ym):
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity2)
         time.sleep(2)
         j = 0
         y = 0
@@ -644,7 +642,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(xm):
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity2)
         time.sleep(2)
         y = 0
         j = 0
@@ -660,7 +658,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(ym):
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity2)
         time.sleep(2)
         y = 0
         j = 0
@@ -674,7 +672,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(xm):
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity2)
         time.sleep(2)
         y = 0
         j = 0
@@ -690,7 +688,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(ym):
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity2)
         time.sleep(2)
         y = 0
         j = 0
@@ -704,7 +702,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(xm):
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity2)
         time.sleep(2)
         y = 0
         j = 0
@@ -720,7 +718,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(ym):
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity2)
         time.sleep(2)
         j = 0
 
@@ -733,7 +731,7 @@ def pathing_level1(mc, mr, fl, xn, xp, yn, yp, rotc, drone):
         rotc = rotate(mc, rotc, rotn)
 
         for j in range(xm):
-            y = move_forward(mc, mr, fl)
+            y = move_forward(mc, mr, fl, velocity2)
         time.sleep(2)
         y = 0
         j = 0
@@ -939,7 +937,7 @@ def error_correction_level1(mc, xe, ye, rotc, drone):
                 else:
                     error_flag = 0
 
-        x = get_position_x(drone)
+        x = get_position_x(drone)*-1
         time.sleep(1)
         error = abs(xe - x)
         
@@ -949,10 +947,10 @@ def error_correction_level1(mc, xe, ye, rotc, drone):
                 if error > pos_error:
                     if x > xe:
                         mc.right(pos_error/4)
-                        x = get_position_x(drone)
+                        x = get_position_x(drone)*-1
                     elif x < xe:
                         mc.left(pos_error/4)
-                        x = get_position_x(drone)
+                        x = get_position_x(drone)*-1
                     error = abs(xe - x)
                 else:
                     error_flag = 0
@@ -977,7 +975,7 @@ def error_correction_level1(mc, xe, ye, rotc, drone):
                 else:
                     error_flag = 0
 
-        x = get_position_x(drone)
+        x = get_position_x(drone)*-1
         time.sleep(1)
         error = abs(xe - x)
         
@@ -987,10 +985,10 @@ def error_correction_level1(mc, xe, ye, rotc, drone):
                 if error > pos_error:
                     if x > xe:
                         mc.forward(pos_error/4)
-                        x = get_position_x(drone)
+                        x = get_position_x(drone)*-1
                     elif x < xe:
                         mc.back(pos_error/4)
-                        x = get_position_x(drone)
+                        x = get_position_x(drone)*-1
                     error = abs(xe - x)
                 else:
                     error_flag = 0
@@ -1015,7 +1013,7 @@ def error_correction_level1(mc, xe, ye, rotc, drone):
                 else:
                     error_flag = 0
 
-        x = get_position_x(drone)
+        x = get_position_x(drone)*-1
         time.sleep(1)
         error = abs(xe - x)
         
@@ -1025,10 +1023,10 @@ def error_correction_level1(mc, xe, ye, rotc, drone):
                 if error > pos_error:
                     if x > xe:
                         mc.left(pos_error/4)
-                        x = get_position_x(drone)
+                        x = get_position_x(drone)*-1
                     elif x < xe:
                         mc.right(pos_error/4)
-                        x = get_position_x(drone)
+                        x = get_position_x(drone)*-1
                     error = abs(xe - x)
                 else:
                     error_flag = 0
@@ -1053,7 +1051,7 @@ def error_correction_level1(mc, xe, ye, rotc, drone):
                 else:
                     error_flag = 0
 
-        x = get_position_x(drone)
+        x = get_position_x(drone)*-1
         time.sleep(1)
         error = abs(xe - x)
         
@@ -1063,10 +1061,10 @@ def error_correction_level1(mc, xe, ye, rotc, drone):
                 if error > pos_error:
                     if x > xe:
                         mc.back(pos_error/4)
-                        x = get_position_x(drone)
+                        x = get_position_x(drone)*-1
                     elif x < xe:
                         mc.forward(pos_error/4)
-                        x = get_position_x(drone)
+                        x = get_position_x(drone)*-1
                     error = abs(xe - x)
                 else:
                     error_flag = 0
@@ -1157,15 +1155,14 @@ def obs_avoid(mc, mr, fl):
 
 def move_forward(mc, mr, fl, velocity):
     mc.forward(fl, velocity)
-    if is_close(mr.front):
+    '''if is_close(mr.front):
         mc.stop()
         y = obs_avoid(mc, mr, fl)
-        return y
+        return y'''
     #elif is_close(mr.top):
        # mc.stop()
        # time.sleep(20)
-    else:
-        return 0
+    return 0
     
 def rotate(mc, rotc, rotn):
     
@@ -1174,25 +1171,35 @@ def rotate(mc, rotc, rotn):
     d_rate = 30
     k = 0 
     k = k + 0
+    d = 3
+    c = rotc
+    n = rotn
 
-    if rotc == rotn:
+    if c == n:
         return rotc
     
-    elif rotc < rotn:
-        rot = rotn - rotc
-        for k in range(rot):
-            mc.turn_right(deg, d_rate)
-        k = 0
-        rotc = rotn
-        return rotc
+    elif c < n:
+        rot = n - c
+        
+        if rot == d:
+            mc.turn_left(deg, d_rate)
+        
+        else:
+            for k in range(rot):
+                mc.turn_right(deg, d_rate)
+            k = 0
     
-    elif rotc > rotn:
-        rot = rotc - rotn
-        for k in range(rot):
+    elif c > n:
+        rot = c - n
+        if rot == d:
             mc.turn_right(deg, d_rate)
-        k = 0
-        rotc = rotn
-        return rotc
+        else: 
+            for k in range(rot):
+                mc.turn_left(deg, d_rate)
+            k = 0
+    
+    rotc = rotn
+    return rotc
     
 def move_front_ob(mc, mr, fl):
     mc.forward(fl)
@@ -1401,8 +1408,11 @@ def run_sequence(scf, dict):
                         xn = spX1[point+1]
                         yn = spY1[point+1] 
 
-
-                    sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn1, temp_det1, xp, yp)
+                    if point == 1:
+                        sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn1, temp_det1, xp, yp)
+                    elif point == 0:
+                        temp_det1 = 1
+                        mc.down(0.1)
 
                     if temp_det1 == 1:
                         sweep(mc, mr, fl, rotc, grid_size, partition2, drone, gn1, temp_det1, xp, yp)
@@ -1411,7 +1421,7 @@ def run_sequence(scf, dict):
                         time.sleep(2)
                         mc.turn_right(90, 30)
 
-                    if point < grid_num -1:
+                    if point < grid_num - 1:
                         pathing_level2(mc, fl, xn, xp, yn, yp, drone)
                         gn1 = grid_order1[point+1]
 
@@ -1549,8 +1559,11 @@ def run_sequence(scf, dict):
                         xn = spX2[point+1]
                         yn = spY2[point+1] 
 
-
-                    sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn2, temp_det2, xp, yp)
+                    if point == 0:
+                        sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn2, temp_det2, xp, yp)
+                    elif point == 1:
+                        temp_det2 = 1
+                        mc.down(0.1)
 
                     if temp_det2 == 1:
                         sweep(mc, mr, fl, rotc, grid_size, partition2, drone, gn2, temp_det2, xp, yp)
