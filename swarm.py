@@ -1408,11 +1408,9 @@ def run_sequence(scf, dict):
                         xn = spX1[point+1]
                         yn = spY1[point+1] 
 
-                    if point == 1:
-                        sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn1, temp_det1, xp, yp)
-                    elif point == 0:
-                        temp_det1 = 1
-                        mc.down(0.1)
+                    sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn1, temp_det1, xp, yp)
+
+                    grid_order1[point] = 0
 
                     if temp_det1 == 1:
                         sweep(mc, mr, fl, rotc, grid_size, partition2, drone, gn1, temp_det1, xp, yp)
@@ -1422,14 +1420,16 @@ def run_sequence(scf, dict):
                         mc.turn_right(90, 30)
 
                     if point < grid_num - 1:
-                        pathing_level2(mc, fl, xn, xp, yn, yp, drone)
-                        gn1 = grid_order1[point+1]
+                        '''pathing_level2(mc, fl, xn, xp, yn, yp, drone)
+                        gn1 = grid_order1[point+1]'''
+                        point = grid_num
+                        break
 
                     if temp_det1 == 1:
                         temp_det1 = 0
                         hold1 = 0
 
-                    point = point + 1
+                    #point = point + 1
         
         logconf1.stop()
         '''logconf11.stop()
@@ -1545,6 +1545,7 @@ def run_sequence(scf, dict):
         global hold2
         drone = 2
         temp_det2 = 0
+        inter = 0
 
         with MotionCommander(scf, default_height = 0.4) as mc:    
             with Multiranger(scf) as mr:
@@ -1559,11 +1560,8 @@ def run_sequence(scf, dict):
                         xn = spX2[point+1]
                         yn = spY2[point+1] 
 
-                    if point == 0:
-                        sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn2, temp_det2, xp, yp)
-                    elif point == 1:
-                        temp_det2 = 1
-                        mc.down(0.1)
+                    
+                    sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn2, temp_det2, xp, yp)
 
                     if temp_det2 == 1:
                         sweep(mc, mr, fl, rotc, grid_size, partition2, drone, gn2, temp_det2, xp, yp)
@@ -1572,7 +1570,7 @@ def run_sequence(scf, dict):
                         time.sleep(2)
                         mc.turn_right(90, 30)
 
-                    if point < grid_num -1:
+                    if point < grid_num - 1:
                         pathing_level2(mc, fl, xn, xp, yn, yp, drone)
                         gn2 = grid_order2[point+1]
 
@@ -1581,6 +1579,25 @@ def run_sequence(scf, dict):
                         hold2 = 0
 
                     point = point + 1
+
+                while inter != 2:
+                    print("Checking for Unmonitored zones\n")
+                    if grid_order1[i] != 0:
+                        xp = spX2[1]
+                        yp = spY2[1]
+                        xn = spX1[i]
+                        yn = spY1[i]
+                        gn2 = grid_order1[i]
+                        print(xp, yp, "\n")
+                        print(xn, yn, "\n")
+
+                        pathing_level2(mc, fl, xn, xp, yn, yp, drone)
+                        sweep(mc, mr, fl, rotc, grid_size, partition1, drone, gn2, temp_det2, xn, yn)
+
+                        inter = 2
+
+                    else:
+                        inter = inter + 1
 
         logconf2.stop()
         '''logconf21.stop()
@@ -1599,7 +1616,6 @@ def log_pos_callback1(timestamp, data, logconf):
     global x_pos1
     global y_pos1
     global z_pos1
-    print(data)
 
     position_estimate1[0] = data['stateEstimate.x']
     position_estimate1[1] = data['stateEstimate.y']*-1
@@ -1616,7 +1632,6 @@ def log_pos_callback2(timestamp, data, logconf):
     global x_pos2
     global y_pos2
     global z_pos2
-    print(data)
 
     position_estimate2[0] = data['stateEstimate.x']
     position_estimate2[1] = ((data['stateEstimate.y']*-1) + 2)
